@@ -1,14 +1,4 @@
 const Breadcrumb = ({ items = [], button = [] }) => {
-    const runFunction = (fnString) => {
-        // You can handle dynamic functions safely here (avoid eval if possible)
-        try {
-            // eslint-disable-next-line no-eval
-            eval(fnString);
-        } catch (e) {
-            console.error("Error running function:", e);
-        }
-    };
-
     return (
         <div className="flex flex-wrap items-center justify-between bg-white rounded shadow-sm p-2 mb-3">
             <nav aria-label="breadcrumb" className="flex-1">
@@ -37,16 +27,17 @@ const Breadcrumb = ({ items = [], button = [] }) => {
 
             {button && button.length > 0 && (
                 <div className="flex gap-2">
-                    {button.map((btn, idx) => (
-                        <a
-                            key={idx}
-                            href={btn.link || "#"}
-                            className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"
-                                } px-3 py-1 rounded text-sm flex items-center transition`}
-                        >
-                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}
+                    {button.map((btn, idx) => (btn.link ? (
+                        <a key={idx} href={btn.link || "#"} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
+                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}&nbsp;&nbsp;
                             {btn.label}
                         </a>
+                    ) : btn.dyalog ? (
+                        <button type="button" key={idx} data-bs-toggle="modal" data-bs-target={btn.dyalog} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
+                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}&nbsp;&nbsp;
+                            {btn.label}
+                        </button>
+                    ) : <></>
                     ))}
                 </div>
             )}

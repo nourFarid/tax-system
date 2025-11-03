@@ -1,10 +1,5 @@
 {
   "Hello": "مرحبا",
-  "add": "إضافة",
-  "edit": "تعديل",
-  "delete": "حذف",
-  "download": "تحميل",
-  "save": "حفظ",
   "Home": "الصفحة الرئيسيه",
   "My Panel": "لوحة التحكم",
   "Search for anything": "ابحث",
@@ -96,5 +91,16 @@
   "Customer": "العميل",
   "Supplier": "المورد",
   "Fiscal Year": "السنة المالية",
-  "Preview": "عرض"
+  "Preview": "عرض",
+  "Add Document Type": "إضافة نوع مستند",
+  "Name": "الإسم",
+  "Code": "كود",
+  "Save": "حفظ",
+  "Cancel": "إلغاء",
+  "Are you sure to delete": "هل أنت متأكد من حذف",
+  "QuestionMark": "؟",
+  "Filter": "بحث",
+  "Reset": "إعادة تعيين",
+  "ID": "مسلسل",
+  "Edit Document Type": "تعديل نوع المستند"
 }

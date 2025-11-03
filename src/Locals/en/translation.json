@@ -1,10 +1,9 @@
 {
   "hello": "Hello",
-  "add": "Add",
-  "edit": "Edit",
-  "delete": "Delete",
-  "download": "Download",
-  "save": "Save",
+  "Add": "Add",
+  "Edit": "Edit",
+  "Delete": "Delete",
+  "Download": "Download",
   "Home": "Home",
   "My Panel": "My Panel",
   "Document 41": "Document 41",
@@ -20,5 +19,15 @@
   "Customer": "Customer",
   "Supplier": "Supplier",
   "Fiscal Year": "Fiscal Year",
-  "Preview": "Preview"
+  "Preview": "Preview",
+  "Add Document Type": "Add Document Type",
+  "Name": "Name",
+  "Code": "Code",
+  "Save": "Save",
+  "Cancel": "Cancel",
+  "Are you sure to delete": "Are you sure to delete",
+  "QuestionMark": "?",
+  "Filter": "Filter",
+  "Reset": "Reset",
+  "ID": "ID"
 }

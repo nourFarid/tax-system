@@ -1,8 +1,8 @@
-.table thead.table-marine-blue {
+.eg-table thead.table-marine-blue {
     background-color: #002d63 !important;
 }
 
-.table thead.table-marine-blue th {
+.eg-table thead.table-marine-blue th {
     background-color: #002d63 !important;
     color: #ffffff !important;
     font-weight: 600;
@@ -11,40 +11,59 @@
     border-color: #335582 !important;
 }
 
-.table {
+.eg-table {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-primary-8);
+    border-top: #d3d3d3 !important;
+    border-bottom: #d3d3d3 !important;
+    border-left: #d3d3d3 !important;
+    border-right: #d3d3d3 !important;
 }
 
-.table thead {
+.eg-table thead {
     font-weight: 600;
-    border-bottom: 2px solid var(--color-primary-3);
+    border-bottom: 2px solid #d3d3d3;
 }
 
-.table th,
-.table td {
+.eg-table th,
+.eg-table td {
     text-align: center;
     vertical-align: middle;
     padding: 12px;
-    border-color: var(--color-primary-8);
+    border-color: #d3d3d3;
 }
 
-.table tbody tr:nth-child(odd) {
-    /* Lightest blue */
+.eg-table tbody tr:nth-child(odd) {
     background-color: var(--color-primary-9);
 }
 
-.table tbody tr:nth-child(even) {
-    /* Light blue */
+.eg-table tbody tr:nth-child(even) {
     background-color: var(--color-primary-8);
 }
 
-.table tbody tr:hover {
-    /* Light blue hover effect */
+.eg-table tbody tr:hover {
     background-color: var(--color-primary-2);
     color: inherit;
     transition: all 0.2s ease;
     box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.02);
+}
+.eg-table {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.eg-table::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom: 1px solid #d3d3d3;
+    pointer-events: none; /* so it doesn't block buttons */
 }

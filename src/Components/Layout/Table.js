@@ -27,7 +27,7 @@ const Table = ({
   return (
     <div className="container-fluid p-4">
       <div className="table-responsive">
-        <table className="table table-bordered table-hover table-striped align-middle text-center">
+        <table className="table table-bordered table-hover table-striped align-middle text-center eg-table table-marine-blue">
           <thead className="table-marine-blue text-white">
             <tr>
               {columns.map((col, idx) => (
@@ -60,12 +60,7 @@ const Table = ({
                         )}
 
                         {showShow && (
-                          <button
-                            type="button"
-                            onClick={() => onShow(row)}
-                            className="btn btn-sm btn-success"
-                            title="Show"
-                          >
+                          <button type="button" onClick={() => onShow(row)} className="btn btn-sm btn-warning" title="Show">
                             <i className="bi bi-search"></i>
                           </button>
                         )}
@@ -73,14 +68,7 @@ const Table = ({
                         {showDelete && (
                           <button
                             type="button"
-                            onClick={() => {
-                              if (
-                                typeof window !== "undefined" &&
-                                window.confirm("Are you sure you want to delete this item?")
-                              ) {
-                                onDelete(row);
-                              }
-                            }}
+                            onClick={() => onDelete(row)}
                             className="btn btn-sm btn-danger"
                             title="Delete"
                           >
