@@ -76,3 +76,7 @@
     float: right !important;
     display: block !important;
 }
+
+.eg-shadow-lg {
+  box-shadow: 0 .0025rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
