@@ -79,7 +79,19 @@
   "Edit Statement Type": "Edit Statement Type",
   "Add Item Type" : "Add Itme Type",
   "Edit Item Type": "Edit Itme Type",
-  "Deduction Percetage":"Deduction Percetage"
+  "Deduction Percetage":"Deduction Percetage",
+  "From":"From",
+  "To": "To",
+  "Year From": "Year From",
+  "Year To": "Year To",
+  "Add Fiscal Year": "Add Fiscal Year",
+  "Edit Fiscal Year":"Edit Fiscal Year",
+  "Add Supplier": "Add Supplier",
+  "Edit Supplier": "Edit Supplier",
+  "Add Item" : "Add Itme",
+  "Edit Item": "Edit Itme",
+  "Edit Item": "Edit Itme",
+    "Code Type": "Code "
 
 
 }

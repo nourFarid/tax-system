@@ -13,10 +13,13 @@ const FiscalYear = () => {
 
   const objTitle = useMemo(
     () => ({
-      AddItemType: t("Add Item Type"),
-      EditStatementType: t("Edit Item Type"),
-      Name: t("Name"),
-      Code: t("Code"),
+      AddFiscalYear: t("Add Fiscal Year"),
+      EditFiscalYear: t("Edit Fiscal Year"),
+      Id: t("ID"),
+      From: t("From"),
+      To: t("To"),
+      YrFrom: t("Year From"),
+      YrTo: t("Year To"),
       Save: t("Save"),
       Cancel: t("Cancel"),
       Delete: t("Delete"),
@@ -28,53 +31,60 @@ const FiscalYear = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ From: "", To: "",YrFrom:"",YrTo:" " });
+  const [objDocType, setObjDocType] = useState({ From: "", To: "", YrFrom: "", YrTo: "" });
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
-    { label: t("Item Type"), active: true },
+    { label: t("Fiscal Year"), active: true },
   ];
 
   const breadcrumbButtons = [
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
-      dyalog: "#AddItemType",
+      dyalog: "#AddFiscalYear",
       class: "btn btn-sm btn-success ms-2 float-end",
     },
   ];
 
   const columns = [
     { label: t("ID"), accessor: "id" },
-    { label: t("Name"), accessor: "name" },
-    { label: t("Code"), accessor: "code" },
+    { label: t("Year From"), accessor: "YrFrom" },
+    { label: t("Year To"), accessor: "YrTo" },
+    { label: t("From"), accessor: "From" },
+    { label: t("To"), accessor: "To" },
+
   ];
 
   const data = [
-    { id: 1, name: "good", code: "test123" },
-    { id: 2, name: "ازيك عامل اية", code: "test123" },
+    { id: 1, From: "2024-07-11", To: "2024-10-11", YrFrom: "2024", YrTo: "2025" },
+    { id: 2, From: "2024-07-11", To: "2024-10-11", YrFrom: "2024", YrTo: "2025" },
   ];
 
   const handleEdit = (row) => {
     setObjDocType({
-      Name: row.name || "",
-      Code: row.code || "",
-      Id: row.id || -1
+      Id: row.id || -1,
+      From: row.From || "",
+      To: row.To || "",
+      YrFrom: row.YrFrom || "",
+      YrTo: row.YrTo || "",
     });
 
-    const modalElement = document.getElementById("EditItemType");
+    const modalElement = document.getElementById("EditFiscalYear");
     const modal = new Modal(modalElement);
     modal.show();
   };
-  const handleShow = (row) => {};
+  const handleShow = (row) => { };
   const handleDelete = (row) => {
     setObjDocType({
-      Name: row.name || "",
-      Code: row.code || "",
-      Id: row.id || -1
+      Id: row.id || -1,
+      From: row.From || "",
+      To: row.To || "",
+      YrFrom: row.YrFrom || "",
+      YrTo: row.YrTo || "",
     });
 
-    const modalElement = document.getElementById("DeleteItemType");
+    const modalElement = document.getElementById("DeleteFiscalYear");
     const modal = new Modal(modalElement);
     modal.show();
   };
@@ -85,7 +95,7 @@ const FiscalYear = () => {
   };
 
   const handleSave = () => {
-    setObjDocType({ Name: "", Code: "" });
+    setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
     // the add request should be here
   };
 
@@ -98,11 +108,11 @@ const FiscalYear = () => {
   };
 
   useEffect(() => {
-    const modalIds = ["AddItemType", "EditItemType", "DeleteItemType"];
+    const modalIds = ["AddFiscalYear", "EditFiscalYear", "DeleteFiscalYear"];
 
     const handleHidden = () => {
       // Reset object when any modal is hidden
-      setObjDocType({ Name: "", Code: "" });
+      setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
     };
 
     const modals = modalIds
@@ -141,11 +151,11 @@ const FiscalYear = () => {
         onPageChange={setPageNumber}
       />
 
-      <div className="modal fade" id="AddItemType" tabIndex="-1" aria-hidden="true">
+      <div className="modal fade" id="AddFiscalYear" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.AddItemType}</h5>
+              <h5 className="modal-title">{objTitle.AddFiscalYear}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
                 X
               </button>
@@ -154,13 +164,24 @@ const FiscalYear = () => {
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+                  <label className="form-label">{objTitle.From}</label>
+                  <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">{objTitle.Code}</label>
-                  <input type="text" name="Code" value={objDocType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+                  <label className="form-label">{objTitle.To}</label>
+                  <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <label className="form-label">{objTitle.YrFrom}</label>
+                  <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">{objTitle.YrTo}</label>
+                  <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
                 </div>
               </div>
             </div>
@@ -177,11 +198,11 @@ const FiscalYear = () => {
         </div>
       </div>
 
-      <div className="modal fade" id="EditItemType" tabIndex="-1" aria-hidden="true">
+      <div className="modal fade" id="EditFiscalYear" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.EditStatementType}</h5>
+              <h5 className="modal-title">{objTitle.EditFiscalYear}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
                 X
               </button>
@@ -190,13 +211,24 @@ const FiscalYear = () => {
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+                  <label className="form-label">{objTitle.From}</label>
+                  <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
                 </div>
 
                 <div className="col-md-6">
-                  <label className="form-label">{objTitle.Code}</label>
-                  <input type="text" name="Code" value={objDocType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+                  <label className="form-label">{objTitle.To}</label>
+                  <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <label className="form-label">{objTitle.YrFrom}</label>
+                  <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">{objTitle.YrTo}</label>
+                  <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
                 </div>
               </div>
             </div>
@@ -213,9 +245,9 @@ const FiscalYear = () => {
         </div>
       </div>
 
-      <div className="modal fade" id="DeleteItemType" tabIndex="-1" aria-hidden="true">
+      <div className="modal fade" id="DeleteFiscalYear" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
@@ -224,7 +256,10 @@ const FiscalYear = () => {
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
+              <p>
+                {objTitle.DeleteConfirmation}{" "}
+                <strong>{objDocType.YrFrom} - {objDocType.YrTo}</strong> {objTitle.QuestionMark}
+              </p>
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>

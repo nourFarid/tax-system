@@ -17,6 +17,10 @@ import TaxType from './Pages/TaxType';
 import StatementType from './Pages/StatementType';
 import ItemType from './Pages/ItemType';
 import NatureOfTransaction from './Pages/NatureOfTransaction';
+import FiscalYear from './Pages/FiscalYear';
+import Supplier from './Pages/Supplier';
+import Customer from './Pages/Customer';
+import Item from './Pages/Item';
 
 function App() {
   const lang = useSelector((state) => state.language.lang)
@@ -47,6 +51,10 @@ function App() {
               <Route path="/TaxType" element={<TaxType/>} />;
               <Route path="/ItemType" element={<ItemType/>} />;
               <Route path="/TransactionNature" element={<NatureOfTransaction/>} />;
+              <Route path="/FiscalYear" element={<FiscalYear/>} />;
+              <Route path="/Supplier" element={<Supplier/>} />;
+              <Route path="/Customer" element={<Customer/>} />;
+              <Route path="/Item" element={<Item/>} />;
               
               {/* Add other routes */}
             </Routes>

@@ -153,8 +153,21 @@
   "Edit Statement Type": "تعديل نوع البيان",
   "Add Item Type" : "إضافة نوع المنتج",
   "Edit Item Type": "تعديل نوع المنتج",
-  "Deduction Percetage":"نسبة الخصم"
-
+  "Deduction Percetage":"نسبة الخصم",
+  "From":"بدأ من",
+  "To": "ينتهي في",
+  "Year From": "بداية من سنة",
+  "Year To": "ينتهي في سنة",
+  "Add Fiscal Year": "إضافة السنة مالية",
+  "Edit Fiscal Year":"تعديل السنة مالية",
+  "Add Supplier": "إضافة مورد",
+  "Edit Supplier": "تعديل مورد",
+  "Tax Number": "الرقم الضريبي",
+  "File Number": "رقم الملف الضريبي",
+  "Edit Customer":"تعديل العميل",
+  "Add Customer":"إضافة العميل",
+   "Add Item" : "إضافة المنتج",
+  "Code Type": "كود"
 
 
 
