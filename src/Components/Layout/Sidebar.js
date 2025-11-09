@@ -34,7 +34,7 @@ const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop }) => {
         for (let i = 0; i < menuItems.length; i++) {
             if (isParentActive(menuItems[i].subItems)) {
             setOpenSubmenu(menuItems[i].id);
-            break; // optional if only one active submenu needed
+            break;
             }
         }
         }
