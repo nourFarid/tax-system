@@ -47,16 +47,14 @@ function App() {
               <Route path="/Document41/Add" element={<AddDocument41/>} />
               <Route path="/Setup/DocumentType" element={<DocumentType/>} />
               <Route path="/ExamplePage" element={<ExamplePage/>} />
-              <Route path="/StatementType" element={<StatementType/>} />;
-              <Route path="/TaxType" element={<TaxType/>} />;
-              <Route path="/ItemType" element={<ItemType/>} />;
-              <Route path="/TransactionNature" element={<NatureOfTransaction/>} />;
-              <Route path="/FiscalYear" element={<FiscalYear/>} />;
-              <Route path="/Supplier" element={<Supplier/>} />;
-              <Route path="/Customer" element={<Customer/>} />;
-              <Route path="/Item" element={<Item/>} />;
-              
-              {/* Add other routes */}
+              <Route path="/Setup/StatementType" element={<StatementType/>} />;
+              <Route path="/Setup/TaxType" element={<TaxType/>} />;
+              <Route path="/Setup/ItemType" element={<ItemType/>} />;
+              <Route path="/Setup/TransactionNature" element={<NatureOfTransaction/>} />;
+              <Route path="/Setup/FiscalYear" element={<FiscalYear/>} />;
+              <Route path="/Setup/Supplier" element={<Supplier/>} />;
+              <Route path="/Setup/Customer" element={<Customer/>} />;
+              <Route path="/Setup/Item" element={<Item/>} />;
             </Routes>
           </Layout>
         } />

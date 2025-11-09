@@ -47,7 +47,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/TaxType")}
+        onClick={() => navigate("/Setup/TaxType")}
         className={`bg-gradient-to-br from-emerald-500 to-teal-600 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -62,7 +62,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/StatementType")}
+        onClick={() => navigate("/Setup/StatementType")}
         className={`bg-gradient-to-br from-rose-500 to-pink-600 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -77,7 +77,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/Item")}
+        onClick={() => navigate("/Setup/Item")}
         className={`bg-gradient-to-br from-blue-500 to-sky-600 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -92,7 +92,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/ItemType")}
+        onClick={() => navigate("/Setup/ItemType")}
         className={`bg-gradient-to-br from-amber-500 to-orange-600 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -107,7 +107,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/TransactionNature")}
+        onClick={() => navigate("/Setup/TransactionNature")}
         className={`bg-gradient-to-br from-fuchsia-500 to-purple-700 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -122,7 +122,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/Customer")}
+        onClick={() => navigate("/Setup/Customer")}
         className={`bg-gradient-to-br from-green-500 to-lime-600 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -137,7 +137,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/Supplier")}
+        onClick={() => navigate("/Setup/Supplier")}
         className={`bg-gradient-to-br from-cyan-500 to-blue-700 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
@@ -152,7 +152,7 @@ const Setup = () => {
       </div>
 
       <div
-        onClick={() => navigate("/FiscalYear")}
+        onClick={() => navigate("/Setup/FiscalYear")}
         className={`bg-gradient-to-br from-red-600 to-red-400 ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
