@@ -86,7 +86,7 @@ const Setup = () => {
           </div>
           <div className={textClass}>
             <h1 className="text-2xl font-bold leading-tight">{objTitle.Item}</h1>
-            <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
+            <h4 className="mt-1 text-gray-00 text-sm">{objTitle.Preview}</h4>
           </div>
         </div>
       </div>
@@ -138,7 +138,9 @@ const Setup = () => {
 
       <div
         onClick={() => navigate("/Setup/Supplier")}
-        className={`bg-gradient-to-br from-cyan-500 to-blue-700 ${cardClass}`}
+        className={`bg-gradient-to-br bg-gradient-to-br from-rose-400 to-pink-500
+
+ ${cardClass}`}
       >
         <div className="flex items-center justify-between w-full">
           <div className="visual">

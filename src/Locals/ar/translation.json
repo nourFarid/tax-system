@@ -167,7 +167,9 @@
   "Edit Customer":"تعديل العميل",
   "Add Customer":"إضافة العميل",
    "Add Item" : "إضافة المنتج",
-  "Code Type": "كود"
+   "Edit Item" : "تعديل المنتج",
+  "Code Type": "كود",
+  "Unit":"وحدة"
 
 
 

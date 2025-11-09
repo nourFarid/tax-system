@@ -1,4 +1,6 @@
 import PropTypes from "prop-types";
+import useTranslate from "../../Hooks/Translation/useTranslate";
+
 const Table = ({
   columns = [],
   data = [],
@@ -10,6 +12,7 @@ const Table = ({
   onDelete = () => { },
   onShow = () => { },
 }) => {
+  const { t } = useTranslate();
   const getCellValue = (row, accessor) => {
     if (!row) return "-";
     if (typeof accessor === "function") return accessor(row);
@@ -45,7 +48,7 @@ const Table = ({
                 <th className="whitespace-nowrap" key={idx}>
                   {col.label}</th>
               ))}
-              {showActions && <th style={{ width: 160 }}>Actions</th>}
+              {showActions && <th style={{ width: 160 }}> {t("Actions")}</th>}
             </tr>
           </thead>
 
@@ -72,7 +75,7 @@ const Table = ({
                         )}
 
                         {showDelete && (
-                          <button type="button"onClick={() => onDelete(row)} className="btn btn-sm btn-danger"title="Delete">
+                          <button type="button" onClick={() => onDelete(row)} className="btn btn-sm btn-danger" title="Delete">
                             <i className="bi bi-trash"></i>
                           </button>
                         )}

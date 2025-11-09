@@ -71,7 +71,7 @@ const data = [
     unit: "pcs",
     taxAmount: 15.08,
     taxType: "VAT",
-    "code Type": "Type A"
+    codeType: "Type A"
   },
   {
     id: 2,
@@ -81,7 +81,7 @@ const data = [
     unit: "kg",
     taxAmount: 30,
     taxType: "GST",
-    "code Type": "Type B"
+    codeType: "Type B"
   },
   {
     id: 3,
@@ -91,7 +91,7 @@ const data = [
     unit: "box",
     taxAmount: 7.5,
     taxType: "VAT",
-    "code Type": "Type C"
+    codeType: "Type C"
   }
 ];
 
