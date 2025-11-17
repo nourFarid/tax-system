@@ -169,7 +169,10 @@
    "Add Item" : "إضافة المنتج",
    "Edit Item" : "تعديل المنتج",
   "Code Type": "كود",
-  "Unit":"وحدة"
+  "Unit":"وحدة",
+  "Updated At":"تعديلا في",
+  "Created At":"إنشاء في",
+  "Updated By":"تعديلا بواسطة"
 
 
 

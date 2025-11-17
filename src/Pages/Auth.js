@@ -2,24 +2,45 @@ import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import "remixicon/fonts/remixicon.css";
-import MainLogo from "../Assets/Images/LoginLogo.png";
+import MainLogo from "../Assets/Images/logo.png";
 import EgyptAirLogo from "../Assets/Images/EgyptAir.png"
 import { useSelector, useDispatch } from "react-redux";
 import useTranslate from "../../src/Hooks/Translation/useTranslate";
 import { SET_LANGUAGE } from "../Redux/actions/languageActions.js";
-
-
+import axiosInstance from './../Axios/AxiosInstance';
+import { useNavigate } from "react-router-dom";
+import { setAuthUser } from "../Hooks/Services/Storage.js"
 
 const Auth = () => {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const { t } = useTranslate();
     const dispatch = useDispatch();
     const currentLang = useSelector((state) => state.language.lang);
-    
+    const [login, setlogin] = useState({
+        userName: "",
+        password: ""
+    });
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+    const loginFun = async () => {
+        try {
+            const payload = {
+                userName: login.userName,
+                password: login.password,
+                rememberMe: true
+            };
+            const response = await axiosInstance.post("Auth/Login", payload);
+            setAuthUser(response.data.token);
+            navigate("/");
 
+
+        } catch (error) {
+            console.error("Failed to login", error);
+        }
+    };
 
     // Set direction based on language from Redux
     useEffect(() => {
@@ -59,10 +80,10 @@ const Auth = () => {
             ">
 
 
-           {/* Language Toggle Button - Inside Container */}
-            <button
-                onClick={toggleLanguage}
-                className="
+                {/* Language Toggle Button - Inside Container */}
+                <button
+                    onClick={toggleLanguage}
+                    className="
                     absolute
                     top-4 md:top-6 lg:top-8
                     ltr:right-4 rtl:left-4
@@ -82,13 +103,13 @@ const Auth = () => {
                     duration-200
                     border-2 border-white
                 "
-                aria-label="Toggle Language"
-                title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
-            >
-                <span className="font-Cairo font-bold text-sm md:text-base">
-                    {currentLang === 'ar' ? 'EN' : 'ع'}
-                </span>
-            </button>
+                    aria-label="Toggle Language"
+                    title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+                >
+                    <span className="font-Cairo font-bold text-sm md:text-base">
+                        {currentLang === 'ar' ? 'EN' : 'ع'}
+                    </span>
+                </button>
 
 
 
@@ -122,7 +143,7 @@ const Auth = () => {
                             text-center
                             mb-2 md:mb-3 lg:mb-2
                         ">
-                            {t("منظومة الأمن")}
+                            {t("Tax Management")}
                         </h1>
 
 
@@ -182,6 +203,8 @@ const Auth = () => {
                                     focus:ring-primary-300
                                     transition-all
                                 "
+                                value={login.userName}
+                                onChange={(e) => setlogin({ ...login, userName: e.target.value })}
                             />
                         </div>
 
@@ -225,8 +248,11 @@ const Auth = () => {
                                     focus:ring-primary-300
                                     transition-all
                                 "
+                                value={login.password}
+                                onChange={(e) => setlogin({ ...login, password: e.target.value })}
+
                             />
-                            <i 
+                            <i
                                 className={`
                                     ${showPassword ? "ri-eye-off-line" : "ri-eye-line"}
                                     absolute
@@ -263,7 +289,9 @@ const Auth = () => {
                                 duration-200
                                 shadow-lg
                                 hover:shadow-xl
-                            ">
+                            "
+                                onClick={loginFun}
+                            >
                                 {t("Login")}
                             </button>
                         </div>

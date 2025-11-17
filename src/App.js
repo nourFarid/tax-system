@@ -21,6 +21,7 @@ import FiscalYear from './Pages/FiscalYear';
 import Supplier from './Pages/Supplier';
 import Customer from './Pages/Customer';
 import Item from './Pages/Item';
+import Auth from './Pages/Auth';
 
 function App() {
   const lang = useSelector((state) => state.language.lang)
@@ -32,7 +33,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/login" element={<Auth />} /> */}
+        <Route path="/login" element={<Auth />} />
         
         {/* Routes with Sidebar */}
         <Route path="/*" element={
