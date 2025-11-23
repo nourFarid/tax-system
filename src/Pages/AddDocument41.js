@@ -36,7 +36,9 @@ const AddDocument41 = () => {
       NameCode: strInput
     };
     const res = await axiosInstance.post("Item/ListAll", objFilter);
-      let arr = res.data.items.map(x => ({
+    console.log(res);
+    
+      let arr = res.data.map(x => ({
         label: x.name,
         value: x.id
       }));
@@ -51,7 +53,9 @@ const AddDocument41 = () => {
       NameCode: strInput
     };
     const res = await axiosInstance.post("Item/ListAll", objFilter);
-      let arr = res.data.items.map(x => ({
+    console.log(res);
+    
+      let arr = res.data.map(x => ({
         label: x.name,
         value: x.id
       }));
