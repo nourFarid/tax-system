@@ -273,7 +273,7 @@ const Customer = () => {
                     }
                     className="form-check-input me-2"
                   />
-                  <label htmlFor="IsCustomer"  className="form-label">{objTitle.IsCustomer}</label>
+                  <label htmlFor="IsCustomer" className="form-label mt-2">{objTitle.IsCustomer}</label>
                 </div>
 
                 <div className="col-md-6 d-flex align-items-center">
@@ -291,7 +291,7 @@ const Customer = () => {
                     }
                     className="form-check-input me-2"
                   /> 
-                  <label htmlFor="IsSupplier"  className="form-label">{objTitle.IsSupplier}</label>
+                  <label htmlFor="IsSupplier" className="form-label mt-2">{objTitle.IsSupplier}</label>
                 </div>
 
               </div>

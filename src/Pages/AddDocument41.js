@@ -38,53 +38,32 @@ const AddDocument41 = () => {
       <Breadcrumb items={breadcrumbItems} />
       <div className="border rounded p-3 mb-2 bg-white shadow-lg">
         <div className="row p-4">
-          <div className="col-md-4 form-group">
+          <div className="col-md-6 form-group">
             <h1><strong className="text-primary">{t("Document 41")}</strong></h1>
           </div>
         </div>
 
         <div className="row p-4">
-          <div className="col-md-4 form-group">
+          <div className="col-md-6 form-group">
             <label>{t("Supplier")}</label>
             <input type="text" className="mt-2 form-control" placeholder="server side autocomplete" />
           </div>
-          <div className="col-md-4 form-group">
+          <div className="col-md-6 form-group">
             <label>{t("Transaction Date")}</label>
             <input type="date" className="mt-2 form-control" />
           </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Collection Date")}</label>
-            <input type="date" className="mt-2 form-control" />
-          </div>
         </div>
 
         <div className="row p-4">
-          <div className="col-md-4 form-group">
-            <label>{t("Errand Name")}</label>
-            <label className="mt-2 form-control">{t("Errand Name")}</label>
-          </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Errand Code")}</label>
-            <label className="mt-2 form-control">{t("Errand Code")}</label>
-          </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Transaction Nature")}</label>
-            <select className="form-control">
-              <option >{t("Transaction Nature")}</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="row p-4">
-          <div className="col-md-4 form-group">
-            <label>{t("Type of Deduction")}</label>
-            <select className="form-control mt-2">
-              <option >{t("Type of Deduction")}</option>
-            </select>
-          </div>
-          <div className="col-md-4 form-group">
+          <div className="col-md-6 form-group">
             <label>{t("Fiscal Year")}</label>
             <label className="mt-2 form-control">{t("Fiscal Year")}</label>
+          </div>
+          <div className="col-md-6 form-group">
+            <label>{t("Transaction Nature")}</label>
+            <select className="mt-2 form-control">
+              <option >{t("Transaction Nature")}</option>
+            </select>
           </div>
         </div>
       </div>

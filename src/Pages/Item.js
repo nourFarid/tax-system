@@ -6,6 +6,8 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
+import $ from "jquery";
+
 const Item = () => {
   const { t } = useTranslate();
   const [items, setItems] = useState([]);
@@ -29,142 +31,10 @@ const Item = () => {
     }),
     [t]
   );
-    const [objDocType, setObjDocType] = useState({
+  const [objItem, setObjItem] = useState({
     Name: "",
     Price: 0
   });
-  const closeModal = (modalName) => {
-    const modalElement = document.getElementById(modalName);
-    console.log("closeModal: modalElement for", modalName, modalElement);
-
-    if (!modalElement) {
-      console.warn(`Modal with id "${modalName}" not found.`);
-      return;
-    }
-
-    let modal = Modal.getInstance(modalElement);
-    if (!modal) {
-      modal = new Modal(modalElement);
-    }
-
-    try {
-      modal.hide();
-    } catch (e) {
-      console.error("Error hiding modal:", e);
-    }
-    const backdrops = document.querySelectorAll('.modal-backdrop');
-    backdrops.forEach(backdrop => backdrop.remove());
-    document.body.classList.remove('modal-open');
-  };
-
-  const fetchItems = async (page = 1) => {
-    setLoading(true);
-    try {
-      const res = await axiosInstance.get("Item", {
-        params: { pageNumber: page, pageSize },
-      });
-      const data = res.data;
-      setItems(data.items);
-      setTotalCount(data.totalCount);
-      setPageNumber(data.pageNumber);
-    } catch (e) {
-      setError("Failed to fetch items");
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleEdit = (row) => {
-    setObjDocType({
-      Id: row.id || -1,
-      Name: row.name || "",
-      Price: row.price || 0,
-    });
-
-    const modalElement = document.getElementById("EditItem");
-    let modal = Modal.getInstance(modalElement);
-    if (!modal) modal = new Modal(modalElement);
-    modal.show();
-  };
-  const handleDelete = (row) => {
-    setObjDocType({
-      Id: row.id || null,
-      Name: row.name || "",
-      Price: row.price || 0,
-    });
-const modalElement = document.getElementById("DeleteDocumentType");
-    let modal = Modal.getInstance(modalElement);
-    if (!modal) modal = new Modal(modalElement);
-    modal.show();
-
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setObjDocType((prev) => ({ ...prev, [name]: value }));
-  };
-  
-  
-  const update = async () => {
-    try {
-      const payload = {
-        Name: objDocType.Name,
-        Price: Number(objDocType.Price),
-      };
-      const response = await axiosInstance.put("Item/" + objDocType.Id, payload);
-      console.log("Update response:", response);
-      closeModal("EditItem");
-      await fetchItems(pageNumber);
-
-      setObjDocType({
-        Name: "",
-        Price: 0,
-        Id: null,
-      });
-    } catch (error) {
-      console.log(error)
-      alert("Failed to update item");
-    }
-  };
-
-
-  const Delete = async () => {
-    try {
-      await axiosInstance.delete(`Item/${objDocType.Id}`);
-      await fetchItems(pageNumber);
-      closeModal("DeleteDocumentType");
-      setObjDocType({
-        Name: "",
-        Price: 0,
-        Id: null,
-      });
-    } catch (error) {
-      console.error("Failed to delete item", error);
-      alert("Failed to delete item");
-    }
-  };
-
-
-
-  const save = async () => {
-    try {
-      const payload = {
-        Name: objDocType.Name,
-        Price: Number(objDocType.Price),
-      };
-      const response = await axiosInstance.post("Item", payload);
-      fetchItems(pageNumber)
-      closeModal("AddItem")
-      setObjDocType({
-        Name: "",
-        Price: 0,
-      });
-    } catch (error) {
-      console.error("Failed to add item", error);
-      alert("Failed to add item");
-    }
-  };
-
-
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -189,33 +59,137 @@ const modalElement = document.getElementById("DeleteDocumentType");
     { label: t("Updated By"), accessor: "updatedByUserId" },
   ];
 
+  const fetchItems = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.get("Item", {
+        params: { pageNumber: page, pageSize },
+      });
+      const data = res.data;
+      setItems(data.items);
+      setTotalCount(data.totalCount);
+      setPageNumber(data.pageNumber);
+    } catch (e) {
+      setError("Failed to fetch items");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleEdit = (row) => {
+    setObjItem({
+      Id: row.id || -1,
+      Name: row.name || "",
+      Price: row.price || 0,
+    });
 
+    const modalElement = document.getElementById("EditItem");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
+    modal.show();
+  };
+  const handleDelete = (row) => {
+    setObjItem({
+      Id: row.id || null,
+      Name: row.name || "",
+      Price: row.price || 0,
+    });
+    const modalElement = document.getElementById("DeleteItem");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
+    modal.show();
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setObjItem((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  const update = async () => {
+    try {
+      const payload = {
+        Name: objItem.Name,
+        Price: Number(objItem.Price),
+      };
+      const response = await axiosInstance.put("Item/" + objItem.Id, payload);
+      console.log("Update response:", response);
+      
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Id: null,
+      });
+      hideModal("EditItem");
+      await fetchItems(pageNumber);
+    } catch (error) {
+      console.log(error)
+      alert("Failed to update item");
+    }
+  };
+
+
+  const Delete = async () => {
+    try {
+      await axiosInstance.delete(`Item/${objItem.Id}`);
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Id: null,
+      });
+      hideModal("DeleteItem");
+      await fetchItems(pageNumber);
+    } catch (error) {
+      console.error("Failed to delete item", error);
+      alert("Failed to delete item");
+    }
+  };
+
+
+
+  const save = async () => {
+    try {
+      const payload = {
+        Name: objItem.Name,
+        Price: Number(objItem.Price),
+      };
+      const response = await axiosInstance.post("Item", payload);
+      if (response.status === 200) {
+        setObjItem({
+          Name: "",
+          Price: 0,
+        });
+        hideModal("AddItem");
+        fetchItems(pageNumber)
+      }
+    } catch (error) {
+      console.error("Failed to add item", error);
+      alert("Failed to add item");
+    }
+  };
+
+  const reset = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Id: null,
+    });
+  }
+
+  const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
+  }
 
   useEffect(() => {
     fetchItems(pageNumber)
-    const modalIds = ["AddItem", "EditItem", "DeleteDocumentType"];
-
-    const handleHidden = () => {
-      // Reset object when any modal is hidden
-      setObjDocType({
-        Name: "",
-        Price: 0
-      });
-    };
-
-    const modals = modalIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    modals.forEach((modalEl) => {
-      modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    });
-
-    // Cleanup
+    document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
+    document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
+    document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
     return () => {
-      modals.forEach((modalEl) => {
-        modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-      });
     };
   }, [pageNumber]);
   if (loading) {
@@ -280,7 +254,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
                   <input
                     type="text"
                     name="Name"
-                    value={objDocType.Name}
+                    value={objItem.Name}
                     onChange={handleChange}
                     className="form-control"
                     placeholder={objTitle.Name}
@@ -291,7 +265,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
                   <input
                     type="number"
                     name="Price"
-                    value={objDocType.Price}
+                    value={objItem.Price}
                     onChange={handleChange}
                     className="form-control"
                     placeholder={t("Price")}
@@ -365,7 +339,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
                   <input
                     type="text"
                     name="Name"
-                    value={objDocType.Name}
+                    value={objItem.Name}
                     onChange={handleChange}
                     className="form-control"
                     placeholder={objTitle.Name}
@@ -379,7 +353,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
                   <input
                     type="number"
                     name="Price"
-                    value={objDocType.Price}
+                    value={objItem.Price}
                     onChange={handleChange}
                     className="form-control"
                     placeholder={t("Price")}
@@ -416,7 +390,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
       </div>
 
 
-      <div className="modal fade" id="DeleteDocumentType" tabIndex="-1" aria-hidden="true">
+      <div className="modal fade" id="DeleteItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
@@ -427,7 +401,7 @@ const modalElement = document.getElementById("DeleteDocumentType");
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
+              <p>{objTitle.DeleteConfirmation} <strong> {objItem.Name} </strong> {objTitle.QuestionMark}</p>
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>

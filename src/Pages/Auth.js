@@ -34,7 +34,7 @@ const Auth = () => {
             };
             const response = await axiosInstance.post("Auth/Login", payload);
             setAuthUser(response.data.token);
-            navigate("/");
+            navigate("/Setup");
 
 
         } catch (error) {

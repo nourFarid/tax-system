@@ -33,7 +33,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Auth />} />
+<Route path="/" element={<Auth />} />
         
         {/* Routes with Sidebar */}
         <Route path="/*" element={
