@@ -6,7 +6,6 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
-import $ from "jquery";
 
 const Item = () => {
   const { t } = useTranslate();

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
+import AsyncSelect from "react-select/async";
+import axiosInstance from "../Axios/AxiosInstance";
 
 const AddDocument41 = () => {
   const { t } = useTranslate();
@@ -21,13 +23,45 @@ const AddDocument41 = () => {
     }),
     [t]
   );
-  
+
+  const [objSupplier, setObjSupplier] = useState(null);
+  const [objItem, setObjItem] = useState(null);
+  const strDocDir = document.documentElement.dir;
+
+  const arrSupplier = async (strInput) => {
+    if (strInput.length < 2) {
+      return [];
+    }
+    let objFilter = {
+      NameCode: strInput
+    };
+    const res = await axiosInstance.post("Item/ListAll", objFilter);
+      let arr = res.data.items.map(x => ({
+        label: x.name,
+        value: x.id
+      }));
+      console.log(arr);
+      return arr;
+  };
+  const arrItem = async (strInput) => {
+    if (strInput.length < 2) {
+      return [];
+    }
+    let objFilter = {
+      NameCode: strInput
+    };
+    const res = await axiosInstance.post("Item/ListAll", objFilter);
+      let arr = res.data.items.map(x => ({
+        label: x.name,
+        value: x.id
+      }));
+      console.log(arr);
+      return arr;
+  };
   const breadcrumbItems = [
     { label: t("Document 41"), link: "/Document41", active: false },
     { label: t("Add"), link: "", active: true }
   ];
-
-  const strDocDir = document.documentElement.dir;
 
   useEffect(() => {
     // fetch data here if needed
@@ -45,8 +79,14 @@ const AddDocument41 = () => {
 
         <div className="row p-4">
           <div className="col-md-6 form-group">
-            <label>{t("Supplier")}</label>
-            <input type="text" className="mt-2 form-control" placeholder="server side autocomplete" />
+            <label className="mb-2">{t("Supplier")}</label>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={false}
+              loadOptions={arrSupplier}
+              value={objSupplier}
+              onChange={(option) => setObjSupplier(option)}
+            />
           </div>
           <div className="col-md-6 form-group">
             <label>{t("Transaction Date")}</label>
@@ -70,8 +110,14 @@ const AddDocument41 = () => {
       <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
         <div className="row p-4">
           <div className="col-md-6 form-group">
-            <label>{t("Item")}</label>
-            <input type="text" className="mt-2 form-control" placeholder="server side autocomplete" />
+            <label className="mb-2">{t("Item")}</label>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={false}
+              loadOptions={arrItem}
+              value={objItem}
+              onChange={(option) => setObjItem(option)}
+            />
           </div>
           <div className="col-md-3 form-group">
             <label>{t("Price")}</label>

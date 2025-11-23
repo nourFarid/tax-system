@@ -2,26 +2,27 @@ import './App.css';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import i18n from "./i18n";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './Components/Layout/Layout';
-import ExamplePage from './Pages/ExamplePage';
-import Setup from './Pages/Setup';
-import DocumentType from './Pages/DocumentType'
-import Document41 from './Pages/Document41'
-import Purchase from './Pages/Purchase'
-import AddPurchase from './Pages/AddPurchase'
-import AddDocument41 from './Pages/AddDocument41'
-import Sales from './Pages/Sales'
-import AddSales from './Pages/AddSales'
-import TaxType from './Pages/TaxType';
-import StatementType from './Pages/StatementType';
-import ItemType from './Pages/ItemType';
-import NatureOfTransaction from './Pages/NatureOfTransaction';
-import FiscalYear from './Pages/FiscalYear';
-import Supplier from './Pages/Supplier';
-import Customer from './Pages/Customer';
-import Item from './Pages/Item';
-import Auth from './Pages/Auth';
+const Layout = lazy(()=> import ('./Components/Layout/Layout'));
+const ExamplePage = lazy(()=> import ('./Pages/ExamplePage'));
+const Setup = lazy(()=> import ('./Pages/Setup'));
+const DocumentType = lazy(()=> import ('./Pages/DocumentType'));
+const Document41 = lazy(()=> import ('./Pages/Document41'));
+const Purchase = lazy(()=> import ('./Pages/Purchase'));
+const AddPurchase = lazy(()=> import ('./Pages/AddPurchase'));
+const AddDocument41 = lazy(()=> import ('./Pages/AddDocument41'));
+const Sales = lazy(()=> import ('./Pages/Sales'));
+const AddSales = lazy(()=> import ('./Pages/AddSales'));
+const TaxType = lazy(()=> import ('./Pages/TaxType'));
+const StatementType = lazy(()=> import ('./Pages/StatementType'));
+const ItemType = lazy(()=> import ('./Pages/ItemType'));
+const NatureOfTransaction = lazy(()=> import ('./Pages/NatureOfTransaction'));
+const FiscalYear = lazy(()=> import ('./Pages/FiscalYear'));
+const Supplier = lazy(()=> import ('./Pages/Supplier'));
+const Customer = lazy(()=> import ('./Pages/Customer'));
+const Item = lazy(()=> import ('./Pages/Item'));
+const Auth = lazy(()=> import ('./Pages/Auth'));
 
 function App() {
   const lang = useSelector((state) => state.language.lang)
@@ -33,8 +34,7 @@ function App() {
   return (
     <Router>
       <Routes>
-<Route path="/" element={<Auth />} />
-        
+        <Route path="/" element={<Auth />} />
         {/* Routes with Sidebar */}
         <Route path="/*" element={
           <Layout>
