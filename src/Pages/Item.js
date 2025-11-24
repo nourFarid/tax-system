@@ -27,12 +27,14 @@ const Item = () => {
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
+      Code:t('Code')
     }),
     [t]
   );
   const [objItem, setObjItem] = useState({
     Name: "",
-    Price: 0
+    Price: 0,
+    Code:""
   });
 
   const breadcrumbItems = [
@@ -50,12 +52,12 @@ const Item = () => {
   ];
 
   const columns = [
-    { label: t("ID"), accessor: "id" },
+    { label: t("Code"), accessor: "code" },
     { label: t("Name"), accessor: "name" },
     { label: t("Price"), accessor: "price" },
     { label: t("Updated At"), accessor: "updateAt" },
     { label: t("Created At"), accessor: "createdAt" },
-    { label: t("Updated By"), accessor: "updatedByUserId" },
+    { label: t("Updated By"), accessor: "updatedByUser.userName" },
   ];
 
   const fetchItems = async (page = 1) => {
@@ -79,6 +81,7 @@ const Item = () => {
       Id: row.id || -1,
       Name: row.name || "",
       Price: row.price || 0,
+      Code:row.code||""
     });
 
     const modalElement = document.getElementById("EditItem");
@@ -91,6 +94,8 @@ const Item = () => {
       Id: row.id || null,
       Name: row.name || "",
       Price: row.price || 0,
+      Code:row.code||""
+
     });
     const modalElement = document.getElementById("DeleteItem");
     let modal = Modal.getInstance(modalElement);
@@ -109,6 +114,7 @@ const Item = () => {
       const payload = {
         Name: objItem.Name,
         Price: Number(objItem.Price),
+        Code: objItem.Code,
       };
       const response = await axiosInstance.put("Item/" + objItem.Id, payload);
       console.log("Update response:", response);
@@ -117,6 +123,7 @@ const Item = () => {
         Name: "",
         Price: 0,
         Id: null,
+        Code:""
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
@@ -134,6 +141,7 @@ const Item = () => {
         Name: "",
         Price: 0,
         Id: null,
+        Code:""
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
@@ -150,12 +158,15 @@ const Item = () => {
       const payload = {
         Name: objItem.Name,
         Price: Number(objItem.Price),
+        Code:objItem.Code
       };
       const response = await axiosInstance.post("Item", payload);
       if (response.status === 200) {
         setObjItem({
           Name: "",
           Price: 0,
+          Code: "",
+
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
@@ -171,6 +182,7 @@ const Item = () => {
       Name: "",
       Price: 0,
       Id: null,
+      Code:""
     });
   }
 
@@ -257,6 +269,17 @@ const Item = () => {
                     onChange={handleChange}
                     className="form-control"
                     placeholder={objTitle.Name}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">{objTitle.Code}</label>
+                  <input
+                    type="text"
+                    name="Code"
+                    value={objItem.Code}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Code}
                   />
                 </div>
                 <div className="col-md-6 mb-3">
