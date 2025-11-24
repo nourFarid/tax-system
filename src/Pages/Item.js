@@ -260,7 +260,7 @@ const Item = () => {
               style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
             >
               <div className="row">
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
                   <input
                     type="text"
@@ -271,7 +271,7 @@ const Item = () => {
                     placeholder={objTitle.Name}
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
                   <input
                     type="text"
@@ -282,7 +282,7 @@ const Item = () => {
                     placeholder={objTitle.Code}
                   />
                 </div>
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{t("Price")}</label>
                   <input
                     type="number"
@@ -356,7 +356,7 @@ const Item = () => {
               style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
             >
               <div className="row">
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
                   <input
                     type="text"
@@ -368,9 +368,19 @@ const Item = () => {
                   />
                 </div>
 
+<div className="col-md-4 mb-3">
+                  <label className="form-label">{objTitle.Code}</label>
+                  <input
+                    type="text"
+                    name="Code"
+                    value={objItem.Code}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Code}
+                  />
+                </div>
 
-
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{t("Price")}</label>
                   <input
                     type="number"

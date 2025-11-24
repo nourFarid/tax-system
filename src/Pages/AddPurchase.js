@@ -1,17 +1,35 @@
 import { useEffect, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
-
+import AsyncSelect from "react-select/async";
+import axiosInstance from "../Axios/AxiosInstance";
 const AddPurchase = () => {
   const { t } = useTranslate();
-  
+
   const breadcrumbItems = [
     { label: t("Purchase"), link: "/Purchase", active: false },
     { label: t("Add"), link: "", active: true }
   ];
 
   const strDocDir = document.documentElement.dir;
+  const [objItem, setObjItem] = useState(null);
+  const arrItem = async (strInput) => {
+    if (strInput.length < 2) {
+      return [];
+    }
+    let objFilter = {
+      NameCode: strInput
+    };
+    const res = await axiosInstance.post("Item/ListAll", objFilter);
+    console.log(res);
 
+    let arr = res.data.map(x => ({
+      label: x.name,
+      value: x.id
+    }));
+    console.log(arr);
+    return arr;
+  };
   useEffect(() => {
     // fetch data here if needed
   }, []);
@@ -76,8 +94,14 @@ const AddPurchase = () => {
         <div className="row p-4">
           <div className="col-md-6 form-group">
             <label>{t("Item")}</label>
-            <input type="text" className="mt-2 form-control" placeholder="server side autocomplete" />
-          </div>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={false}
+              loadOptions={arrItem}
+              value={objItem}
+              onChange={(option) => setObjItem(option)}
+            />
+            </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
             <input type="number" className="mt-2 form-control" placeholder="0.0" />
