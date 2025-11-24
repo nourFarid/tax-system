@@ -26,6 +26,14 @@ const AddDocument41 = () => {
 
   const [objSupplier, setObjSupplier] = useState(null);
   const [objItem, setObjItem] = useState(null);
+  const [objDocument41, setObjDocument41] = useState({
+    item: null,
+    supplierId: null,
+    transactionDate: "",
+    fiscalYearId: null,
+    transactionNatureId: -1,
+    amount: 0,
+  });
   const strDocDir = document.documentElement.dir;
 
   const arrSupplier = async (strInput) => {
@@ -40,7 +48,8 @@ const AddDocument41 = () => {
     
       let arr = res.data.map(x => ({
         label: x.name,
-        value: x.id
+        value: x.id,
+        objItem: x
       }));
       console.log(arr);
       return arr;
@@ -53,14 +62,12 @@ const AddDocument41 = () => {
       NameCode: strInput
     };
     const res = await axiosInstance.post("Item/ListAll", objFilter);
-    console.log(res);
-    
-      let arr = res.data.map(x => ({
-        label: x.name,
-        value: x.id
-      }));
-      console.log(arr);
-      return arr;
+    let arr = res.data.map(x => ({
+      label: x.name,
+      value: x.id
+    }));
+    console.log(arr);
+    return arr;
   };
   const breadcrumbItems = [
     { label: t("Document 41"), link: "/Document41", active: false },
@@ -120,7 +127,7 @@ const AddDocument41 = () => {
               defaultOptions={false}
               loadOptions={arrItem}
               value={objItem}
-              onChange={(option) => setObjItem(option)}
+              onChange={(option) => setObjItem(option.objItem)}
             />
           </div>
           <div className="col-md-3 form-group">

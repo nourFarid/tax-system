@@ -63,13 +63,13 @@ const Item = () => {
   const fetchItems = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.get("Item", {
-        params: { pageNumber: page, pageSize },
-      });
+      const res = await axiosInstance.post("Item/List", { pageNumber: page, pageSize });
       const data = res.data;
-      setItems(data.items);
-      setTotalCount(data.totalCount);
-      setPageNumber(data.pageNumber);
+      if (data.result) {
+        setItems(data.data.items);
+        setTotalCount(data.data.totalCount);
+        setPageNumber(data.data.pageNumber);
+      }
     } catch (e) {
       setError("Failed to fetch items");
     } finally {
