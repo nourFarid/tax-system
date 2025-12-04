@@ -160,7 +160,7 @@ const Item = () => {
         Price: Number(objItem.Price),
         Code:objItem.Code
       };
-      const response = await axiosInstance.post("Item", payload);
+      const response = await axiosInstance.post("Item/Add", payload);
       if (response.status === 200) {
         setObjItem({
           Name: "",

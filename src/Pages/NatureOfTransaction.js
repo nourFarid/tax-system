@@ -16,7 +16,7 @@ const NatureOfTransaction = () => {
       AddNatureOfTransaction: t("Add Nature Of Transaction"),
       EditNatureOfTransaction: t("Edit Nature Of Transaction"),
       Name: t("Name"),
-      ID: t("ID"),
+      ID: t("Code"),
       DeductionPercetage: t("Deduction Percetage"),
       Code: t("Code"),
       Save: t("Save"),
@@ -47,25 +47,24 @@ const NatureOfTransaction = () => {
   ];
 
   const columns = [
-    { label: t("ID"), accessor: "id" },
+    { label: t("Code"), accessor: "code" },
     { label: t("Name"), accessor: "name" },
-    // { label: t("Code"), accessor: "code" },
     { label: t("Deduction Percetage"), accessor: "DeductionPercetage" },
   ];
 
   const data = [
     {
-      id: 1, name: "good", DeductionPercetage: 90
+      code: 1, name: "good", DeductionPercetage: 90
     },
     {
-      id: 2, name: "ازيك عامل اية", DeductionPercetage: 50
+      code: 2, name: "ازيك عامل اية", DeductionPercetage: 50
     },
   ];
 
   const handleEdit = (row) => {
     setObjDocType({
       Name: row.name || "",
-      // Code: row.code || "",
+      Code: row.code || "",
       Id: row.id || -1,
       DeductionPercetage: row.DeductionPercetage || 0
     });
@@ -78,7 +77,7 @@ const NatureOfTransaction = () => {
   const handleDelete = (row) => {
     setObjDocType({
       Name: row.name || "",
-      // Code: row.code || "",
+      Code: row.code || "",
       Id: row.id || -1,
       DeductionPercetage: row.DeductionPercetage || 0
 
@@ -112,7 +111,7 @@ const NatureOfTransaction = () => {
 
     const handleHidden = () => {
       // Reset object when any modal is hidden
-      setObjDocType({ Name: "", Id: "", DeductionPercetage: 0 });
+      setObjDocType({ Name: "", Id: "", DeductionPercetage: 0, Code: "" });
     };
 
     const modals = modalIds
@@ -164,7 +163,7 @@ const NatureOfTransaction = () => {
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-4">
-                  <label className="form-label">{objTitle.ID}</label>
+                  <label className="form-label">{objTitle.Code}</label>
                   <input type="text" name="Code" value={objDocType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
                 </div>
                 <div className="col-md-4">
@@ -206,7 +205,7 @@ const NatureOfTransaction = () => {
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 {/* <div className="col-md-4">
-                  <label className="form-label">{objTitle.ID}</label>
+                  <label className="form-label">{objTitle.Code}</label>
                   <input type="text" name="Code" value={objDocType.ID} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
                 </div> */}
                 <div className="col-md-6">
