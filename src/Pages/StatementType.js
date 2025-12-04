@@ -4,19 +4,22 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
+import axiosInstance from "../Axios/AxiosInstance";
+import Spinner from "../Components/Layout/Spinner";
 
 const StatementType = () => {
   const { t } = useTranslate();
+  const [items, setItems] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const objTitle = useMemo(
     () => ({
-      AddStatementType: t("Add Statement Type"),
-      EditStatementType: t("Edit Statement Type"),
+      AddItem: t("Add Item"),
+      EditItem: t("Edit Item"),
       Name: t("Name"),
-      Code: t("Code"),
       Save: t("Save"),
       Cancel: t("Cancel"),
       Delete: t("Delete"),
@@ -24,11 +27,15 @@ const StatementType = () => {
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
+      Code:t('Code')
     }),
     [t]
   );
-
-  const [objDocType, setObjDocType] = useState({ Name: "", Code: "" });
+  const [objItem, setObjItem] = useState({
+    Name: "",
+    Price: 0,
+    Code:""
+  });
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -39,99 +46,179 @@ const StatementType = () => {
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
-      dyalog: "#AddStatementType",
+      dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
     },
   ];
 
   const columns = [
-    { label: t("ID"), accessor: "id" },
+    { label: t("Id"), accessor: "id" },
     { label: t("Name"), accessor: "name" },
     { label: t("Code"), accessor: "code" },
+    
+    
   ];
 
-  const data = [
-    { id: 1, name: "good", code: "test123" },
-    { id: 2, name: "ازيك عامل اية", code: "test123" },
-  ];
+const fetchItems = async (page = 1) => {
+  setLoading(true);
+  try {
+    const res = await axiosInstance.post("StatementType/ListAll", { pageNumber: page, pageSize: pageSize });
+    const data = res.data;
 
+    if (data.result) {
+      const itemsList = data.data; // لو بيرجع array
+      setItems(itemsList);
+      setTotalCount(itemsList.length); // عدد العناصر
+      setPageNumber(page); // الصفحة الحالية
+    }
+  } catch (e) {
+    setError("Failed to fetch items");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleEdit = (row) => {
-    setObjDocType({
+    setObjItem({
+      Id: row.id || -1,
       Name: row.name || "",
-      Code: row.code || "",
-      Id: row.id || -1
+   
+      Code:row.code||""
     });
 
-    const modalElement = document.getElementById("EditStatementType");
-    const modal = new Modal(modalElement);
+    const modalElement = document.getElementById("EditItem");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
     modal.show();
   };
-  const handleShow = (row) => {};
   const handleDelete = (row) => {
-    setObjDocType({
+    setObjItem({
+      Id: row.id || null,
       Name: row.name || "",
-      Code: row.code || "",
-      Id: row.id || -1
-    });
+    
+      Code:row.code||""
 
-    const modalElement = document.getElementById("DeleteStatementType");
-    const modal = new Modal(modalElement);
+    });
+    const modalElement = document.getElementById("DeleteItem");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
     modal.show();
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setObjDocType((prev) => ({ ...prev, [name]: value }));
+    setObjItem((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setObjDocType({ Name: "", Code: "" });
-    // the add request should be here
+
+  const update = async () => {
+    try {
+      const payload = {
+            name: objItem.Name,               // لاحظ small n
+      code: objItem.Code,               // لاحظ small c
+     
+      };
+      const response = await axiosInstance.put("StatementType/" + objItem.Id, payload);
+      console.log("Update response:", response);
+      
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Id: null,
+        Code:""
+      });
+      hideModal("EditItem");
+      await fetchItems(pageNumber);
+    } catch (error) {
+      console.log(error)
+      alert("Failed to update item");
+    }
   };
 
-  const handleUpdate = () => {
-    // the add request should be here
+
+  const Delete = async () => {
+    try {
+      await axiosInstance.delete(`StatementType/${objItem.Id}`);
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Id: null,
+        Code:""
+      });
+      hideModal("DeleteItem");
+      await fetchItems(pageNumber);
+    } catch (error) {
+      console.error("Failed to delete item", error);
+      alert("Failed to delete item");
+    }
   };
 
-  const Delete = () => {
-    // the add request should be here
+
+
+  const save = async () => {
+    try {
+      const payload = {
+         name: objItem.Name,               // لاحظ small n
+      code: objItem.Code,               // لاحظ small c
+      
+      };
+      const response = await axiosInstance.post("StatementType/add", payload);
+      if (response.status === 200) {
+        setObjItem({
+          Name: "",
+        Code: ""
+
+        });
+        hideModal("AddItem");
+        fetchItems(pageNumber)
+      }
+    } catch (error) {
+      console.error("Failed to add item", error);
+      alert("Failed to add item");
+    }
   };
+
+  const reset = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Id: null,
+      Code:""
+    });
+  }
+
+  const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
+  }
 
   useEffect(() => {
-    const modalIds = ["AddStatementType", "EditStatementType", "DeleteStatementType"];
-
-    const handleHidden = () => {
-      // Reset object when any modal is hidden
-      setObjDocType({ Name: "", Code: "" });
-    };
-
-    const modals = modalIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    modals.forEach((modalEl) => {
-      modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    });
-
-    // Cleanup
+    fetchItems(pageNumber)
+    document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
+    document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
+    document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
     return () => {
-      modals.forEach((modalEl) => {
-        modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-      });
     };
-  }, []);
+  }, [pageNumber]);
+  if (loading) {
+    return <Spinner></Spinner>
+  }
 
+  if (error) return <p>{error}</p>;
   return (
     <>
       <Breadcrumb items={breadcrumbItems} button={breadcrumbButtons} />
 
       <Table
         columns={columns}
-        data={data}
+        data={items}
         showActions={true}
         onEdit={handleEdit}
         showShow={false}
-        onShow={handleShow}
+        onShow={() => { }}
         onDelete={handleDelete}
       />
       <Pagination
@@ -141,35 +228,84 @@ const StatementType = () => {
         onPageChange={setPageNumber}
       />
 
-      <div className="modal fade" id="AddStatementType" tabIndex="-1" aria-hidden="true">
+      {/* Add Item Modal */}
+      <div className="modal fade" id="AddItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.AddStatementType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
+          <div
+            className="modal-content"
+            style={{
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "10px",
+              border: "1px solid #d3d3d3",
+            }}
+          >
+            <div
+              className="modal-header d-flex justify-content-between align-items-center"
+              style={{ borderBottom: "1px solid #d3d3d3" }}
+            >
+              <h5 className="modal-title">{objTitle.AddItem}</h5>
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm"
+                data-bs-dismiss="modal"
+              >
                 X
               </button>
             </div>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
+            <div
+              className="modal-body"
+              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
+            >
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+                  <input
+                    type="text"
+                    name="Name"
+                    value={objItem.Name}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Name}
+                  />
                 </div>
-
-                <div className="col-md-6">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input type="text" name="Code" value={objDocType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+                  <input
+                    type="text"
+                    name="Code"
+                    value={objItem.Code}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Code}
+                  />
                 </div>
+               
+
+
+
+
+
+
+
               </div>
             </div>
 
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleSave} >
+            <div
+              className="modal-footer"
+              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
+            >
+              <button type="button" className="btn btn-success" onClick={save}>
                 {objTitle.Save}
               </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
+
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+              >
                 {objTitle.Cancel}
               </button>
             </div>
@@ -177,35 +313,96 @@ const StatementType = () => {
         </div>
       </div>
 
-      <div className="modal fade" id="EditStatementType" tabIndex="-1" aria-hidden="true">
+      {/* Edit Item Modal */}
+      <div className="modal fade" id="EditItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.EditStatementType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
+          <div
+            className="modal-content"
+            style={{
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "10px",
+              border: "1px solid #d3d3d3",
+            }}
+          >
+            <div
+              className="modal-header d-flex justify-content-between align-items-center"
+              style={{ borderBottom: "1px solid #d3d3d3" }}
+            >
+              <h5 className="modal-title">{objTitle.EditItem}</h5>
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm"
+                data-bs-dismiss="modal"
+              >
                 X
               </button>
             </div>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
+            <div
+              className="modal-body"
+              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
+            >
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+                  <input
+                    type="text"
+                    name="Name"
+                    value={objItem.Name}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Name}
+                  />
                 </div>
 
-                <div className="col-md-6">
+<div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input type="text" name="Code" value={objDocType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+                  <input
+                    type="text"
+                    name="Code"
+                    value={objItem.Code}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={objTitle.Code}
+                  />
                 </div>
+
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">{t("RatePercent")}</label>
+                  <input
+                    type="number"
+                    name="Price"
+                    value={objItem.Price}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder={t("Price")}
+                    step="0.01"
+                  />
+                </div>
+
+
+
               </div>
             </div>
 
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleUpdate} >
+            <div
+              className="modal-footer"
+              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
+            >
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={update}
+              >
                 {objTitle.Save}
               </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+              >
                 {objTitle.Cancel}
               </button>
             </div>
@@ -213,9 +410,10 @@ const StatementType = () => {
         </div>
       </div>
 
-      <div className="modal fade" id="DeleteStatementType" tabIndex="-1" aria-hidden="true">
+
+      <div className="modal fade" id="DeleteItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
@@ -224,7 +422,7 @@ const StatementType = () => {
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
+              <p>{objTitle.DeleteConfirmation} <strong> {objItem.Name} </strong> {objTitle.QuestionMark}</p>
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
@@ -241,5 +439,6 @@ const StatementType = () => {
     </>
   );
 };
+
 
 export default StatementType;
