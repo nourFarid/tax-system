@@ -3,7 +3,7 @@ import store from '../Redux/store';
 import { getAuthUser } from '../Hooks/Services/Storage'; 
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5256/api/',
+    baseURL: 'https://localhost:7150/api/',
 });
 
 axiosInstance.interceptors.request.use(
