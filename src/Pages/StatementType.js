@@ -14,6 +14,7 @@ const StatementType = () => {
   const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
   const objTitle = useMemo(
     () => ({
@@ -77,6 +78,20 @@ const fetchItems = async (page = 1) => {
     setLoading(false);
   }
 };
+ const validateForm = () => {
+  const newErrors = {};
+
+  if (!objItem.Name || objItem.Name.trim() === "") {
+    newErrors.Name = "Name is required";
+  }
+
+  if (!objItem.Code || objItem.Code.trim() === "") {
+    newErrors.Code = "Code is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
   const handleEdit = (row) => {
     setObjItem({
       Id: row.id || -1,
@@ -111,6 +126,7 @@ const fetchItems = async (page = 1) => {
 
 
   const update = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
             name: objItem.Name,               // لاحظ small n
@@ -155,10 +171,11 @@ const fetchItems = async (page = 1) => {
 
 
   const save = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
-         name: objItem.Name,               // لاحظ small n
-      code: objItem.Code,               // لاحظ small c
+         name: objItem.Name,               
+      code: objItem.Code,               
       
       };
       const response = await axiosInstance.post("StatementType/add", payload);
@@ -230,7 +247,7 @@ const fetchItems = async (page = 1) => {
 
       {/* Add Item Modal */}
       <div className="modal fade" id="AddItem" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
+        <div className="modal-dialog modal-sm modal-dialog-centered" style={{ maxWidth: "650px" }}>
           <div
             className="modal-content"
             style={{
@@ -267,9 +284,10 @@ const fetchItems = async (page = 1) => {
                     name="Name"
                     value={objItem.Name}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
                     placeholder={objTitle.Name}
                   />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
                 <div className="col-md-6 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
@@ -278,18 +296,12 @@ const fetchItems = async (page = 1) => {
                     name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
+                  {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
                
-
-
-
-
-
-
-
               </div>
             </div>
 
@@ -315,100 +327,60 @@ const fetchItems = async (page = 1) => {
 
       {/* Edit Item Modal */}
       <div className="modal fade" id="EditItem" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
-              <h5 className="modal-title">{objTitle.EditItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
-            </div>
+  <div
+    className="modal-dialog modal-dialog-centered"
+    style={{ maxWidth: "650px" }}
+  >
+    <div className="modal-content" style={{
+      maxHeight: "90vh",
+      display: "flex",
+      flexDirection: "column",
+      borderRadius: "10px",
+      border: "1px solid #d3d3d3",
+    }}>
+      <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
+        <h5 className="modal-title">{objTitle.EditItem}</h5>
+        <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
+      </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
-              <div className="row">
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objItem.Name}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Name}
-                  />
-                </div>
+      <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label">{objTitle.Name}</label>
+            <input
+              type="text"
+              name="Name"
+              value={objItem.Name}
+              onChange={handleChange}
+              className={`form-control ${errors.Name ? "is-invalid" : ""}`}
+              placeholder={objTitle.Name}
+            />
+            {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
+          </div>
 
-<div className="col-md-4 mb-3">
-                  <label className="form-label">{objTitle.Code}</label>
-                  <input
-                    type="text"
-                    name="Code"
-                    value={objItem.Code}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Code}
-                  />
-                </div>
-
-                <div className="col-md-4 mb-3">
-                  <label className="form-label">{t("RatePercent")}</label>
-                  <input
-                    type="number"
-                    name="Price"
-                    value={objItem.Price}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={t("Price")}
-                    step="0.01"
-                  />
-                </div>
-
-
-
-              </div>
-            </div>
-
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={update}
-              >
-                {objTitle.Save}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
-            </div>
+          <div className="col-md-6 mb-3">
+            <label className="form-label">{objTitle.Code}</label>
+            <input
+              type="text"
+              name="Code"
+              value={objItem.Code}
+              onChange={handleChange}
+              className={`form-control ${errors.Code ? "is-invalid" : ""}`}
+              placeholder={objTitle.Code}
+            />
+            {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
           </div>
         </div>
       </div>
+
+      <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+        <button type="button" className="btn btn-success" onClick={update}>{objTitle.Save}</button>
+        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">{objTitle.Cancel}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
       <div className="modal fade" id="DeleteItem" tabIndex="-1" aria-hidden="true">
