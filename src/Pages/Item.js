@@ -14,6 +14,7 @@ const Item = () => {
   const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
   const objTitle = useMemo(
     () => ({
@@ -76,6 +77,24 @@ const Item = () => {
       setLoading(false);
     }
   };
+  const validateForm = () => {
+  const newErrors = {};
+
+  if (!objItem.Name || objItem.Name.trim() === "") {
+    newErrors.Name = "Name is required";
+  }
+
+  if (!objItem.Code || objItem.Code.trim() === "") {
+    newErrors.Code = "Code is required";
+  }
+
+  if (objItem.Price === "" || objItem.Price === null || isNaN(objItem.Price)) {
+    newErrors.Price = "Price is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
   const handleEdit = (row) => {
     setObjItem({
       Id: row.id || -1,
@@ -110,6 +129,7 @@ const Item = () => {
 
 
   const update = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
         Name: objItem.Name,
@@ -154,6 +174,7 @@ const Item = () => {
 
 
   const save = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
         Name: objItem.Name,
@@ -267,9 +288,10 @@ const Item = () => {
                     name="Name"
                     value={objItem.Name}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
                     placeholder={objTitle.Name}
                   />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
@@ -278,9 +300,10 @@ const Item = () => {
                     name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
+                  {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{t("Price")}</label>
@@ -289,10 +312,11 @@ const Item = () => {
                     name="Price"
                     value={objItem.Price}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
                   />
+                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
 
 
@@ -363,9 +387,10 @@ const Item = () => {
                     name="Name"
                     value={objItem.Name}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
                     placeholder={objTitle.Name}
                   />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
 <div className="col-md-4 mb-3">
@@ -375,9 +400,10 @@ const Item = () => {
                     name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
+                  {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
 
                 <div className="col-md-4 mb-3">
@@ -387,10 +413,11 @@ const Item = () => {
                     name="Price"
                     value={objItem.Price}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
                   />
+                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
 
 
