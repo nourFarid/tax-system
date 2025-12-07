@@ -14,6 +14,13 @@ const NatureOfTransaction = () => {
   const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [objItems, setObjItems] = useState({
+  Name: "",
+  Code: "",
+  Price: "",
+});
+const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
   const objTitle = useMemo(
     () => ({
@@ -78,6 +85,11 @@ const fetchItems = async (page = 1) => {
     setLoading(false);
   }
 };
+const handleBlur = (e) => {
+  const { name } = e.target;
+  setTouched({ ...touched, [name]: true });
+};
+
   const handleEdit = (row) => {
     setObjItem({
       Id: row.id || -1,
@@ -110,8 +122,29 @@ const fetchItems = async (page = 1) => {
     setObjItem((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+  const newErrors = {};
+
+  if (!objItem.Name || objItem.Name.trim() === "") {
+    newErrors.Name = "Name is required";
+  }
+
+  if (!objItem.Code || objItem.Code.trim() === "") {
+    newErrors.Code = "Code is required";
+  }
+
+  if (objItem.Price === "" || objItem.Price === null || isNaN(objItem.Price)) {
+    newErrors.Price = "Rate Percent is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+
 
   const update = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
             name: objItem.Name,               // لاحظ small n
@@ -156,10 +189,11 @@ const fetchItems = async (page = 1) => {
 
 
   const save = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
-         name: objItem.Name,               // لاحظ small n
-      code: objItem.Code,               // لاحظ small c
+         name: objItem.Name,              
+      code: objItem.Code,              
       ratePercent: Number(objItem.Price) 
       };
       const response = await axiosInstance.post("TransactionNature/Add", payload);
@@ -264,43 +298,45 @@ const fetchItems = async (page = 1) => {
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objItem.Name}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Name}
-                  />
+                <input
+                  type="text"
+                 name="Name"
+                 value={objItem.Name}
+                 onChange={handleChange}
+               className={`form-control ${errors.Name ? "is-invalid" : ""}`}
+               placeholder={objTitle.Name}
+                />
+                    {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
+
+                
+
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input
+                 <input
                     type="text"
                     name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
+                  {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{t("RatePercent")}</label>
-                  <input
-                    type="number"
-                    name="Price"
-                    value={objItem.Price}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={t("Price")}
-                    step="0.01"
-                  />
+                    <input
+                  type="number"
+                  name="Price"
+                  value={objItem.Price}
+                  onChange={handleChange}
+                  className={`form-control ${errors.Price ? "is-invalid" : ""}`}
+                  placeholder={t("Price")}
+                  step="0.01"
+                />
+                {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
+
                 </div>
-
-
-
-
-
 
 
               </div>
@@ -365,9 +401,10 @@ const fetchItems = async (page = 1) => {
                     name="Name"
                     value={objItem.Name}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
                     placeholder={objTitle.Name}
                   />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
 <div className="col-md-4 mb-3">
@@ -377,9 +414,10 @@ const fetchItems = async (page = 1) => {
                     name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
+                   {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
 
                 <div className="col-md-4 mb-3">
@@ -389,10 +427,11 @@ const fetchItems = async (page = 1) => {
                     name="Price"
                     value={objItem.Price}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
                   />
+                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
 
 
