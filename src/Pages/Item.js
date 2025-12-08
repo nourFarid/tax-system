@@ -137,6 +137,7 @@ const Item = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "Price" && Number(value) < 0) return;
     setObjItem((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -349,6 +350,7 @@ const Item = () => {
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
@@ -450,6 +452,7 @@ const Item = () => {
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>

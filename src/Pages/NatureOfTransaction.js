@@ -131,6 +131,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "Price" && Number(value) < 0) return;
     setObjItem((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -371,6 +372,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
 
@@ -447,9 +449,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
 
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input
-                    type="text"
-                    name="Code"
+                  <input type="text" name="Code"
                     value={objItem.Code}
                     onChange={handleChange}
                     className={`form-control ${errors.Code ? "is-invalid" : ""}`}
@@ -468,6 +468,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
