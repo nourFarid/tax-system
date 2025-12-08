@@ -1,4 +1,4 @@
-export const setAuthUser = (data, expiresInMinutes=60) => {
+export const setAuthUser = (data, expiresInMinutes = 30) => {
   const expirationTime = new Date().getTime() + expiresInMinutes * 60 * 1000;
   localStorage.setItem("user", JSON.stringify({ data, expirationTime }));
 };
@@ -6,7 +6,7 @@ export const setAuthUser = (data, expiresInMinutes=60) => {
 export const removeAuthUser = () => {
   if (localStorage.getItem("user")) {
     localStorage.removeItem("user");
-    window.location.href = "/login"; 
+    window.location.href = "/"; 
   }
 };
 

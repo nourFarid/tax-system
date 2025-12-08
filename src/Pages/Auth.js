@@ -35,8 +35,6 @@ const Auth = () => {
             const response = await axiosInstance.post("Auth/Login", payload);
             setAuthUser(response.data.token);
             navigate("/Setup");
-
-
         } catch (error) {
             console.error("Failed to login", error);
         }
