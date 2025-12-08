@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
+import  { useSwal }  from "../Hooks/Alert/Swal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
@@ -38,6 +39,7 @@ const StatementType = () => {
     Price: 0,
     Code:""
   });
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -155,9 +157,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
+      showSuccess("Success", "Item updated successfully!");
     } catch (error) {
       console.log(error)
       alert("Failed to update item");
+      showError("Error", "Failed to update item");
     }
   };
 
@@ -173,9 +177,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
+      showSuccess("Deleted", "Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item", error);
       alert("Failed to delete item");
+       showError("Error", "Failed to delete item");
     }
   };
 
@@ -198,10 +204,12 @@ const fetchItems = async (page = 1) => {
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
+        showSuccess("Success", "Item added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item", error);
       alert("Failed to add item");
+      showError("Error", "Failed to add item!");
     }
   };
 
@@ -437,6 +445,7 @@ const fetchItems = async (page = 1) => {
           </div>
         </div>
       </div>
+      <SwalComponent />
     </>
   );
 };
