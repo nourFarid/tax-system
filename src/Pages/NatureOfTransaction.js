@@ -86,10 +86,10 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
       const data = res.data;
 
       if (data.result) {
-        const itemsList = data.data; // لو بيرجع array
+        const itemsList = data.data; 
         setItems(itemsList);
-        setTotalCount(itemsList.length); // عدد العناصر
-        setPageNumber(page); // الصفحة الحالية
+        setTotalCount(itemsList.length); 
+        setPageNumber(page); 
       }
     } catch (e) {
       setError("Failed to fetch items");
@@ -115,6 +115,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
     if (!modal) modal = new Modal(modalElement);
     modal.show();
   };
+
   const handleDelete = (row) => {
     setObjItem({
       Id: row.id || null,
@@ -160,8 +161,8 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
     if (!validateForm()) return;
     try {
       const payload = {
-        name: objItem.Name,               // لاحظ small n
-        code: objItem.Code,               // لاحظ small c
+        name: objItem.Name,               
+        code: objItem.Code,              
         ratePercent: Number(objItem.Price)
       };
       const response = await axiosInstance.put("TransactionNature/" + objItem.Id, payload);
@@ -254,8 +255,6 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
 
   useEffect(() => {
     fetchItems(pageNumber)
-
-    // Reset form when Add modal is shown (to clear any data from previous edit)
     const handleAddModalShow = () => {
       setObjItem({
         Name: "",
@@ -306,97 +305,40 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
       {/* Add Item Modal */}
       <div className="modal fade" id="AddItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex",flexDirection: "column",borderRadius: "10px",border: "1px solid #d3d3d3",}}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button"className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
-              <div className="row">
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
+              <div className="row"> 
+
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objItem.Name}
-                    onChange={handleChange}
-                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
-                    placeholder={objTitle.Name}
-                  />
+                  <input type="text" name="Name" value={objItem.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`}placeholder={objTitle.Name}/>
                   {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
-
-
-
                 </div>
+
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input
-                    type="text"
-                    name="Code"
-                    value={objItem.Code}
-                    onChange={handleChange}
+                  <input type="text" name="Code"value={objItem.Code} onChange={handleChange}
                     className={`form-control ${errors.Code ? "is-invalid" : ""}`}
-                    placeholder={objTitle.Code}
-                  />
+                    placeholder={objTitle.Code} />
                   {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{t("RatePercent")}</label>
-                  <input
-                    type="number"
-                    name="Price"
-                    value={objItem.Price}
-                    onChange={handleChange}
-                    className={`form-control ${errors.Price ? "is-invalid" : ""}`}
-                    placeholder={t("Price")}
+                  <input type="number" name="Price" value={objItem.Price} onChange={handleChange} className={`form-control ${errors.Price ? "is-invalid" : ""}`} placeholder={t("Price")}
                     step="0.01"
-                    min="0"
-                  />
-                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
-
-                </div>
-
-
+                    min="0" />
+                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}  </div>
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button type="button" className="btn btn-success" onClick={save}>
-                {objTitle.Save}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
+              <button type="button" className="btn btn-success" onClick={save}>{objTitle.Save}</button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal">{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
@@ -405,34 +347,13 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
       {/* Edit Item Modal */}
       <div className="modal fade" id="EditItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
+            <div className="modal-header d-flex justify-content-between align-items-center"style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.EditItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
             </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
@@ -472,30 +393,12 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
-
-
-
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={update}
-              >
-                {objTitle.Save}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+              <button type="button" className="btn btn-success" onClick={update}>{objTitle.Save}</button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal">{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
@@ -507,9 +410,7 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -517,12 +418,8 @@ const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwa
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
+              <button type="button" className="btn btn-danger" onClick={Delete} >{objTitle.Delete}</button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
