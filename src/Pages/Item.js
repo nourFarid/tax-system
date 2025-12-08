@@ -16,6 +16,7 @@ const Item = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
+   const [touched, setTouched] = useState({});
   const objTitle = useMemo(
     () => ({
       AddItem: t("Add Item"),
@@ -42,6 +43,15 @@ const Item = () => {
     { label: t("Setup"), link: "/Setup", active: false },
     { label: t("Items"), active: true },
   ];
+    const handleAddClick = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Code: ""
+    });
+    setErrors({});
+    setTouched({});
+  };
 
   const breadcrumbButtons = [
     {
@@ -49,6 +59,7 @@ const Item = () => {
       icon: "bi bi-plus-circle",
       dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
+       onClick: handleAddClick,
     },
   ];
 
@@ -216,12 +227,30 @@ const Item = () => {
     backdrops.forEach(b => b.remove());
   }
 
-  useEffect(() => {
+   useEffect(() => {
     fetchItems(pageNumber)
+
+    // Reset form when Add modal is shown (to clear any data from previous edit)
+    const handleAddModalShow = () => {
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Code: ""
+      });
+      setErrors({});
+      setTouched({});
+    };
+
+    document.getElementById("AddItem")?.addEventListener("show.bs.modal", handleAddModalShow);
     document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
+
     return () => {
+      document.getElementById("AddItem")?.removeEventListener("show.bs.modal", handleAddModalShow);
+      document.getElementById("AddItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
   }, [pageNumber]);
   if (loading) {

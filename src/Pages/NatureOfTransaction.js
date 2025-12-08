@@ -267,7 +267,7 @@ const NatureOfTransaction = () => {
       document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
       document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
-  }, [pageNumber]);
+  }, [pageNumber]);     
   if (loading) {
     return <Spinner></Spinner>
   }
