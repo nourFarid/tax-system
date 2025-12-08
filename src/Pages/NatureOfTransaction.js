@@ -15,11 +15,11 @@ const NatureOfTransaction = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [objItems, setObjItems] = useState({
-  Name: "",
-  Code: "",
-  Price: "",
-});
-const [touched, setTouched] = useState({});
+    Name: "",
+    Code: "",
+    Price: "",
+  });
+  const [touched, setTouched] = useState({});
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
   const objTitle = useMemo(
@@ -34,14 +34,14 @@ const [touched, setTouched] = useState({});
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
-      Code:t('Code')
+      Code: t('Code')
     }),
     [t]
   );
   const [objItem, setObjItem] = useState({
     Name: "",
     Price: 0,
-    Code:""
+    Code: ""
   });
 
   const breadcrumbItems = [
@@ -49,12 +49,23 @@ const [touched, setTouched] = useState({});
     { label: t("Transaction Nature"), active: true },
   ];
 
+  const handleAddClick = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Code: ""
+    });
+    setErrors({});
+    setTouched({});
+  };
+
   const breadcrumbButtons = [
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
       dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
+      onClick: handleAddClick,
     },
   ];
 
@@ -67,35 +78,35 @@ const [touched, setTouched] = useState({});
     { label: t("Updated By"), accessor: "updatedByUser.userName" },
   ];
 
-const fetchItems = async (page = 1) => {
-  setLoading(true);
-  try {
-    const res = await axiosInstance.post("TransactionNature/ListAll", { pageNumber: page, pageSize: pageSize });
-    const data = res.data;
+  const fetchItems = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("TransactionNature/ListAll", { pageNumber: page, pageSize: pageSize });
+      const data = res.data;
 
-    if (data.result) {
-      const itemsList = data.data; // لو بيرجع array
-      setItems(itemsList);
-      setTotalCount(itemsList.length); // عدد العناصر
-      setPageNumber(page); // الصفحة الحالية
+      if (data.result) {
+        const itemsList = data.data; // لو بيرجع array
+        setItems(itemsList);
+        setTotalCount(itemsList.length); // عدد العناصر
+        setPageNumber(page); // الصفحة الحالية
+      }
+    } catch (e) {
+      setError("Failed to fetch items");
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    setError("Failed to fetch items");
-  } finally {
-    setLoading(false);
-  }
-};
-const handleBlur = (e) => {
-  const { name } = e.target;
-  setTouched({ ...touched, [name]: true });
-};
+  };
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched({ ...touched, [name]: true });
+  };
 
   const handleEdit = (row) => {
     setObjItem({
       Id: row.id || -1,
       Name: row.name || "",
       Price: row.ratePercent || 0,
-      Code:row.code||""
+      Code: row.code || ""
     });
 
     const modalElement = document.getElementById("EditItem");
@@ -108,7 +119,7 @@ const handleBlur = (e) => {
       Id: row.id || null,
       Name: row.name || "",
       Price: row.ratePercent || 0,
-      Code:row.code||""
+      Code: row.code || ""
 
     });
     const modalElement = document.getElementById("DeleteItem");
@@ -123,23 +134,23 @@ const handleBlur = (e) => {
   };
 
   const validateForm = () => {
-  const newErrors = {};
+    const newErrors = {};
 
-  if (!objItem.Name || objItem.Name.trim() === "") {
-    newErrors.Name = "Name is required";
-  }
+    if (!objItem.Name || objItem.Name.trim() === "") {
+      newErrors.Name = "Name is required";
+    }
 
-  if (!objItem.Code || objItem.Code.trim() === "") {
-    newErrors.Code = "Code is required";
-  }
+    if (!objItem.Code || objItem.Code.trim() === "") {
+      newErrors.Code = "Code is required";
+    }
 
-  if (objItem.Price === "" || objItem.Price === null || isNaN(objItem.Price)) {
-    newErrors.Price = "Rate Percent is required";
-  }
+    if (objItem.Price === "" || objItem.Price === null || isNaN(objItem.Price)) {
+      newErrors.Price = "Rate Percent is required";
+    }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
 
@@ -147,18 +158,18 @@ const handleBlur = (e) => {
     if (!validateForm()) return;
     try {
       const payload = {
-            name: objItem.Name,               // لاحظ small n
-      code: objItem.Code,               // لاحظ small c
-      ratePercent: Number(objItem.Price) 
+        name: objItem.Name,               // لاحظ small n
+        code: objItem.Code,               // لاحظ small c
+        ratePercent: Number(objItem.Price)
       };
       const response = await axiosInstance.put("TransactionNature/" + objItem.Id, payload);
       console.log("Update response:", response);
-      
+
       setObjItem({
         Name: "",
         Price: 0,
         Id: null,
-        Code:""
+        Code: ""
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
@@ -176,7 +187,7 @@ const handleBlur = (e) => {
         Name: "",
         Price: 0,
         Id: null,
-        Code:""
+        Code: ""
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
@@ -192,16 +203,16 @@ const handleBlur = (e) => {
     if (!validateForm()) return;
     try {
       const payload = {
-         name: objItem.Name,              
-      code: objItem.Code,              
-      ratePercent: Number(objItem.Price) 
+        name: objItem.Name,
+        code: objItem.Code,
+        ratePercent: Number(objItem.Price)
       };
       const response = await axiosInstance.post("TransactionNature/Add", payload);
       if (response.status === 200) {
         setObjItem({
           Name: "",
-        Price: 0,
-        Code: ""
+          Price: 0,
+          Code: ""
 
         });
         hideModal("AddItem");
@@ -218,7 +229,7 @@ const handleBlur = (e) => {
       Name: "",
       Price: 0,
       Id: null,
-      Code:""
+      Code: ""
     });
   }
 
@@ -233,10 +244,28 @@ const handleBlur = (e) => {
 
   useEffect(() => {
     fetchItems(pageNumber)
+
+    // Reset form when Add modal is shown (to clear any data from previous edit)
+    const handleAddModalShow = () => {
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Code: ""
+      });
+      setErrors({});
+      setTouched({});
+    };
+
+    document.getElementById("AddItem")?.addEventListener("show.bs.modal", handleAddModalShow);
     document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
+
     return () => {
+      document.getElementById("AddItem")?.removeEventListener("show.bs.modal", handleAddModalShow);
+      document.getElementById("AddItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
   }, [pageNumber]);
   if (loading) {
@@ -298,22 +327,22 @@ const handleBlur = (e) => {
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                <input
-                  type="text"
-                 name="Name"
-                 value={objItem.Name}
-                 onChange={handleChange}
-               className={`form-control ${errors.Name ? "is-invalid" : ""}`}
-               placeholder={objTitle.Name}
-                />
-                    {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
+                  <input
+                    type="text"
+                    name="Name"
+                    value={objItem.Name}
+                    onChange={handleChange}
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
+                    placeholder={objTitle.Name}
+                  />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
 
-                
+
 
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                 <input
+                  <input
                     type="text"
                     name="Code"
                     value={objItem.Code}
@@ -325,16 +354,16 @@ const handleBlur = (e) => {
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{t("RatePercent")}</label>
-                    <input
-                  type="number"
-                  name="Price"
-                  value={objItem.Price}
-                  onChange={handleChange}
-                  className={`form-control ${errors.Price ? "is-invalid" : ""}`}
-                  placeholder={t("Price")}
-                  step="0.01"
-                />
-                {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
+                  <input
+                    type="number"
+                    name="Price"
+                    value={objItem.Price}
+                    onChange={handleChange}
+                    className={`form-control ${errors.Price ? "is-invalid" : ""}`}
+                    placeholder={t("Price")}
+                    step="0.01"
+                  />
+                  {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
 
                 </div>
 
@@ -407,7 +436,7 @@ const handleBlur = (e) => {
                   {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
-<div className="col-md-4 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
                   <input
                     type="text"
@@ -417,7 +446,7 @@ const handleBlur = (e) => {
                     className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code}
                   />
-                   {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
+                  {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
 
                 <div className="col-md-4 mb-3">

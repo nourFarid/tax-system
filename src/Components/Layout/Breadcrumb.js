@@ -33,7 +33,7 @@ const Breadcrumb = ({ items = [], button = [] }) => {
                             {btn.label}
                         </a>
                     ) : btn.dyalog ? (
-                        <button type="button" key={idx} data-bs-toggle="modal" data-bs-target={btn.dyalog} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
+                        <button type="button" key={idx} data-bs-toggle="modal" data-bs-target={btn.dyalog} onClick={btn.onClick} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
                             {btn.icon && <i className={`${btn.icon} mr-1`}></i>}&nbsp;&nbsp;
                             {btn.label}
                         </button>
