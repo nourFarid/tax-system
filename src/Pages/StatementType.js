@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
+import  { useSwal }  from "../Hooks/Alert/Swal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
@@ -15,6 +16,7 @@ const StatementType = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+   const [touched, setTouched] = useState({});
   const [error, setError] = useState(null);
   const objTitle = useMemo(
     () => ({
@@ -37,11 +39,21 @@ const StatementType = () => {
     Price: 0,
     Code:""
   });
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
     { label: t("Statement Type"), active: true },
   ];
+    const handleAddClick = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Code: ""
+    });
+    setErrors({});
+    setTouched({});
+  };
 
   const breadcrumbButtons = [
     {
@@ -49,6 +61,7 @@ const StatementType = () => {
       icon: "bi bi-plus-circle",
       dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
+        onClick: handleAddClick
     },
   ];
 
@@ -144,9 +157,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
+      showSuccess("Success", "Item updated successfully!");
     } catch (error) {
       console.log(error)
       alert("Failed to update item");
+      showError("Error", "Failed to update item");
     }
   };
 
@@ -162,9 +177,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
+      showSuccess("Deleted", "Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item", error);
       alert("Failed to delete item");
+       showError("Error", "Failed to delete item");
     }
   };
 
@@ -187,10 +204,12 @@ const fetchItems = async (page = 1) => {
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
+        showSuccess("Success", "Item added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item", error);
       alert("Failed to add item");
+      showError("Error", "Failed to add item!");
     }
   };
 
@@ -212,12 +231,30 @@ const fetchItems = async (page = 1) => {
     backdrops.forEach(b => b.remove());
   }
 
-  useEffect(() => {
+ useEffect(() => {
     fetchItems(pageNumber)
+
+    // Reset form when Add modal is shown (to clear any data from previous edit)
+    const handleAddModalShow = () => {
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Code: ""
+      });
+      setErrors({});
+      setTouched({});
+    };
+
+    document.getElementById("AddItem")?.addEventListener("show.bs.modal", handleAddModalShow);
     document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
+
     return () => {
+      document.getElementById("AddItem")?.removeEventListener("show.bs.modal", handleAddModalShow);
+      document.getElementById("AddItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
   }, [pageNumber]);
   if (loading) {
@@ -408,6 +445,7 @@ const fetchItems = async (page = 1) => {
           </div>
         </div>
       </div>
+      <SwalComponent />
     </>
   );
 };

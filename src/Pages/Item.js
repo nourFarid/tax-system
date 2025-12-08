@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
+import  { useSwal }  from "../Hooks/Alert/Swal";
 import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
@@ -16,6 +17,7 @@ const Item = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
+   const [touched, setTouched] = useState({});
   const objTitle = useMemo(
     () => ({
       AddItem: t("Add Item"),
@@ -37,11 +39,21 @@ const Item = () => {
     Price: 0,
     Code:""
   });
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
     { label: t("Items"), active: true },
   ];
+    const handleAddClick = () => {
+    setObjItem({
+      Name: "",
+      Price: 0,
+      Code: ""
+    });
+    setErrors({});
+    setTouched({});
+  };
 
   const breadcrumbButtons = [
     {
@@ -49,6 +61,7 @@ const Item = () => {
       icon: "bi bi-plus-circle",
       dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
+       onClick: handleAddClick,
     },
   ];
 
@@ -124,6 +137,7 @@ const Item = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "Price" && Number(value) < 0) return;
     setObjItem((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -147,9 +161,10 @@ const Item = () => {
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
+      showSuccess("Success", "Item updated successfully!");
     } catch (error) {
       console.log(error)
-      alert("Failed to update item");
+      showError("Error", "Failed to update item");
     }
   };
 
@@ -165,9 +180,10 @@ const Item = () => {
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
+      showSuccess("Deleted", "Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item", error);
-      alert("Failed to delete item");
+      showError("Error", "Failed to delete item");
     }
   };
 
@@ -191,10 +207,11 @@ const Item = () => {
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
+        showSuccess("Success", "Item added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item", error);
-      alert("Failed to add item");
+      showError("Error", "Failed to add item!");
     }
   };
 
@@ -216,12 +233,29 @@ const Item = () => {
     backdrops.forEach(b => b.remove());
   }
 
-  useEffect(() => {
+   useEffect(() => {
     fetchItems(pageNumber)
+
+    const handleAddModalShow = () => {
+      setObjItem({
+        Name: "",
+        Price: 0,
+        Code: ""
+      });
+      setErrors({});
+      setTouched({});
+    };
+
+    document.getElementById("AddItem")?.addEventListener("show.bs.modal", handleAddModalShow);
     document.getElementById("AddItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("EditItem")?.addEventListener("hidden.bs.modal", reset);
     document.getElementById("DeleteItem")?.addEventListener("hidden.bs.modal", reset);
+
     return () => {
+      document.getElementById("AddItem")?.removeEventListener("show.bs.modal", handleAddModalShow);
+      document.getElementById("AddItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
+      document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
   }, [pageNumber]);
   if (loading) {
@@ -263,23 +297,11 @@ const Item = () => {
             }}
           >
             <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+              className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
-
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
@@ -315,34 +337,16 @@ const Item = () => {
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
-
-
-
-
-
-
-
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button type="button" className="btn btn-success" onClick={save}>
-                {objTitle.Save}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+              <button type="button" className="btn btn-success" onClick={save}> {objTitle.Save} </button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal"> {objTitle.Cancel}</button>
             </div>
           </div>
         </div>
@@ -351,34 +355,12 @@ const Item = () => {
       {/* Edit Item Modal */}
       <div className="modal fade" id="EditItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{maxHeight: "90vh",display: "flex",flexDirection: "column",borderRadius: "10px",border: "1px solid #d3d3d3",}}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.EditItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
             </div>
-
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
@@ -393,7 +375,7 @@ const Item = () => {
                   {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
-<div className="col-md-4 mb-3">
+                <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
                   <input
                     type="text"
@@ -416,33 +398,16 @@ const Item = () => {
                     className={`form-control ${errors.Price ? "is-invalid" : ""}`}
                     placeholder={t("Price")}
                     step="0.01"
+                    min="0"
                   />
                   {errors.Price && <div className="invalid-feedback">{errors.Price}</div>}
                 </div>
-
-
-
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={update}
-              >
-                {objTitle.Save}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+              <button type="button" className="btn btn-success" onClick={update}>{objTitle.Save}</button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal">{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
@@ -454,9 +419,7 @@ const Item = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -464,16 +427,13 @@ const Item = () => {
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
+              <button type="button" className="btn btn-danger" onClick={Delete} >{objTitle.Delete}</button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
       </div>
+      <SwalComponent />
     </>
   );
 };
