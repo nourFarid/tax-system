@@ -40,6 +40,32 @@ const StatementType = () => {
     Code:""
   });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const validateDuplicates = (name, code, id = null) => {
+  let newErrors = { Name: "", Code: "" };
+  let hasError = false;
+
+  // Check duplicate name
+  const nameExists = items.some(
+    item => item.name.toLowerCase() === name.toLowerCase() && item.id !== id
+  );
+  if (nameExists) {
+    newErrors.Name = "This name already exists";
+    hasError = true;
+  }
+
+  // Check duplicate code
+  const codeExists = items.some(
+    item => item.code.toLowerCase() === code.toLowerCase() && item.id !== id
+  );
+  if (codeExists) {
+    newErrors.Code = "This code already exists";
+    hasError = true;
+  }
+
+  setErrors(prev => ({ ...prev, ...newErrors }));
+  return !hasError;
+};
+
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -61,7 +87,7 @@ const StatementType = () => {
       icon: "bi bi-plus-circle",
       dyalog: "#AddItem",
       class: "btn btn-sm btn-success ms-2 float-end",
-        onClick: handleAddClick
+      onClick: handleAddClick
     },
   ];
 
@@ -109,7 +135,6 @@ const fetchItems = async (page = 1) => {
     setObjItem({
       Id: row.id || -1,
       Name: row.name || "",
-   
       Code:row.code||""
     });
 
@@ -122,9 +147,7 @@ const fetchItems = async (page = 1) => {
     setObjItem({
       Id: row.id || null,
       Name: row.name || "",
-    
       Code:row.code||""
-
     });
     const modalElement = document.getElementById("DeleteItem");
     let modal = Modal.getInstance(modalElement);
@@ -135,15 +158,19 @@ const fetchItems = async (page = 1) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setObjItem((prev) => ({ ...prev, [name]: value }));
+    const updated = { ...objItem, [name]: value };
+    setObjItem(updated);
+    validateDuplicates(updated.Name, updated.Code, updated.Id);
   };
 
 
   const update = async () => {
     if (!validateForm()) return;
+    if (!validateDuplicates(objItem.Name, objItem.Code)) return;
     try {
       const payload = {
-            name: objItem.Name,               // لاحظ small n
-      code: objItem.Code,               // لاحظ small c
+      name: objItem.Name,              
+      code: objItem.Code,               
      
       };
       const response = await axiosInstance.put("StatementType/" + objItem.Id, payload);
@@ -189,16 +216,17 @@ const fetchItems = async (page = 1) => {
 
   const save = async () => {
     if (!validateForm()) return;
+    if (!validateDuplicates(objItem.Name, objItem.Code)) return;
     try {
       const payload = {
-         name: objItem.Name,               
+      name: objItem.Name,               
       code: objItem.Code,               
       
       };
       const response = await axiosInstance.post("StatementType/add", payload);
       if (response.status === 200) {
         setObjItem({
-          Name: "",
+        Name: "",
         Code: ""
 
         });
@@ -285,34 +313,15 @@ const fetchItems = async (page = 1) => {
       {/* Add Item Modal */}
       <div className="modal fade" id="AddItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-sm modal-dialog-centered" style={{ maxWidth: "650px" }}>
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content"
+            style={{maxHeight: "90vh", display: "flex",flexDirection: "column",borderRadius: "10px", border: "1px solid #d3d3d3",}}>
+          
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddItem}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
@@ -338,25 +347,12 @@ const fetchItems = async (page = 1) => {
                   />
                   {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
                 </div>
-               
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button type="button" className="btn btn-success" onClick={save}>
-                {objTitle.Save}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+              <button type="button" className="btn btn-success" onClick={save}> {objTitle.Save} </button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
@@ -417,27 +413,20 @@ const fetchItems = async (page = 1) => {
     </div>
   </div>
 </div>
-
-
-
+      {/* Delete Item Modal */}
       <div className="modal fade" id="DeleteItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
               <p>{objTitle.DeleteConfirmation} <strong> {objItem.Name} </strong> {objTitle.QuestionMark}</p>
             </div>
-
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
+              <button type="button" className="btn btn-danger" onClick={Delete} >{objTitle.Delete}</button>
               <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
                 {objTitle.Cancel}
               </button>
@@ -449,6 +438,4 @@ const fetchItems = async (page = 1) => {
     </>
   );
 };
-
-
 export default StatementType;

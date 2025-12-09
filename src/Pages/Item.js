@@ -40,6 +40,32 @@ const Item = () => {
     Code:""
   });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const validateDuplicates = (name, code, id = null) => {
+  let newErrors = { Name: "", Code: "" };
+  let hasError = false;
+
+  // Check duplicate name
+  const nameExists = items.some(
+    item => item.name.toLowerCase() === name.toLowerCase() && item.id !== id
+  );
+  if (nameExists) {
+    newErrors.Name = "This name already exists";
+    hasError = true;
+  }
+
+  // Check duplicate code
+  const codeExists = items.some(
+    item => item.code.toLowerCase() === code.toLowerCase() && item.id !== id
+  );
+  if (codeExists) {
+    newErrors.Code = "This code already exists";
+    hasError = true;
+  }
+
+  setErrors(prev => ({ ...prev, ...newErrors }));
+  return !hasError;
+};
+
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -139,11 +165,18 @@ const Item = () => {
     const { name, value } = e.target;
     if (name === "Price" && Number(value) < 0) return;
     setObjItem((prev) => ({ ...prev, [name]: value }));
+     const updated = { ...objItem, [name]: value };
+  setObjItem(updated);
+
+  // live duplicate check
+  validateDuplicates(updated.Name, updated.Code, updated.Id);
   };
 
 
   const update = async () => {
     if (!validateForm()) return;
+    if (!validateDuplicates(objItem.Name, objItem.Code)) return;
+
     try {
       const payload = {
         Name: objItem.Name,
@@ -191,6 +224,7 @@ const Item = () => {
 
   const save = async () => {
     if (!validateForm()) return;
+    if (!validateDuplicates(objItem.Name, objItem.Code)) return;
     try {
       const payload = {
         Name: objItem.Name,
