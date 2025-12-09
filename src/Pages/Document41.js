@@ -3,12 +3,14 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Pagination from '../Components/Layout/Pagination';
+import axiosInstance from "../Axios/AxiosInstance";
 
 const Document41 = () => {
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
+  const [totalRows, setTotalRows] = useState(0);
   const breadcrumbItems = [
     { label: t("Document 41"), link: "/Document41", active: false }
   ];
@@ -23,82 +25,43 @@ const Document41 = () => {
   ];
 
   const columns = [
-    { label: t("Code"), accessor: "code" },
+    { label: t("Serial Number"), accessor: "serialNumber" },/* 
     { label: t("Tax Registration Number"), accessor: "supplier.taxRegistrationNumber" },
-    { label: t("National ID"), accessor: "supplier.nationalId" },
+    { label: t("National ID"), accessor: "supplier.nationalId" }, */
     { label: t("Supplier Name"), accessor: "supplier.name" },
-    { label: t("Address"), accessor: "supplier.address" },
-    { label: t("Errand Name"), accessor: "errand.name" },
-    { label: t("Errand Code"), accessor: "errand.code" },
     { label: t("Transaction Date"), accessor: "transactionDate" },
     { label: t("Nature of Transaction"), accessor: "transactionNature.name" },
-    { label: t("Total Transaction Value"), accessor: "totalAmount" },
-    { label: t("Deduction Type"), accessor: "transactionNature.code" },
-    { label: t("Collection Date"), accessor: "collectionDate" },
-    { label: t("Net Amount"), accessor: "netAmount" },
-    { label: t("Deduction Percentage"), accessor: "transactionNature.deductionPercentage" },
-    { label: t("Fiscal Year From"), accessor: "fiscalYear.dateFrom" },
-    { label: t("Fiscal Year To"), accessor: "fiscalYear.dateTo" }
+    { label: t("Item"), accessor: "item.name" },
+    { label: t("Amount"), accessor: "amount" },
+    { label: t("Transaction Nature"), accessor: "transactionNature.name" },
+    { label: t("Price"), accessor: "price" },
+    { label: t("Tax Percent"), accessor: "taxPercent" },
+    { label: t("Deduction Percentage"), accessor: "deductionPercentage" },
+    { label: t("Fiscal Year From"), accessor: "quarter.dateFrom" },
+    { label: t("Fiscal Year To"), accessor: "quarter.dateTo" }
   ];
 
+  const [arrData, setArrData] = useState([]);
+  const [objFilter, setObjFilter] = useState({});
 
-  const data = [
-    {
-      code: "TXN001",
-      supplier: {
-        taxRegistrationNumber: "123456789",
-        nationalId: "29805141234567",
-        name: "Ali Mahmoud",
-        address: "Cairo, Egypt"
-      },
-      errand: {
-        name: "Nasr City Tax Office",
-        code: "ERR001"
-      },
-      transactionDate: "2025-11-01",
-      transactionNature: {
-        name: "Service Payment",
-        code: "SRV001",
-        deductionPercentage: 10
-      },
-      totalAmount: 15000.0,
-      collectionDate: "2025-11-03",
-      netAmount: 13500.0,
-      fiscalYear: {
-        dateFrom: "2025-01-01",
-        dateTo: "2025-12-31"
-      }
-    },
-    {
-      code: "TXN001",
-      supplier: {
-        taxRegistrationNumber: "123456789",
-        nationalId: "29805141234567",
-        name: "Ali Mahmoud",
-        address: "Cairo, Egypt"
-      },
-      errand: {
-        name: "Nasr City Tax Office",
-        code: "ERR001"
-      },
-      transactionDate: "2025-11-01",
-      transactionNature: {
-        name: "Service Payment",
-        code: "SRV001",
-        deductionPercentage: 10
-      },
-      totalAmount: 15000.0,
-      collectionDate: "2025-11-03",
-      netAmount: 13500.0,
-      fiscalYear: {
-        dateFrom: "2025-01-01",
-        dateTo: "2025-12-31"
-      }
+  const List = async (intPageNumber = 1) => {
+    setPageNumber(intPageNumber);
+    const res = await axiosInstance.post("Document41/List", {pageNumber: pageNumber, pageSize: pageSize, filter: objFilter});
+    const result = res.data;
+    if (!result.result) {
+      alert(result.message);
+      return;
     }
-  ];
+    for (let i = 0; i < result.data.data.length; i++) {
+      result.data.data[i].deductionPercentage = result.data.data[i].price * result.data.data[i].taxPercent / 100;
+    }
+    setArrData(result.data.data);
+    setTotalRows(result.data.totalRows);
+    setTotalCount(result.data.totalCount);
+  };
 
   useEffect(() => {
-    // fetch data here if needed
+    List();
   }, []);
 
   return (
@@ -107,7 +70,7 @@ const Document41 = () => {
 
       <Table
         columns={columns}
-        data={data}
+        data={arrData}
         showActions={false}
         onEdit={() => { }}
         showShow={false}
