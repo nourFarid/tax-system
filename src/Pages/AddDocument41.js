@@ -56,7 +56,7 @@ const AddDocument41 = () => {
     let arr = res.data.data.map(x => ({
       label: "[x.taxRegistrationNumber] x.name".replace("x.name", x.name).replace("x.taxRegistrationNumber", x.taxRegistrationNumber??"-"),
       value: x.id,
-      objItem: x
+      objSupplier: x
     }));
     return arr;
   };
@@ -70,15 +70,17 @@ const AddDocument41 = () => {
     const res = await axiosInstance.post("Item/ListAll", objFilter);
 
     if (res.data.data == null || res.data.data.length == 0) {
-      let arr = [{
+      let arr = [
+        {
         label: strInput,
         value: -1,
-        objItem: x => ({
+        objItem: {
           name: strInput,
           code: "",
           price: 0
-        })
-      }];
+        }
+      }]
+      ;
       return arr;
     }
 
@@ -126,20 +128,10 @@ const AddDocument41 = () => {
   }
 
   const Add = async () => {
-    if (objDocument41.itemId == -1) {
-      const name = objDocument41.item?.name ?? objDocument41.item?.label ?? "";
-
-      let objNewItem = {
-        name,
-        code: "",
-        price: objDocument41.price / objDocument41.amount
-      };
-
-      setObjDocument41(prev => ({...prev,item: objNewItem}));
-    }
     let response = await axiosInstance.post("Document41/Add", objDocument41)
     if (response.data.result) {
       alert(response.data.message);
+      reset();
     }
   }
 
@@ -150,10 +142,37 @@ const AddDocument41 = () => {
     }
   }
 
+  const reset = () => {
+    setObjDocument41({
+      serialNumber: "",
+      item: null,
+      itemId: -1,
+      supplierId: null,
+      transactionDate: "",
+      fiscalYearId: -1,
+      quarterId: -1,
+      transactionNatureId: -1,
+      amount: 1,
+      taxPercent: 14,
+      price: 0
+    });
+    setObjSupplier(null);
+    setObjItem(null);
+    setStrFiscalYear("Date Fiscal Year");
+  }
+
   useEffect(() => {
-    // fetch data here if needed
+    if (objDocument41.itemId === -1) {
+      setObjDocument41(prev => ({
+        ...prev,
+        item: {
+          ...prev.item,
+          price: prev.price / prev.amount
+        }
+      }));
+    }
     listTransactionNature();
-  }, []);
+  }, [objDocument41.price, objDocument41.amount]);
 
   return (
     <>
@@ -217,7 +236,7 @@ const AddDocument41 = () => {
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objDocument41.price} onChange={(e) => {setObjDocument41(prev => ({...prev, price: Number(e.target.value * objDocument41.amount)}))}} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objDocument41.price} onChange={(e) => {setObjDocument41(prev => ({...prev, price: Number(e.target.value)}))}} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>

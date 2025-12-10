@@ -3,13 +3,17 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Pagination from '../Components/Layout/Pagination';
+import axiosInstance from "../Axios/AxiosInstance";
 
 const Sales = () => {
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
-  
+  const [loading, setLoading] = useState(true);
+  const [sales, setSales] = useState([]);
+  const [error, setError] = useState(null);
+
   const breadcrumbItems = [
     { label: t("Sales"), link: "/Sales", active: false }
   ];
@@ -27,12 +31,12 @@ const Sales = () => {
     { label: t("Tax Type"), accessor: "taxType" },
     { label: t("Table Goods Type"), accessor: "tableGoodsType" },
     { label: t("Invoice Number"), accessor: "invoiceNumber" },
-    { label: t("Supplier Name"), accessor: "supplier.name" },
-    { label: t("Supplier Tax Registration Number"), accessor: "supplier.taxRegistrationNumber" },
-    { label: t("Supplier Tax File Number"), accessor: "supplier.taxFileNumber" },
-    { label: t("Address"), accessor: "supplier.address" },
-    { label: t("National ID / Passport Number"), accessor: "supplier.nationalIdOrPassport" },
-    { label: t("Mobile Number"), accessor: "supplier.phoneNumber" },
+    { label: t("Customer Name"), accessor: "Customer.name" },
+    { label: t("Customer Tax Registration Number"), accessor: "Customer.taxRegistrationNumber" },
+    { label: t("Customer Tax File Number"), accessor: "Customer.taxFileNumber" },
+    { label: t("Address"), accessor: "Customer.address" },
+    { label: t("National ID / Passport Number"), accessor: "Customer.nationalIdOrPassport" },
+    { label: t("Mobile Number"), accessor: "Customer.phoneNumber" },
     { label: t("Invoice Date"), accessor: "invoiceDate" },
     { label: t("Product Name"), accessor: "product.name" },
     { label: t("Product Code"), accessor: "product.code" },
@@ -48,14 +52,13 @@ const Sales = () => {
     { label: t("Tax Amount"), accessor: "taxAmount" },
     { label: t("Grand Total"), accessor: "grandTotal" }
   ];
-
   const data = [
     {
       documentType: "Invoice",
       taxType: "Value Added Tax",
       tableGoodsType: "General Goods",
       invoiceNumber: "INV-2025-001",
-      supplier: {
+      customer: {
         name: "Global Supplies Co.",
         taxRegistrationNumber: "123456789",
         taxFileNumber: "TAX-998877",
@@ -85,7 +88,7 @@ const Sales = () => {
       taxType: "Value Added Tax",
       tableGoodsType: "Services",
       invoiceNumber: "CN-2025-032",
-      supplier: {
+      customer: {
         name: "Tech Solutions Egypt",
         taxRegistrationNumber: "987654321",
         taxFileNumber: "TAX-223344",
@@ -111,10 +114,38 @@ const Sales = () => {
       grandTotal: 17100.0
     }
   ];
+ const fetchSales = async (page = 1, pageSize = 10, sortBy = "invoiceDate", isDescending = true) => {
+  setLoading(true);
+  try {
+    const body = {
+      filter: {},
+      pageNumber: page,
+      pageSize,
+      sortBy,
+      isDescending
+    };
 
+    const res = await axiosInstance.post("Purchase/List", body);
+    const data = res.data;
+    console.log('====================================');
+    console.log(res);
+    console.log('====================================');
+
+    if (data.result) {
+      setSales(data.data.data);
+      setTotalCount(data.data.totalCount);
+      setPageNumber(data.data.pageNumber);
+    }
+  } catch (e) {
+    setError("Failed to fetch items");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     // fetch data here if needed
+    fetchSales()
   }, []);
 
   return (
