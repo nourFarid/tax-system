@@ -28,6 +28,9 @@ const Document41 = () => {
       fun: async () => {
         const res = await axiosInstance.post("Document41/ExportExcel", objFilter, { responseType: "blob" });
 
+        if (res.data.result === false) {
+          return alert(res.data.message);
+        }
         const blob = new Blob([res.data], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
