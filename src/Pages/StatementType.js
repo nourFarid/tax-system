@@ -77,7 +77,7 @@ const StatementType = () => {
       Price: 0,
       Code: ""
     });
-    setErrors({});
+    setErrors({});        
     setTouched({});
   };
 

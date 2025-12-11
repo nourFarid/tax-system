@@ -3,14 +3,15 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
+import { useParams } from "react-router-dom";
 
-const AddSales = () => {
+const UpdateSales = () => {
   const { t } = useTranslate();
+  const { id } = useParams();
   const strDocDir = document.documentElement.dir;
-
   const breadcrumbItems = [
     { label: t("Sales"), link: "/Sales", active: false },
-    { label: t("Add"), link: "", active: true },
+    { label: t("Edit"), link: "", active: true },
   ];
 
   // ==========================
@@ -123,6 +124,14 @@ const AddSales = () => {
     if (!response.data.result) alert(response.data.message);
     setObjDocType(response.data.data);
   };
+  const fetchSale = async () => {
+    const response = await axiosInstance.get("/Sales/"+id, {});
+    if (!response.data.result) alert(response.data.message);
+    setObjSale(response.data.data);
+    console.log('====================================');
+    console.log(objSale);
+    console.log('====================================');
+  };
 
   const fetchStatmentType = async () => {
     const response = await axiosInstance.post("/StatementType/ListAll", {});
@@ -157,6 +166,8 @@ const AddSales = () => {
     fetchDocType();
     fetchStatmentType();
     fetchItemType();
+        fetchSale()
+
   },  [objSale.price, objSale.amount]);
 
 return (
@@ -327,4 +338,4 @@ return (
   );
 };
 
-export default AddSales;
+export default UpdateSales;
