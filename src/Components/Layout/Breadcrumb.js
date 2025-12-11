@@ -27,18 +27,33 @@ const Breadcrumb = ({ items = [], button = [] }) => {
 
             {button && button.length > 0 && (
                 <div className="flex gap-2">
-                    {button.map((btn, idx) => (btn.link ? (
-                        <a key={idx} href={btn.link || "#"} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
-                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}&nbsp;&nbsp;
+                    {button.map((btn, idx) => {
+                    if (btn.link) {
+                        return (
+                        <a key={idx} href={btn.link} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`}>
+                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}
                             {btn.label}
                         </a>
-                    ) : btn.dyalog ? (
-                        <button type="button" key={idx} data-bs-toggle="modal" data-bs-target={btn.dyalog} onClick={btn.onClick} className={`${btn.class || "bg-blue-600 hover:bg-blue-700 text-white"} px-3 py-1 rounded text-sm flex items-center transition`}>
-                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}&nbsp;&nbsp;
+                        );
+                    }
+                    if (btn.dyalog) {
+                        return (
+                        <button key={idx} type="button" data-bs-toggle="modal" data-bs-target={btn.dyalog} onClick={btn.onClick} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`}>
+                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}
                             {btn.label}
                         </button>
-                    ) : <></>
-                    ))}
+                        );
+                    }
+                    if (btn.fun) {
+                        return (
+                        <button key={idx} type="button" onClick={btn.fun} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`}>
+                            {btn.icon && <i className={`${btn.icon} mr-1`}></i>}
+                            {btn.label}
+                        </button>
+                        );
+                    }
+                    return null;
+                    })}
                 </div>
             )}
         </div>
