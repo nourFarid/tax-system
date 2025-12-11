@@ -14,6 +14,7 @@ const Supplier = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const objTitle = useMemo(
     () => ({
@@ -63,6 +64,31 @@ const Supplier = () => {
     // { label: t("Customer"), accessor: "IsCustomer" },
   ];
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!objDocType.Name || objDocType.Name.trim() === "") {
+      newErrors.Name = "Name is required";
+    }
+
+    if (!objDocType.NationalID || objDocType.NationalID.trim() === "") {
+      newErrors.NationalID = "National ID is required";
+    }
+
+    // Check both AddressLine (for Add) and Address (for Edit)
+    const address = objDocType.AddressLine || objDocType.Address;
+    if (!address || address.trim() === "") {
+      newErrors.Address = "Address is required";
+    }
+
+    if (!objDocType.TaxNumber || objDocType.TaxNumber.trim() === "") {
+      newErrors.TaxNumber = "Tax Number is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const fetchSuppliers = async (page = 1) => {
     setLoading(true);
     try {
@@ -70,9 +96,10 @@ const Supplier = () => {
       const data = res.data;
 
       if (data.result) {
-        const itemsList = data.data;
-        setSuppliers(itemsList);
-        setTotalCount(itemsList.length);
+        // Filter to only show suppliers (where isSupplier is true)
+        const suppliersList = data.data.filter(item => item.isSupplier === true);
+        setSuppliers(suppliersList);
+        setTotalCount(suppliersList.length);
         setPageNumber(page);
       }
     } catch (e) {
@@ -96,35 +123,30 @@ const Supplier = () => {
 
   const handleEdit = (row) => {
     setObjDocType({
-      Id: row.id || -1,
-      NationalID: row.NationalID || "",
-      Name: row.Name || "",
-      AddressLine: row.AddressLine || "",
-      TaxNumber: row.TaxNumber || "",
-      FileNumber: row.FileNumber || "",
-      IsSupplier: row.IsSupplier || false,
-      IsCustomer: row.IsCustomer || false,
+      Id: row.id,
+      Name: row.name,
+      NationalID: row.nationalId,
+      PassportNumber: row.passportNumber,
+      TaxNumber: row.taxRegistrationNumber,
+      Address: row.address,
+      IsCustomer: row.isCustomer,
+      IsSupplier: row.isSupplier
     });
 
-
-    const modalElement = document.getElementById("EditSupplier");
-    const modal = new Modal(modalElement);
+    const modalEl = document.getElementById("EditSupplier");
+    const modal = new Modal(modalEl);
     modal.show();
   };
   const handleShow = (row) => { };
   const handleDelete = (row) => {
     setObjDocType({
-      Id: row.id || -1,
-      NationalID: row.NationalID || "",
-      Name: row.Name || "",
-      AddressLine: row.AddressLine || "",
-      TaxNumber: row.TaxNumber || "",
-      FileNumber: row.FileNumber || "",
-      PhoneNumber: row.PhoneNumber || "",
-      ErrandCode: row.ErrandCode || "",
-      ErrandName: row.ErrandName || "",
-      IsSupplier: row.IsSupplier || false,
-      IsCustomer: row.IsCustomer || false,
+      Id: row.id,
+      NationalID: row.nationalId || "",
+      Name: row.name || "",
+      Address: row.address || "",
+      TaxNumber: row.taxRegistrationNumber || "",
+      IsSupplier: row.isSupplier || false,
+      IsCustomer: row.isCustomer || false,
     });
 
     const modalElement = document.getElementById("DeleteSupplier");
@@ -138,6 +160,7 @@ const Supplier = () => {
   };
 
   const handleSave = async () => {
+    if (!validateForm()) return;
     try {
       // بناء الـ payload بناءً على objDocType
       const payload = {
@@ -180,14 +203,77 @@ const Supplier = () => {
       console.error("Failed to add supplier", error);
     }
   };
+  const handleUpdate = async () => {
+    if (!validateForm()) return;
+    try {
+      const payload = {
+        Id: objDocType.Id,
+        Name: objDocType.Name,
+        NationalID: objDocType.NationalID,
+        PassportNumber: objDocType.PassportNumber,
+        TaxRegistrationNumber: objDocType.TaxNumber,
+        Address: objDocType.Address,
+        IsCustomer: objDocType.IsCustomer,
+        IsSupplier: objDocType.IsSupplier
+      };
 
+      console.log("Sending update payload:", payload);
 
-  const handleUpdate = () => {
-    // the add request should be here
+      const response = await axiosInstance.put(
+        "CustomerSupplier/" + objDocType.Id,
+        payload
+      );
+
+      console.log("Update response:", response.data);
+
+      // reset form
+      setObjDocType({
+        Id: null,
+        Name: "",
+        NationalID: "",
+        PassportNumber: "",
+        TaxNumber: "",
+        Address: "",
+        IsCustomer: false,
+        IsSupplier: true
+      });
+
+      // close modal
+      const modalEl = document.getElementById("EditSupplier");
+      const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
+      modal.hide();
+
+      // reload table
+      await fetchSuppliers(pageNumber);
+
+      // showSuccess("Success", "Supplier updated successfully!");
+
+    } catch (error) {
+      console.log(error);
+      //showError("Error", "Failed to update supplier");
+    }
   };
 
-  const Delete = () => {
-    // the add request should be here
+
+
+  const Delete = async () => {
+    try {
+      const response = await axiosInstance.delete(`CustomerSupplier/${objDocType.Id}`);
+
+      if (response.status === 200 || response.status === 204) {
+        console.log("Supplier deleted successfully");
+
+        // Close modal
+        const modalEl = document.getElementById("DeleteSupplier");
+        const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
+        modal.hide();
+
+        // Refresh the table
+        await fetchSuppliers(pageNumber);
+      }
+    } catch (error) {
+      console.error("Failed to delete supplier", error);
+    }
   };
 
   useEffect(() => {
@@ -249,26 +335,29 @@ const Supplier = () => {
               <div className="row">
                 <div className="col-md-6">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
                 <div className="col-md-6">
                   <label className="form-label">{objTitle.NationalID}</label>
-                  <input type="text" name="NationalID" value={objDocType.NationalID} onChange={handleChange} className="form-control" placeholder={objTitle.NationalID} />
+                  <input type="text" name="NationalID" value={objDocType.NationalID} onChange={handleChange} className={`form-control ${errors.NationalID ? "is-invalid" : ""}`} placeholder={objTitle.NationalID} />
+                  {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-12">
                   <label className="form-label">{objTitle.AddressLine}</label>
-                  <input type="text" name="AddressLine" value={objDocType.AddressLine} onChange={handleChange} className="form-control" placeholder={objTitle.AddressLine} />
-
+                  <input type="text" name="AddressLine" value={objDocType.AddressLine} onChange={handleChange} className={`form-control ${errors.Address ? "is-invalid" : ""}`} placeholder={objTitle.AddressLine} />
+                  {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
                 </div>
               </div>
               <div className="row">
 
                 <div className="col-md-4">
                   <label className="form-label">{objTitle.TaxNumber}</label>
-                  <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className="form-control" placeholder={objTitle.TaxNumber} />
+                  <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
+                  {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
                 </div>
 
 
@@ -351,9 +440,10 @@ const Supplier = () => {
                     name="Name"
                     value={objDocType.Name}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
                     placeholder={objTitle.Name}
                   />
+                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
                 <div className="col-md-6">
@@ -363,9 +453,10 @@ const Supplier = () => {
                     name="NationalID"
                     value={objDocType.NationalID}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.NationalID ? "is-invalid" : ""}`}
                     placeholder={objTitle.NationalID}
                   />
+                  {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
                 </div>
               </div>
 
@@ -374,27 +465,17 @@ const Supplier = () => {
                   <label className="form-label">{objTitle.AddressLine}</label>
                   <input
                     type="text"
-                    name="AddressLine"
-                    value={objDocType.AddressLine}
+                    name="Address"
+                    value={objDocType.Address}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.Address ? "is-invalid" : ""}`}
                     placeholder={objTitle.AddressLine}
                   />
+                  {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
                 </div>
               </div>
 
               <div className="row">
-                <div className="col-md-4">
-                  <label className="form-label">{objTitle.PhoneNumber}</label>
-                  <input
-                    type="text"
-                    name="PhoneNumber"
-                    value={objDocType.PhoneNumber}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.PhoneNumber}
-                  />
-                </div>
 
                 <div className="col-md-4">
                   <label className="form-label">{objTitle.TaxNumber}</label>
@@ -403,48 +484,12 @@ const Supplier = () => {
                     name="TaxNumber"
                     value={objDocType.TaxNumber}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`}
                     placeholder={objTitle.TaxNumber}
                   />
+                  {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
                 </div>
 
-                <div className="col-md-4">
-                  <label className="form-label">{objTitle.FileNumber}</label>
-                  <input
-                    type="text"
-                    name="FileNumber"
-                    value={objDocType.FileNumber}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.FileNumber}
-                  />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.ErrandCode}</label>
-                  <input
-                    type="text"
-                    name="ErrandCode"
-                    value={objDocType.ErrandCode}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.ErrandCode}
-                  />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.ErrandName}</label>
-                  <input
-                    type="text"
-                    name="ErrandName"
-                    value={objDocType.ErrandName}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.ErrandName}
-                  />
-                </div>
               </div>
 
               <div className="row mt-3">
