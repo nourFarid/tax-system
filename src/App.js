@@ -12,6 +12,7 @@ const Document41 = lazy(()=> import ('./Pages/Document41'));
 const Purchase = lazy(()=> import ('./Pages/Purchase'));
 const AddPurchase = lazy(()=> import ('./Pages/AddPurchase'));
 const AddDocument41 = lazy(()=> import ('./Pages/AddDocument41'));
+const EditDocument41 = lazy(()=> import ('./Pages/EditDocument41'));
 const Sales = lazy(()=> import ('./Pages/Sales'));
 const AddSales = lazy(()=> import ('./Pages/AddSales'));
 const TaxType = lazy(()=> import ('./Pages/TaxType'));
@@ -46,6 +47,7 @@ function App() {
               <Route path="/Setup" element={<Setup/>} />
               <Route path="/Document41" element={<Document41/>} />
               <Route path="/Document41/Add" element={<AddDocument41/>} />
+              <Route path="/Document41/Edit" element={<EditDocument41/>} />
               <Route path="/Setup/DocumentType" element={<DocumentType/>} />
               <Route path="/ExamplePage" element={<ExamplePage/>} />
               <Route path="/Setup/StatementType" element={<StatementType/>} />;

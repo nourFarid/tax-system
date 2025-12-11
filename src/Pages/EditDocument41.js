@@ -63,6 +63,7 @@ const AddDocument41 = () => {
     }));
     return arr;
   };
+
   const breadcrumbItems = [
     { label: t("Document 41"), link: "/Document41", active: false },
     { label: t("Add"), link: "", active: true }
@@ -99,11 +100,12 @@ const AddDocument41 = () => {
     }
   }
 
-  const Add = async () => {
-    let response = await axiosInstance.post("Document41/Add", objDocument41)
+  const Update = async () => {
+    let response = await axiosInstance.put("Document41/Update", objDocument41)
     if (response.data.result) {
       alert(response.data.message);
       reset();
+      window.location.href = `/Document41`;
     }
   }
 
@@ -131,8 +133,37 @@ const AddDocument41 = () => {
     setStrFiscalYear("Date Fiscal Year");
   }
 
+  const loadDocument41 = async () => {
+    const res = await axiosInstance.post("Document41/List", {pageNumber: 1, pageSize: 1, filter: {id: (new URLSearchParams(window.location.search).get("id"))}});
+    const result = res.data;
+    if (!result.result) {
+      alert(result.message);
+      return;
+    }
+    setObjDocument41({
+      id: result.data.data[0].id,
+      item: result.data.data[0].item,
+      itemId: result.data.data[0].itemId,
+      supplierId: result.data.data[0].supplierId,
+      transactionDate: result.data.data[0].transactionDate,
+      fiscalYearId: result.data.data[0].fiscalYearId,
+      quarterId: result.data.data[0].quarterId,
+      transactionNatureId: result.data.data[0].transactionNatureId,
+      amount: result.data.data[0].amount,
+      taxPercent: result.data.data[0].taxPercent,
+      price: result.data.data[0].price
+    });
+    setObjSupplier({
+      label: "[x.taxRegistrationNumber] x.name".replace("x.name", result.data.data[0].supplier.name).replace("x.taxRegistrationNumber", result.data.data[0].supplier.taxRegistrationNumber??"-"),
+      value: result.data.data[0].supplier.id,
+      objSupplier: result.data.data[0].supplier
+    });
+    UpdateFiscalYear(result.data.data[0].transactionDate);
+  };
+
   useEffect(() => {
     listTransactionNature();
+    loadDocument41();
   }, []);
 
   return (
@@ -200,7 +231,7 @@ const AddDocument41 = () => {
 
         <div className="row p-4" dir={strDocDir === "rtl" ? "ltr" : "rtl"}>
           <div className="col-md-3 me-2">
-            <button type="button" className="btn btn-success" onClick={Add}>{t("Add")}</button>
+            <button type="button" className="btn btn-success" onClick={Update}>{t("Save")}</button>
           </div>
         </div>
       </div>
