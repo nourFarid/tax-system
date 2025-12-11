@@ -5,6 +5,7 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 const Customer = () => {
   const { t } = useTranslate();
@@ -39,6 +40,7 @@ const Customer = () => {
   );
 
   const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: false });
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -159,6 +161,8 @@ const Customer = () => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
+
+
     try {
       const payload = {
         NationalID: objDocType.NationalID,
@@ -166,32 +170,38 @@ const Customer = () => {
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
         isSupplier: objDocType.IsSupplier || false,
-        isCustomer: true  // Ensure it's a Customer
+        isCustomer: true
       };
 
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
+      console.log("Add response:", response.data);
 
-      if (response.status === 200 || response.status === 201) {
-        console.log("Customer added:", response.data);
-
+  
+       
+        // Reset form
         setObjDocType({
           NationalID: "",
           Name: "",
           Address: "",
           TaxNumber: "",
+          AddressLine: "",
           IsSupplier: false,
           IsCustomer: false
         });
 
+        // Close modal
         const modalEl = document.getElementById("AddCustomer");
         const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
         modal.hide();
 
         await fetchCustomers(pageNumber);
-        console.log("Customer added successfully!");
-      }
+
+      showSuccess("Success", "Customer updated successfully!");
+      
     } catch (error) {
-      console.error("Failed to add customer", error);
+      console.error("Failed to add Customer", error);
+      showError("Error", error.response?.data?.message || "Failed to add Customer");
+      
     }
   };
 
@@ -235,8 +245,11 @@ const Customer = () => {
 
       await fetchCustomers(pageNumber);
 
+      showSuccess("Success", "Customer updated successfully!");
+
     } catch (error) {
       console.log(error);
+      showError("Error", "Failed to update customer");
     }
   };
 
@@ -247,6 +260,8 @@ const Customer = () => {
       if (response.status === 200 || response.status === 204) {
         console.log("Customer deleted successfully");
 
+        showSuccess("Success", "Customer deleted successfully!");
+
         const modalEl = document.getElementById("DeleteCustomer");
         const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
         modal.hide();
@@ -255,6 +270,7 @@ const Customer = () => {
       }
     } catch (error) {
       console.error("Failed to delete customer", error);
+      showError("Error", "Failed to delete customer");
     }
   };
 
@@ -527,6 +543,7 @@ const Customer = () => {
           </div>
         </div>
       </div>
+      <SwalComponent />
     </>
   );
 };

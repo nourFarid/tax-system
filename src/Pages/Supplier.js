@@ -5,6 +5,7 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 const Supplier = () => {
   const { t } = useTranslate();
@@ -39,7 +40,7 @@ const Supplier = () => {
   );
 
   const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: false });
-
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
     { label: t("Supplier"), active: true },
@@ -162,47 +163,52 @@ const Supplier = () => {
   const handleSave = async () => {
     if (!validateForm()) return;
     try {
-      // بناء الـ payload بناءً على objDocType
       const payload = {
         NationalID: objDocType.NationalID,
         Name: objDocType.Name,
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
-        isSupplier: true,       // نتأكد إنها Supplier
+        isSupplier: true,
         isCustomer: objDocType.IsCustomer || false
       };
 
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
+      console.log("Add response:", response.data);
 
-      if (response.status === 200 || response.status === 201) {
-        console.log("Supplier added:", response.data);
-
-        // تفريغ الفورم بعد الإضافة
+      // Check HTTP status for success (2xx range)
+      if (response.status >= 200 && response.status < 300) {
+        // Reset form
         setObjDocType({
           NationalID: "",
           Name: "",
           Address: "",
           TaxNumber: "",
-          FileNumber: "",
-          PhoneNumber: "",
-          ErrandCode: "",
-          ErrandName: "",
+          AddressLine: "",
           IsSupplier: false,
           IsCustomer: false
         });
 
-        // إغلاق المودال
+        // Close modal
         const modalEl = document.getElementById("AddSupplier");
         const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
         modal.hide();
 
-        // ممكن تعمل refresh للجدول أو fetch من جديد
-        console.log("Supplier added successfully!");
+        // Refresh the table
+        await fetchSuppliers(pageNumber);
+
+        // Show success message after modal is fully closed
+        setTimeout(() => {
+          showSuccess("Success", "Supplier added successfully!");
+        }, 300);
+      } else {
+        showError("Error", response.data?.message || "Failed to add Supplier");
       }
     } catch (error) {
       console.error("Failed to add supplier", error);
+      showError("Error", error.response?.data?.message || "Failed to add Supplier");
     }
   };
+
   const handleUpdate = async () => {
     if (!validateForm()) return;
     try {
@@ -246,11 +252,12 @@ const Supplier = () => {
       // reload table
       await fetchSuppliers(pageNumber);
 
-      // showSuccess("Success", "Supplier updated successfully!");
+      // Show success message
+      showSuccess("Success", "Supplier updated successfully!");
 
     } catch (error) {
       console.log(error);
-      //showError("Error", "Failed to update supplier");
+      showError("Error", "Failed to update supplier");
     }
   };
 
@@ -263,6 +270,9 @@ const Supplier = () => {
       if (response.status === 200 || response.status === 204) {
         console.log("Supplier deleted successfully");
 
+        // Show success message
+        showSuccess("Success", "Supplier deleted successfully!");
+
         // Close modal
         const modalEl = document.getElementById("DeleteSupplier");
         const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
@@ -273,6 +283,7 @@ const Supplier = () => {
       }
     } catch (error) {
       console.error("Failed to delete supplier", error);
+      showError("Error", "Failed to delete supplier");
     }
   };
 
@@ -561,6 +572,7 @@ const Supplier = () => {
           </div>
         </div>
       </div>
+      <SwalComponent />
     </>
   );
 };
