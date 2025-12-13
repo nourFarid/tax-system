@@ -34,8 +34,7 @@ const Sales = () => {
     { label: t("Customer Name"), accessor: "customerSupplierName" },
     { label: t("Tax Registration Number"), accessor: "customerSupplierTaxRegistrationNumber" },
     { label: t("Address"), accessor: "customerSupplierAddress" },
-    { label: t("National ID"), accessor: "customerSupplierNationalId" },
-    { label: t("Passport Number"), accessor: "customerSupplierPassportNumber" },
+    { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Invoice Date"), accessor: "invoiceDate" },
     { label: t("Item Name"), accessor: "item.name" },
     { label: t("Statment Type"), accessor: "statementType.name" },
@@ -91,7 +90,7 @@ const Sales = () => {
         data={sales}
         showActions={true}
 onEdit={(row) => {
-  navigate("/Sales/UpdateSale");
+  navigate(`/Sales/UpdateSale/${row.id}`);
 }}
 
 

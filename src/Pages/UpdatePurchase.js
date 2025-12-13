@@ -6,7 +6,7 @@ import AsyncSelect from "react-select/async";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const UpdateSales = () => {
+const Updatepurchases = () => {
     const navigate = useNavigate();
 
   const { t } = useTranslate();
@@ -14,20 +14,20 @@ const UpdateSales = () => {
   const strDocDir = document.documentElement.dir;
 
   const breadcrumbItems = [
-    { label: t("Sales"), link: "/Sales", active: false },
+    { label: t("Purchase"), link: "/Purchase", active: false },
     { label: t("Edit"), link: "", active: true },
   ];
 
   // ==========================
   // STATE
   // ==========================
-  const [objCustomer, setObjCustomer] = useState(null);
+  const [objSupplier, setObjSupplier] = useState(null);
   const [objDocType, setObjDocType] = useState([]);
   const [objStatmentType, setObjStatmentType] = useState([]);
   const [objItemType, setObjItemType] = useState([]);
   const [objItem, setObjItem] = useState(null);
 
-  const [objSale, setObjSale] = useState({
+  const [objpurchase, setObjpurchase] = useState({
     id: 0,
     docId: 0,
     documentTypeId: -1,
@@ -37,7 +37,7 @@ const UpdateSales = () => {
     statementTypeId: -1,
     itemTypeId: -1,
     supplierId: -1, // purchase
-    customerId: -1, // sales
+    customerId: -1, // purchases
     price: 0,
     amount: 1,
     tax: 14,
@@ -61,16 +61,16 @@ const UpdateSales = () => {
     }));
   };
 
-  const arrCustomer = async (strInput) => {
+  const arrSupplier = async (strInput) => {
     if (strInput.length < 2) return [];
     const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
       NameIdentity: strInput,
-      IsCustomer: true,
+      IsSupplier: true,
     });
     return res.data.data.map((x) => ({
       label: `[${x.taxRegistrationNumber ?? "-"}] ${x.name}`,
       value: x.id,
-      objCustomer: x,
+      objSupplier: x,
     }));
   };
 
@@ -95,48 +95,48 @@ const UpdateSales = () => {
     else setObjItemType(response.data.data);
   };
 
-  const fetchSale = async () => {
-    const response = await axiosInstance.get("/Sales/" + id);
+  const fetchpurchase = async () => {
+    const response = await axiosInstance.get("/Purchase/" + id);
     if (!response.data.result) return alert(response.data.message);
 
-    const sale = response.data.data;
+    const purchase = response.data.data;
 
-    setObjSale({
-      id: sale.id,
-      docId: sale.docId,
-      documentTypeId: sale.documentType?.id ?? -1,
-      invoiceNumber: sale.invoiceNumber ?? "",
-      invoiceDate: sale.invoiceDate ?? "",
-      itemId: sale.item?.id ?? -1,
-      statementTypeId: sale.statementType?.id ?? -1,
-      itemTypeId: sale.itemType?.id ?? -1,
-      supplierId: sale.customerSupplierId ?? -1,
-      customerId: sale.customerId ?? -1,
-      price: sale.item?.price ?? 0,
-      amount: sale.amount ?? 1,
-      tax: sale.tax ?? 14,
+    setObjpurchase({
+      id: purchase.id,
+      docId: purchase.docId,
+      documentTypeId: purchase.documentType?.id ?? -1,
+      invoiceNumber: purchase.invoiceNumber ?? "",
+      invoiceDate: purchase.invoiceDate ?? "",
+      itemId: purchase.item?.id ?? -1,
+      statementTypeId: purchase.statementType?.id ?? -1,
+      itemTypeId: purchase.itemType?.id ?? -1,
+      supplierId: purchase.customerSupplierId ?? -1,
+      customerId: purchase.customerId ?? -1,
+      price: purchase.item?.price ?? 0,
+      amount: purchase.amount ?? 1,
+      tax: purchase.tax ?? 14,
     });
 
-    if (sale.customerSupplierId) {
-      setObjCustomer({
-        label: `[${sale.customerSupplierTaxRegistrationNumber ?? "-"}] ${sale.customerSupplierName}`,
-        value: sale.customerSupplierId,
-        objCustomer: {
-          id: sale.customerSupplierId,
-          name: sale.customerSupplierName,
-          taxRegistrationNumber: sale.customerSupplierTaxRegistrationNumber,
-          nationalId: sale.customerSupplierNationalId,
-          passportNumber: sale.customerSupplierPassportNumber,
-          address: sale.customerSupplierAddress,
+    if (purchase.customerSupplierId) {
+      setObjSupplier({
+        label: `[${purchase.customerSupplierTaxRegistrationNumber ?? "-"}] ${purchase.customerSupplierName}`,
+        value: purchase.customerSupplierId,
+        objSupplier: {
+          id: purchase.customerSupplierId,
+          name: purchase.customerSupplierName,
+          taxRegistrationNumber: purchase.customerSupplierTaxRegistrationNumber,
+          nationalId: purchase.customerSupplierNationalId,
+          passportNumber: purchase.customerSupplierPassportNumber,
+          address: purchase.customerSupplierAddress,
         },
       });
     }
 
-    if (sale.item) {
+    if (purchase.item) {
       setObjItem({
-        label: `[${sale.item.code}] ${sale.item.name}`,
-        value: sale.item.id,
-        objItem: sale.item,
+        label: `[${purchase.item.code}] ${purchase.item.name}`,
+        value: purchase.item.id,
+        objItem: purchase.item,
       });
     }
   };
@@ -145,7 +145,7 @@ const UpdateSales = () => {
     fetchDocType();
     fetchStatmentType();
     fetchItemType();
-    fetchSale();
+    fetchpurchase();
   }, []);
 
   // ==========================
@@ -154,45 +154,45 @@ const UpdateSales = () => {
   const Update = async () => {
     try {
       const body = {
-        id: objSale.id,
-        docId: objSale.docId,
-        documentTypeId: objSale.documentTypeId,
-        invoiceNumber: objSale.invoiceNumber,
-        invoiceDate: objSale.invoiceDate,
-        itemId: objSale.itemId,
-        statementTypeId: objSale.statementTypeId,
-        itemTypeId: objSale.itemTypeId,
-        supplierId: objSale.supplierId,
-        customerId: objSale.customerId,
-        price: objSale.price,
-        amount: objSale.amount,
-        tax: objSale.tax,
+        id: objpurchase.id,
+        docId: objpurchase.docId,
+        documentTypeId: objpurchase.documentTypeId,
+        invoiceNumber: objpurchase.invoiceNumber,
+        invoiceDate: objpurchase.invoiceDate,
+        itemId: objpurchase.itemId,
+        statementTypeId: objpurchase.statementTypeId,
+        itemTypeId: objpurchase.itemTypeId,
+        supplierId: objpurchase.supplierId,
+        customerId: objpurchase.customerId,
+        price: objpurchase.price,
+        amount: objpurchase.amount,
+        tax: objpurchase.tax,
       };
 
-      const response = await axiosInstance.put("/Sales/Update", body);
+      const response = await axiosInstance.put("/purchase/Update", body);
 
       if (response.data.result) 
-        {alert("Sale updated successfully");
-       navigate(`/Sales`);}
+        {alert("purchase updated successfully");
+       navigate(`/purchases`);}
       else alert(response.data.message);
     } catch (err) {
       console.error(err);
-      alert("Failed to update sale");
+      alert("Failed to update purchase");
     }
   };
 
   // ==========================
   // CALCULATIONS
   // ==========================
-  const totalAmount = objSale.price * objSale.amount;
-  const taxAmount = (totalAmount * objSale.tax) / 100;
+  const totalAmount = objpurchase.price * objpurchase.amount;
+  const taxAmount = (totalAmount * objpurchase.tax) / 100;
   const netAmount = totalAmount + taxAmount;
 
   return (
     <>
       <Breadcrumb items={breadcrumbItems} />
 
-      {/* Sale Details */}
+      {/* purchase Details */}
       <div className="border rounded p-3 mb-2 bg-white shadow-lg">
         <div className="row p-4">
           <div className="col-md-6">
@@ -200,11 +200,11 @@ const UpdateSales = () => {
             <AsyncSelect
               cacheOptions
               defaultOptions={false}
-              loadOptions={arrCustomer}
-              value={objCustomer}
+              loadOptions={arrSupplier}
+              value={objSupplier}
               onChange={(option) => {
-                setObjCustomer(option);
-                setObjSale((prev) => ({ ...prev, supplierId: option.value }));
+                setObjSupplier(option);
+                setObjpurchase((prev) => ({ ...prev, supplierId: option.value }));
               }}
             />
           </div>
@@ -213,9 +213,9 @@ const UpdateSales = () => {
             <label>{t("Document Type")}</label>
             <select
               className="mt-2 form-control"
-              value={objSale.documentTypeId}
+              value={objpurchase.documentTypeId}
               onChange={(e) =>
-                setObjSale({ ...objSale, documentTypeId: Number(e.target.value) })
+                setObjpurchase({ ...objpurchase, documentTypeId: Number(e.target.value) })
               }
             >
               <option value={-1}>{t("Document Type")}</option>
@@ -234,9 +234,9 @@ const UpdateSales = () => {
             <label>{t("Item Type")}</label>
             <select
               className="mt-2 form-control"
-              value={objSale.itemTypeId}
+              value={objpurchase.itemTypeId}
               onChange={(e) =>
-                setObjSale({ ...objSale, itemTypeId: Number(e.target.value) })
+                setObjpurchase({ ...objpurchase, itemTypeId: Number(e.target.value) })
               }
             >
               <option value={-1}>{t("Item Type")}</option>
@@ -252,9 +252,9 @@ const UpdateSales = () => {
             <label>{t("Statement Type")}</label>
             <select
               className="mt-2 form-control"
-              value={objSale.statementTypeId}
+              value={objpurchase.statementTypeId}
               onChange={(e) =>
-                setObjSale({ ...objSale, statementTypeId: Number(e.target.value) })
+                setObjpurchase({ ...objpurchase, statementTypeId: Number(e.target.value) })
               }
             >
               <option value={-1}>{t("Statement Type")}</option>
@@ -273,9 +273,9 @@ const UpdateSales = () => {
             <input
               type="text"
               className="mt-2 form-control"
-              value={objSale.invoiceNumber}
+              value={objpurchase.invoiceNumber}
               onChange={(e) =>
-                setObjSale({ ...objSale, invoiceNumber: e.target.value })
+                setObjpurchase({ ...objpurchase, invoiceNumber: e.target.value })
               }
             />
           </div>
@@ -285,9 +285,9 @@ const UpdateSales = () => {
             <input
               type="date"
               className="mt-2 form-control"
-              value={objSale.invoiceDate}
+              value={objpurchase.invoiceDate}
               onChange={(e) =>
-                setObjSale({ ...objSale, invoiceDate: e.target.value })
+                setObjpurchase({ ...objpurchase, invoiceDate: e.target.value })
               }
             />
           </div>
@@ -304,7 +304,7 @@ const UpdateSales = () => {
               value={objItem}
               onChange={(option) => {
                 setObjItem(option);
-                setObjSale((prev) => ({
+                setObjpurchase((prev) => ({
                   ...prev,
                   itemId: option.value,
                   price: option.objItem?.price ?? 0,
@@ -318,9 +318,9 @@ const UpdateSales = () => {
             <input
               type="number"
               className="mt-2 form-control"
-              value={objSale.price}
+              value={objpurchase.price}
               onChange={(e) =>
-                setObjSale({ ...objSale, price: Number(e.target.value) })
+                setObjpurchase({ ...objpurchase, price: Number(e.target.value) })
               }
             />
           </div>
@@ -330,7 +330,7 @@ const UpdateSales = () => {
             <input
               type="number"
               className="mt-2 form-control"
-              value={objSale.tax}
+              value={objpurchase.tax}
               disabled
             />
           </div>
@@ -340,7 +340,7 @@ const UpdateSales = () => {
             <input
               type="number"
               className="mt-2 form-control"
-              value={objSale.amount}
+              value={objpurchase.amount}
               disabled
             />
           </div>
@@ -366,4 +366,4 @@ const UpdateSales = () => {
   );
 };
 
-export default UpdateSales;
+export default Updatepurchases;

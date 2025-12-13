@@ -59,7 +59,7 @@ const Document41 = () => {
   ];
 
   const [arrData, setArrData] = useState([]);
-  const [objFilter, setObjFilter] = useState({quarterId:12});
+  const [objFilter, setObjFilter] = useState({});
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
