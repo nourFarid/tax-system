@@ -115,7 +115,7 @@ const Document41 = () => {
   return (
     <>
       <Breadcrumb items={breadcrumbItems} button={breadcrumbButtons} />
-      <div className="bg-white p-3 mb-3">
+      <div className="bg-white p-3 mb-3 shadow-sm shadow-lg">
         <h4 className="font-semibold" style={{ color: "blue" }}>{t("Filter")}</h4>
         <div className="row">
           <div className="col-md-3 mb-3">
@@ -158,7 +158,7 @@ const Document41 = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white p-3">
+      <div className="bg-white p-3 shadow-sm shadow-lg">
         <Table
           columns={columns}
           data={arrData}
