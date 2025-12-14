@@ -1,18 +1,46 @@
 import { useEffect, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import AsyncSelect from "react-select/async";
 import axiosInstance from "../Axios/AxiosInstance";
+import AsyncSelect from "react-select/async";
+import { useNavigate } from "react-router-dom";
+
 const AddPurchase = () => {
   const { t } = useTranslate();
+  const strDocDir = document.documentElement.dir;
+  const navigate = useNavigate();
 
   const breadcrumbItems = [
-    { label: t("Purchase"), link: "/Purchase", active: false },
-    { label: t("Add"), link: "", active: true }
+    { label: t("purchase"), link: "/purchase", active: false },
+    { label: t("Add"), link: "", active: true },
   ];
 
-  const strDocDir = document.documentElement.dir;
+  // ==========================
+  // STATE
+  // ==========================
+  const [objSupplier, setObjSupplier] = useState(null);
+  const [objDocType, setObjDocType] = useState(null);
+  const [objStatmentType, setObjStatmentType] = useState(null);
+  const [objItemType, setObjItemType] = useState(null);
   const [objItem, setObjItem] = useState(null);
+
+
+  const [objPurchase, setObjPurchase] = useState({
+    documentTypeId: -1,
+    invoiceNumber: "",
+    invoiceDate: "",
+    itemId: -1,
+    statementTypeId: -1,
+    itemTypeId: -1,
+    supplierId: -1,
+    price: 0,
+    amount: 1,
+    tax: 14,
+  });
+
+  // ==========================
+  // FUNCTIONS (API)
+  // ==========================
   const arrItem = async (strInput) => {
     if (strInput.length < 2) {
       return [];
@@ -21,114 +49,282 @@ const AddPurchase = () => {
       NameCode: strInput
     };
     const res = await axiosInstance.post("Item/ListAll", objFilter);
-    console.log(res);
 
-    let arr = res.data.map(x => ({
-      label: x.name,
-      value: x.id
+    if (res.data.data == null || res.data.data.length == 0) {
+      let arr = [
+        {
+        label: strInput,
+        value: -1,
+        objItem: {
+          name: strInput,
+          code: "",
+          price: 0
+        }
+      }]
+      ;
+      return arr;
+    }
+
+    let arr = res.data.data.map(x => ({
+      label: "[" + x.code + "] " + x.name,
+      value: x.id,
+      objItem: x
     }));
-    console.log(arr);
     return arr;
   };
-  useEffect(() => {
-    // fetch data here if needed
-  }, []);
 
-  return (
+  const arrSupplier = async (strInput) => {
+    if (strInput.length < 2) return [];
+
+    const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
+      NameIdentity: strInput,
+      IsSupplier: true,
+    });
+
+    return res.data.data.map((x) => ({
+      label: `[${x.taxRegistrationNumber ?? "-"}] ${x.name}`,
+      value: x.id,
+      objSupplier: x,
+    }));
+  };
+
+  // ==========================
+  // RESET
+  // ==========================
+  const resetSale = () => {
+    setObjPurchase({
+      documentTypeId: -1,
+      invoiceNumber: "",
+      invoiceDate: "",
+      itemId: -1,
+      statementTypeId: -1,
+      itemTypeId: -1,
+      supplierId: -1,
+      price: 0,
+      amount: 1,
+      tax: 14,
+    });
+
+    setObjItem(null);
+    setObjSupplier(null);
+  };
+
+  // ==========================
+  // ADD SALE (POST)
+  // ==========================
+  const Add = async () => {
+      const response = await axiosInstance.post("/Purchase/Add", objPurchase);
+      if (response.data.result) {
+        alert(response.data.message);
+        resetSale();
+           navigate(`/Purchase`);
+      
+      }
+    
+  };
+
+  const fetchDocType = async () => {
+    const response = await axiosInstance.post("/DocumentType/ListAll", {});
+    if (!response.data.result) alert(response.data.message);
+    setObjDocType(response.data.data);
+  };
+
+  const fetchStatmentType = async () => {
+    const response = await axiosInstance.post("/StatementType/ListAll", {});
+    if (!response.data.result) alert(response.data.message);
+    setObjStatmentType(response.data.data);
+  };
+
+  const fetchItemType = async () => {
+    const response = await axiosInstance.post("/ItemType/ListAll", {});
+    if (!response.data.result) alert(response.data.message);
+    setObjItemType(response.data.data);
+  };
+
+  // ==========================
+  // CALCULATIONS
+  // ==========================
+  const totalAmount = objPurchase.price * objPurchase.amount;
+  const taxAmount = (totalAmount * objPurchase.tax) / 100;
+  const netAmount = totalAmount + taxAmount;
+
+  useEffect(() => {
+      if (objPurchase.itemId === -1) {
+      setObjPurchase(prev => ({
+        ...prev,
+        item: {
+          ...prev.item,
+          price: prev.price / prev.amount
+        }
+      }));
+    }
+
+    fetchDocType();
+    fetchStatmentType();
+    fetchItemType();
+  },  [objPurchase.price, objPurchase.amount]);
+
+return (
     <>
       <Breadcrumb items={breadcrumbItems} />
+
       <div className="border rounded p-3 mb-2 bg-white shadow-lg">
         <div className="row p-4">
-          <div className="col-md-4 form-group">
-            <h1><strong className="text-primary">{t("Purchase")}</strong></h1>
+          <div className="col-md-4">
+            <h1>
+              <strong className="text-primary">{t("Purchase")}</strong>
+            </h1>
           </div>
         </div>
 
         <div className="row p-4">
-          <div className="col-md-4 form-group">
-            <label>{t("Customer")}</label>
-            <input type="text" className="mt-2 form-control" placeholder="server side autocomplete" />
+          <div className="col-md-6">
+            <label>{t("Supplier")}</label>
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={false}
+              loadOptions={arrSupplier}
+              value={objSupplier}
+              onChange={(option) => {
+                setObjSupplier(option);
+                setObjPurchase({ ...objPurchase, supplierId: option.value });
+              }}
+            />
           </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Tax Type")}</label>
-            <select className="mt-2 form-control">
-              <option >{t("Tax Type")}</option>
-            </select>
-          </div>
-          <div className="col-md-4 form-group">
+          <div className="col-md-6">
             <label>{t("Document Type")}</label>
-            <select className="mt-2 form-control">
-              <option >{t("Document Type")}</option>
+            <select
+              className="mt-2 form-control"
+              value={objPurchase.documentTypeId}
+              onChange={(e) =>
+                setObjPurchase({
+                  ...objPurchase,
+                  documentTypeId: Number(e.target.value),
+                })
+              }
+            >
+              <option value={-1}>{t("Document Type")}</option>
+
+              {objDocType?.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
 
         <div className="row p-4">
-          <div className="col-md-4 form-group">
-            <label>{t("Invoice Number")}</label>
-            <input type="text" className="mt-2 form-control" placeholder={t("Invoice Number")} />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Invoic Date")}</label>
-            <input type="date" className="mt-2 form-control" />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>{t("Statment Type")}</label>
-            <select className="mt-2 form-control">
-              <option >{t("Statment Type")}</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="row p-4">
-          <div className="col-md-4 form-group">
+          <div className="col-md-6">
             <label>{t("Item Type")}</label>
-            <select className="mt-2 form-control">
-              <option >{t("Item Type")}</option>
+            <select
+              className="mt-2 form-control"
+              value={objPurchase.itemTypeId}
+              onChange={(e) =>
+                setObjPurchase({
+                  ...objPurchase,
+                  itemTypeId: Number(e.target.value),
+                })
+              }
+            >
+              <option value={-1}>{t("Item Type")}</option>
+
+              {objItemType?.map((itemType) => (
+                <option key={itemType.id} value={itemType.id}>
+                  {itemType.name}
+                </option>
+              ))}
             </select>
+          </div>
+          <div className="col-md-6">
+            <label>{t("Statement Type")}</label>
+            <select
+              className="mt-2 form-control"
+              value={objPurchase.statementTypeId}
+              onChange={(e) =>
+                setObjPurchase({
+                  ...objPurchase,
+                  statementTypeId: Number(e.target.value),
+                })
+              }
+            >
+              <option value={-1}>{t("Statement Type")}</option>
+
+              {objStatmentType?.map((x) => (
+                <option key={x.id} value={x.id}>
+                  {x.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="row p-4">
+          <div className="col-md-6">
+            <label>{t("Invoice Number")}</label>
+            <input
+              type="text"
+              className="mt-2 form-control"
+              value={objPurchase.invoiceNumber}
+              onChange={(e) =>
+                setObjPurchase({ ...objPurchase, invoiceNumber: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label>{t("Invoice Date")}</label>
+            <input
+              type="date"
+              className="mt-2 form-control"
+              value={objPurchase.invoiceDate}
+              onChange={(e) =>
+                setObjPurchase({ ...objPurchase, invoiceDate: e.target.value })
+              }
+            />
           </div>
         </div>
       </div>
 
-      <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
+      {/* ------------------ Items ------------------ */}
+        <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
         <div className="row p-4">
           <div className="col-md-6 form-group">
-            <label>{t("Item")}</label>
-            <AsyncSelect
-              cacheOptions
-              defaultOptions={false}
-              loadOptions={arrItem}
-              value={objItem}
-              onChange={(option) => setObjItem(option)}
+            <label className="mb-2">{t("Item")}</label>
+            <AsyncSelect cacheOption defaultOptions={false} loadOptions={arrItem} value={objItem}
+              onChange={(option) => {
+                setObjItem(option);
+                setObjPurchase(prev => ({...prev, item: option.objItem}));
+                setObjPurchase(prev => ({...prev, itemId: option.value}));
+                setObjPurchase(prev => ({...prev, price: option.objItem?.price || 0}));
+              }}
             />
-            </div>
+          </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objPurchase.price} onChange={(e) => {setObjPurchase(prev => ({...prev, price: Number(e.target.value)}))}} />
+          </div>
+          <div className="col-md-2 form-group">
+            <label>{t("Tax")}</label>
+            <input type="number" className="mt-2 form-control" value={objPurchase.tax} onChange={(e) => setObjPurchase(prev => ({...prev, tax: Number(e.target.value)}))} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Amount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0" />
-          </div>
-          <div className="col-md-2 form-group">
-            <label>{t("Discount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0" />
+            <input type="number" className="mt-2 form-control" placeholder="1" value={objPurchase.amount} onChange={(e) => setObjPurchase(prev => ({...prev, amount: Number(e.target.value)}))}disabled />
           </div>
         </div>
 
         <div className="row p-4" dir={strDocDir === "rtl" ? "ltr" : "rtl"}>
           <div className="col-md-2 pull-left border border-black me-3" dir={strDocDir}>
-            <strong>{t("Total Amount")} : </strong><span>{"0.0"}</span><br />
-            <strong>{t("Tax Percent")} : </strong><span>{"0.0"} %</span><br />
-            <strong>{t("Tax Amount")} : </strong><span>{"0.0"}</span><br />
-            <strong>{t("Discount")} : </strong><span>{"0.0"}</span><br />
-            <strong>{t("Net Amount")} : </strong><span>{"0.0"}</span><br />
+            <strong>{t("Total Amount")} : </strong><span>{objPurchase.price ?? "0.0"}</span><br />
+            <strong>{t("Tax Percent")} : </strong><span>{objPurchase.tax ?? "0"} %</span><br />
+            <strong>{t("Tax Amount")} : </strong><span>{((objPurchase.price * objPurchase.tax) / 100) ?? "0.0"}</span><br />
           </div>
         </div>
 
         <div className="row p-4" dir={strDocDir === "rtl" ? "ltr" : "rtl"}>
           <div className="col-md-3 me-2">
-            <button type="button" className="btn btn-success">{t("Add")}</button>
+            <button type="button" className="btn btn-success" onClick={Add}>{t("Add")}</button>
           </div>
         </div>
       </div>

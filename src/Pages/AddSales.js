@@ -3,10 +3,12 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
+import { useNavigate } from "react-router-dom";
 
 const AddSales = () => {
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
+  const navigate = useNavigate();
 
   const breadcrumbItems = [
     { label: t("Sales"), link: "/Sales", active: false },
@@ -114,7 +116,10 @@ const AddSales = () => {
       const response = await axiosInstance.post("/Sales/Add", objSale);
       if (response.data.result) {
         alert(response.data.message);
-        resetSale();}
+        resetSale();
+           navigate(`/Sales`);
+      
+      }
     
   };
 
