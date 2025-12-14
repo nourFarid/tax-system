@@ -39,7 +39,7 @@ const Supplier = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: false });
+  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: true, IsCustomer: false });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -183,15 +183,15 @@ const Supplier = () => {
           Address: "",
           TaxNumber: "",
           AddressLine: "",
-          IsSupplier: false,
+          IsSupplier: true,
           IsCustomer: false
         });
 
         hideModal("AddSupplier");
         fetchSuppliers(pageNumber);
         showSuccess("Success", "Supplier added successfully!");
-       
-        
+
+
       } else {
         showError("Error", response.data?.message || "Failed to add Supplier");
       }
@@ -259,7 +259,7 @@ const Supplier = () => {
       showError("Error", "Failed to delete supplier");
     }
   };
-   const hideModal = (strModalId) => {
+  const hideModal = (strModalId) => {
     const modal = Modal.getInstance(document.getElementById(strModalId));
     if (modal) {
       modal.hide();
@@ -274,7 +274,7 @@ const Supplier = () => {
 
     const handleHidden = () => {
       // Reset object when any modal is hidden
-      setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", FileNumber: "", PhoneNumber: "", ErrandCode: "", ErrandName: "", IsCustomer: false, IsSupplier: false });
+      setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: true });
     };
 
     const modals = modalIds

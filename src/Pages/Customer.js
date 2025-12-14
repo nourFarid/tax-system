@@ -39,7 +39,7 @@ const Customer = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: false });
+  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: true });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
@@ -133,8 +133,10 @@ const Customer = () => {
     const modal = new Modal(modalEl);
     modal.show();
   };
+  const handleShow = (row) => {
+    // You can implement the show logic here if needed
+  };
 
-  const handleShow = (row) => { };
 
   const handleDelete = (row) => {
     setObjDocType({
@@ -170,19 +172,19 @@ const Customer = () => {
       };
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
       console.log("Add response:", response.data);
-        setObjDocType({
-          NationalID: "",
-          Name: "",
-          Address: "",
-          TaxNumber: "",
-          AddressLine: "",
-          IsSupplier: false,
-          IsCustomer: false
-        });
-      hideModal("AddCustomer");    
+      setObjDocType({
+        NationalID: "",
+        Name: "",
+        Address: "",
+        TaxNumber: "",
+        AddressLine: "",
+        IsSupplier: false,
+        IsCustomer: true
+      });
+      hideModal("AddCustomer");
       await fetchCustomers(pageNumber);
       showSuccess("Success", "Customer added successfully!");
-      
+
     } catch (error) {
       console.error("Failed to add Customer", error);
       showError("Error", error.response?.data?.message || "Failed to add Customer");
@@ -223,8 +225,8 @@ const Customer = () => {
         IsSupplier: false
       });
 
-     
-      hideModal("EditCustomer");  
+
+      hideModal("EditCustomer");
       await fetchCustomers(pageNumber);
       showSuccess("Success", "Customer updated successfully!");
 
@@ -250,7 +252,7 @@ const Customer = () => {
       showError("Error", "Failed to delete customer");
     }
   };
-   const hideModal = (strModalId) => {
+  const hideModal = (strModalId) => {
     const modal = Modal.getInstance(document.getElementById(strModalId));
     if (modal) {
       modal.hide();
@@ -264,7 +266,7 @@ const Customer = () => {
     const modalIds = ["AddCustomer", "EditCustomer", "DeleteCustomer"];
 
     const handleHidden = () => {
-      setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: false });
+      setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: true, IsSupplier: false });
       setErrors({});
     };
 
