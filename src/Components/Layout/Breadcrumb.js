@@ -38,7 +38,7 @@ const Breadcrumb = ({ items = [], button = [] }) => {
                     }
                     if (btn.dyalog) {
                         return (
-                        <button key={idx} type="button" data-bs-toggle="modal" data-bs-target={btn.dyalog} onClick={btn.onClick} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`}>
+                        <button key={idx} type="button" data-bs-toggle="modal" data-bs-target={btn.dyalog} onClick={btn.onClick} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`} disabled={btn.disabled ?? false}>
                             {btn.icon && <i className={`${btn.icon} mr-1`}></i>} &nbsp;
                             {btn.label}
                         </button>
@@ -46,7 +46,7 @@ const Breadcrumb = ({ items = [], button = [] }) => {
                     }
                     if (btn.fun) {
                         return (
-                        <button key={idx} type="button" onClick={btn.fun} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`}>
+                        <button key={idx} type="button" onClick={btn.fun} className={`${btn.class} px-3 py-1 rounded text-sm flex items-center transition`} disabled={btn.disabled ?? false}>
                             {btn.icon && <i className={`${btn.icon} mr-1`}></i>} &nbsp;
                             {btn.label}
                         </button>
