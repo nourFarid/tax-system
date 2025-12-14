@@ -72,7 +72,7 @@ const Customer = () => {
     }
 
     if (!objDocType.NationalID || objDocType.NationalID.trim() === "") {
-      newErrors.NationalID = "National ID is required";
+      newErrors.NationalID = "National ID or Passport is required";
     }
 
     const address = objDocType.AddressLine || objDocType.Address;

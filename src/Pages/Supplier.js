@@ -57,7 +57,7 @@ const Supplier = () => {
 
   const columns = [
     { label: t("ID"), accessor: "id" },
-    { label: t("National ID"), accessor: "NationalID" },
+    { label: t("National ID"), accessor: "identificationNumber" },
     { label: t("Name"), accessor: "Name" },
     { label: t("Tax Number"), accessor: "taxRegistrationNumber" },
     { label: t("Address"), accessor: "Address" }
@@ -73,7 +73,7 @@ const Supplier = () => {
     }
 
     if (!objDocType.NationalID || objDocType.NationalID.trim() === "") {
-      newErrors.NationalID = "National ID is required";
+      newErrors.NationalID = "National ID or Passport is required";
     }
 
     // Check both AddressLine (for Add) and Address (for Edit)
@@ -126,7 +126,7 @@ const Supplier = () => {
     setObjDocType({
       Id: row.id,
       Name: row.name,
-      NationalID: row.nationalId,
+      NationalID: row.identificationNumber,
       PassportNumber: row.passportNumber,
       TaxNumber: row.taxRegistrationNumber,
       Address: row.address,
@@ -164,7 +164,7 @@ const Supplier = () => {
     if (!validateForm()) return;
     try {
       const payload = {
-        NationalID: objDocType.NationalID,
+        IdentificationNumber: objDocType.NationalID,
         Name: objDocType.Name,
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
@@ -207,8 +207,7 @@ const Supplier = () => {
       const payload = {
         Id: objDocType.Id,
         Name: objDocType.Name,
-        NationalID: objDocType.NationalID,
-        PassportNumber: objDocType.PassportNumber,
+        IdentificationNumber: objDocType.NationalID,
         TaxRegistrationNumber: objDocType.TaxNumber,
         Address: objDocType.Address,
         IsCustomer: objDocType.IsCustomer,
