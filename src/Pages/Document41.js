@@ -110,7 +110,7 @@ const Document41 = () => {
   }
 
   const Delete = async () => {
-    const res = await axiosInstance.delete("Document41/" + objCurrentDoc.id);
+    const res = await axiosInstance.delete("Document41/Delete/" + objCurrentDoc.id);
     const response = res.data;
     if (response.result) {
       showSuccess(t("Success"), response.message);
