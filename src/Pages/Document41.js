@@ -4,6 +4,8 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
+import  { useSwal }  from "../Hooks/Alert/Swal";
+import { Modal } from "bootstrap";
 
 const Document41 = () => {
   const [boolDisableExport, setBoolDisableExport] = useState(false);
@@ -14,6 +16,17 @@ const Document41 = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [arrFiscalYear, setArrFiscalYear] = useState([]);
   const [objCurrentDoc, setObjCurrentDoc] = useState({});
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const objTitle = useMemo(
+    () => ({
+      Save: t("Save"),
+      Cancel: t("Cancel"),
+      Delete: t("Delete"),
+      DeleteConfirmation: t("Are you sure to delete"),
+      QuestionMark: t("?")
+    }),
+    [t]
+  );
   const breadcrumbItems = [
     { label: t("Document 41"), link: "/Document41", active: false }
   ];
@@ -33,7 +46,7 @@ const Document41 = () => {
         const res = await axiosInstance.post("Document41/ExportExcel", objFilter, { responseType: "blob" });
 
         if (res.data.type === "application/json") {
-          return alert("No data to export");
+          return showError("Error", "No data to export");
         }
         const blob = new Blob([res.data], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -96,6 +109,18 @@ const Document41 = () => {
     List();
   }
 
+  const Delete = async () => {
+    const res = await axiosInstance.delete("Document41/" + objCurrentDoc.id);
+    const response = res.data;
+    if (response.result) {
+      showSuccess(t("Success"), response.message);
+      hideModal("Delete");
+      List();
+    } else {
+      showError(t("Error"), response.message);
+    }
+  }
+
   const Edit = (objRow) => {
     window.location.href = `/Document41/Edit?id=${objRow.id}`;
   }
@@ -107,6 +132,19 @@ const Document41 = () => {
 
   const HandelDelete = (row) => {
     setObjCurrentDoc(row);
+    const modalElement = document.getElementById("Delete");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
+    modal.show();
+  }
+
+  const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
   }
 
   const listFiscalYear = async () => {
@@ -126,6 +164,12 @@ const Document41 = () => {
     }
     List();
     listFiscalYear();
+
+    document.getElementById("Delete")?.addEventListener("hidden.bs.modal", Reset);
+
+    return () => {
+      document.getElementById("Delete")?.removeEventListener("hidden.bs.modal", Reset);
+    };
   }, [objFilter.transactionDateFrom, objFilter.transactionDateTo, objFilter.quarterId]);
 
   return (
@@ -193,6 +237,27 @@ const Document41 = () => {
           onPageChange={setPageNumber}
         />
       </div>
+
+      <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
+              <h5 className="modal-title">{objTitle.Delete}</h5>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
+            </div>
+
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
+              <p>{objTitle.DeleteConfirmation} <strong> {objCurrentDoc.Name} </strong> {objTitle.QuestionMark}</p>
+            </div>
+
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
+              <button type="button" className="btn btn-danger" onClick={Delete} >{objTitle.Delete}</button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >{objTitle.Cancel}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <SwalComponent />
     </>
   );
 };
