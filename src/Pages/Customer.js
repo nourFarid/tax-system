@@ -75,7 +75,6 @@ const Customer = () => {
       newErrors.NationalID = "National ID is required";
     }
 
-    // Check both AddressLine (for Add) and Address (for Edit)
     const address = objDocType.AddressLine || objDocType.Address;
     if (!address || address.trim() === "") {
       newErrors.Address = "Address is required";
@@ -161,8 +160,6 @@ const Customer = () => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
-
-
     try {
       const payload = {
         NationalID: objDocType.NationalID,
@@ -172,13 +169,8 @@ const Customer = () => {
         isSupplier: objDocType.IsSupplier || false,
         isCustomer: true
       };
-
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
       console.log("Add response:", response.data);
-
-  
-       
-        // Reset form
         setObjDocType({
           NationalID: "",
           Name: "",
@@ -188,20 +180,13 @@ const Customer = () => {
           IsSupplier: false,
           IsCustomer: false
         });
-
-        // Close modal
-        const modalEl = document.getElementById("AddCustomer");
-        const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
-        modal.hide();
-
-        await fetchCustomers(pageNumber);
-
-      showSuccess("Success", "Customer updated successfully!");
+      hideModal("AddCustomer");    
+      await fetchCustomers(pageNumber);
+      showSuccess("Success", "Customer added successfully!");
       
     } catch (error) {
       console.error("Failed to add Customer", error);
       showError("Error", error.response?.data?.message || "Failed to add Customer");
-      
     }
   };
 
@@ -239,12 +224,9 @@ const Customer = () => {
         IsSupplier: false
       });
 
-      const modalEl = document.getElementById("EditCustomer");
-      const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
-      modal.hide();
-
+     
+      hideModal("EditCustomer");  
       await fetchCustomers(pageNumber);
-
       showSuccess("Success", "Customer updated successfully!");
 
     } catch (error) {
@@ -261,11 +243,7 @@ const Customer = () => {
         console.log("Customer deleted successfully");
 
         showSuccess("Success", "Customer deleted successfully!");
-
-        const modalEl = document.getElementById("DeleteCustomer");
-        const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
-        modal.hide();
-
+        hideModal("DeleteCustomer");
         await fetchCustomers(pageNumber);
       }
     } catch (error) {
@@ -273,6 +251,14 @@ const Customer = () => {
       showError("Error", "Failed to delete customer");
     }
   };
+   const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
+  }
 
   useEffect(() => {
     fetchCustomers(pageNumber);
