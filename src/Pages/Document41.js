@@ -6,6 +6,7 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 
 const Document41 = () => {
+  const [boolDisableExport, setBoolDisableExport] = useState(false);
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
@@ -45,7 +46,8 @@ const Document41 = () => {
         a.click();
         window.URL.revokeObjectURL(url)
       },
-      class: "btn btn-sm btn-warning ms-2 float-end"
+      class: "btn btn-sm btn-warning ms-2 float-end",
+      disabled: boolDisableExport
     }
   ];
 
@@ -84,6 +86,15 @@ const Document41 = () => {
     setTotalRows(result.data.totalRows);
     setTotalCount(result.data.totalCount);
   };
+  const Reset = () => {
+    setObjFilter({
+      fiscalYearId: -1,
+      quarterId: -1,
+      transactionDateFrom: "",
+      transactionDateTo: ""
+    });
+    List();
+  }
 
   const Edit = (objRow) => {
     window.location.href = `/Document41/Edit?id=${objRow.id}`;
@@ -108,9 +119,14 @@ const Document41 = () => {
   }
 
   useEffect(() => {
+    if ((objFilter.transactionDateFrom == "" || objFilter.transactionDateTo == "") && objFilter.quarterId == -1) {
+      setBoolDisableExport(true);
+    } else {
+      setBoolDisableExport(false);
+    }
     List();
     listFiscalYear();
-  }, []);
+  }, [objFilter.transactionDateFrom, objFilter.transactionDateTo, objFilter.quarterId]);
 
   return (
     <>
@@ -155,6 +171,8 @@ const Document41 = () => {
         <div className="row" dir={strDocDir === "ltr" ? "rtl" : "ltr"}>
           <div className="col-md-3 mb-3">
             <button className="btn btn-primary" onClick={() => List()}>{t("Filter")}</button>
+            &nbsp;
+            <button className="btn btn-danger" onClick={() => Reset()}>{t("Reset")}</button>
           </div>
         </div>
       </div>
