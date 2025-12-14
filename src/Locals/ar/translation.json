@@ -177,5 +177,10 @@
   "Updated By": "تعديلا بواسطة",
   "Type of Deduction": "نوع الخصم",
   "Quarter": "الربع السنوي",
-  "Serial Number": "الرقم التسلسلي"
+  "Serial Number": "الرقم التسلسلي",
+  "Select Quarter": "اختر الربع السنوي",
+  "Select Fiscal Year": "اختر السنة المالية",
+  "Export": "تصدير",
+  "Transaction Date Form": "تاريخ التعامل من",
+  "Transaction Date To": "تاريخ التعامل إلى"
 }
