@@ -58,7 +58,7 @@ const Customer = () => {
 
   const columns = [
     { label: t("ID"), accessor: "id" },
-    { label: t("National ID"), accessor: "NationalID" },
+    { label: t("National ID"), accessor: "identificationNumber" },
     { label: t("Name"), accessor: "Name" },
     { label: t("Tax Number"), accessor: "taxRegistrationNumber" },
     { label: t("Address"), accessor: "Address" }
@@ -122,8 +122,7 @@ const Customer = () => {
     setObjDocType({
       Id: row.id,
       Name: row.name,
-      NationalID: row.nationalId,
-      PassportNumber: row.passportNumber,
+      NationalID: row.identificationNumber,
       TaxNumber: row.taxRegistrationNumber,
       Address: row.address,
       IsCustomer: row.isCustomer,
@@ -140,7 +139,7 @@ const Customer = () => {
   const handleDelete = (row) => {
     setObjDocType({
       Id: row.id,
-      NationalID: row.nationalId || "",
+      IdentificationNumber: row.nationalId || "",
       Name: row.name || "",
       Address: row.address || "",
       TaxNumber: row.taxRegistrationNumber || "",
@@ -162,7 +161,7 @@ const Customer = () => {
     if (!validateForm()) return;
     try {
       const payload = {
-        NationalID: objDocType.NationalID,
+        IdentificationNumber: objDocType.NationalID,
         Name: objDocType.Name,
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
@@ -196,7 +195,7 @@ const Customer = () => {
       const payload = {
         Id: objDocType.Id,
         Name: objDocType.Name,
-        NationalID: objDocType.NationalID,
+        IdentificationNumber: objDocType.NationalID,
         PassportNumber: objDocType.PassportNumber,
         TaxRegistrationNumber: objDocType.TaxNumber,
         Address: objDocType.Address,
