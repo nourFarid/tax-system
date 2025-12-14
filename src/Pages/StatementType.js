@@ -166,7 +166,7 @@ const fetchItems = async (page = 1) => {
 
   const update = async () => {
     if (!validateForm()) return;
-    if (!validateDuplicates(objItem.Name, objItem.Code)) return;
+    if (!validateDuplicates(objItem.Name, objItem.Code, objItem.Id)) return;
     try {
       const payload = {
       name: objItem.Name,              
