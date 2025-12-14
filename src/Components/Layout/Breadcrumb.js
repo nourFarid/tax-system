@@ -26,7 +26,7 @@ const Breadcrumb = ({ items = [], button = [] }) => {
             </nav>
 
             {button && button.length > 0 && (
-                <div className="flex gap-2">
+                <div className="flex">
                     {button.map((btn, idx) => {
                     if (btn.link) {
                         return (
