@@ -267,7 +267,7 @@ const Supplier = () => {
     const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
     backdrops.forEach(b => b.remove());
   }
-
+// Reset object when any modal is hidden
   useEffect(() => {
     fetchSuppliers(pageNumber);
     const modalIds = ["AddSupplier", "EditSupplier", "DeleteSupplier"];
