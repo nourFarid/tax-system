@@ -104,6 +104,8 @@ const AddDocument41 = () => {
     if (response.data.result) {
       alert(response.data.message);
       reset();
+    } else{
+      alert(response.data.message);
     }
   }
 
