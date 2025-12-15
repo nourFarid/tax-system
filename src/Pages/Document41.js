@@ -214,9 +214,9 @@ const Document41 = () => {
         </div>
         <div className="row" dir={strDocDir === "ltr" ? "rtl" : "ltr"}>
           <div className="col-md-3 mb-3">
-            <button className="btn btn-primary" onClick={() => List()}>{t("Filter")}</button>
-            &nbsp;
             <button className="btn btn-danger" onClick={() => Reset()}>{t("Reset")}</button>
+            &nbsp;
+            <button className="btn btn-primary" onClick={() => List()}>{t("Filter")}</button>
           </div>
         </div>
       </div>
