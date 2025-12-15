@@ -78,6 +78,10 @@ const AddDocument41 = () => {
       alert(res.data.message);
       return;
     }
+    if (res.data.data.length === 0) {
+      alert(t("There is no fiscal year for this date."));
+      return;
+    }
     setObjDocument41(prev => ({...prev, fiscalYearId: res.data.data[0].id || -1}));
     let date = new Date(strDate).setHours(0, 0, 0, 0);
     for (let i = 0; i < res.data.data[0].quarters.length; i++) {
