@@ -1,65 +1,93 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import Pagination from '../Components/Layout/Pagination';
+import Pagination from "../Components/Layout/Pagination";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "bootstrap";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 const Sales = () => {
   const { t } = useTranslate();
+  const navigate = useNavigate();
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [sales, setSales] = useState([]);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
+  const [arrFiscalYear, setArrFiscalYear] = useState([]);
+  const [boolDisableExport, setBoolDisableExport] = useState(false);
+
   const [objFilter, setObjFilter] = useState({
-   fiscalYearId: -1,
+    fiscalYearId: -1,
     quarterId: -1,
     invoiceDateFrom: "",
-    invoiceDateTo: ""
+    invoiceDateTo: "",
   });
-    const [arrFiscalYear, setArrFiscalYear] = useState([]);
 
-    const [boolDisableExport, setBoolDisableExport] = useState(false);
+  // Current sale selected for delete
+  const [objCurrentSale, setObjCurrentSale] = useState({});
+
+  // Titles for modal buttons and texts
+  const objTitle = useMemo(() => ({
+    Save: t("Save"),
+    Cancel: t("Cancel"),
+    Delete: t("Delete"),
+    DeleteConfirmation: t("Are you sure to delete"),
+    QuestionMark: t("?"),
+  }), [t]);
 
   const breadcrumbItems = [
-    { label: t("Sales"), link: "/Sales", active: false }
+    { label: t("sales"), link: "/sales", active: false },
   ];
 
   const breadcrumbButtons = [
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
-      link: "/Sales/Add",
-      class: "btn btn-sm btn-success ms-2 float-end"
+      link: "/sales/Add",
+      class: "btn btn-sm btn-success ms-2 float-end",
     },
     {
       label: t("Export"),
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
-        const res = await axiosInstance.post("Sales/ExportExcel", objFilter, { responseType: "blob" });
+        try {
+          const res = await axiosInstance.post(
+            "sales/ExportExcel",
+            objFilter,
+            { responseType: "blob" }
+          );
 
-        if (res.data.type === "application/json") {
-          return alert("No data to export");
+          if (res.data.type === "application/json") {
+            alert("No data to export");
+            return;
+          }
+
+          const blob = new Blob([res.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "sales.xlsx";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        } catch {
+          alert("Export failed");
         }
-        const blob = new Blob([res.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Sale.xlsx";
-        a.click();
-        window.URL.revokeObjectURL(url)
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
-      disabled: boolDisableExport
-    }
+      disabled: boolDisableExport,
+    },
   ];
+
   const columns = [
     { label: t("Document Type"), accessor: "documentType.name" },
     { label: t("Invoice Number"), accessor: "invoiceNumber" },
@@ -69,144 +97,313 @@ const Sales = () => {
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Invoice Date"), accessor: "invoiceDate" },
     { label: t("Item Name"), accessor: "item.name" },
-    { label: t("Statment Type"), accessor: "statementType.name" },
+    { label: t("Statement Type"), accessor: "statementType.name" },
     { label: t("Item Type"), accessor: "itemType.name" },
     { label: t("Price"), accessor: "item.price" },
     { label: t("Amount"), accessor: "amount" },
     { label: t("Tax Amount"), accessor: "tax" },
-
   ];
+
   const strDocDir = document.documentElement.dir;
+
+  const listFiscalYear = async () => {
+    try {
+      const res = await axiosInstance.post("FiscalYear/ListAll", {});
+      if (!res.data.result) {
+        alert(res.data.message);
+        return;
+      }
+      setArrFiscalYear(res.data.data);
+    } catch {
+      alert("Failed to load fiscal years");
+    }
+  };
+
+  const GetQuarters = (fiscalYearId) => {
+    const fiscalYear = arrFiscalYear.find(
+      (fy) => fy.id === Number(fiscalYearId)
+    );
+    return fiscalYear ? fiscalYear.quarters : [];
+  };
+
+  const fetchsales = async (page = 1) => {
+    setLoading(true);
+    try {
+      const isFilterEmpty =
+        objFilter.fiscalYearId === -1 &&
+        objFilter.quarterId === -1 &&
+        objFilter.invoiceDateFrom === "" &&
+        objFilter.invoiceDateTo === "";
+
+      const body = {
+        filter: isFilterEmpty ? {} : objFilter,
+        pageNumber: page,
+        pageSize,
+        sortBy: "invoiceDate",
+        isDescending: true,
+      };
+
+      const res = await axiosInstance.post("Sales/List", body);
+
+      if (res.data.result) {
+        setSales(res.data.data.items);
+        setTotalCount(res.data.data.totalCount);
+        setPageNumber(res.data.data.pageNumber);
+      } else {
+        setError(res.data.message || "Failed to fetch data");
+      }
+    } catch {
+      setError("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete logic
+
+  const Delete = async () => {
+    try {
+    
+  
+      const res = await axiosInstance.delete("Sales/" + objCurrentSale.docId);
+      console.log('====================================');
+      console.log(objCurrentSale.docId);
+      console.log('====================================');
+      const response = res.data;
+      if (response.result) {
+        showSuccess(t("Success"), response.message);
+        hideModal("Delete");
+        fetchsales(pageNumber);
+      } else {
+        showError(t("Error"), response.message);
+      }
+    } catch {
+      showError(t("Error"), t("Delete failed"));
+    }
+  };
+
+  const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
+  };
+
+  const HandelDelete = (row) => {
+    setObjCurrentSale(row);
+    const modalElement = document.getElementById("Delete");
+    let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
+    modal.show();
+  };
+
+  useEffect(() => {
+    if (
+      (objFilter.invoiceDateFrom === "" || objFilter.invoiceDateTo === "") &&
+      objFilter.quarterId === -1
+    ) {
+      setBoolDisableExport(true);
+    } else {
+      setBoolDisableExport(false);
+    }
+
+    fetchsales(pageNumber);
+  }, [objFilter, pageNumber]);
+
+  useEffect(() => {
+    listFiscalYear();
+  }, []);
+
   const Reset = () => {
     setObjFilter({
       fiscalYearId: -1,
       quarterId: -1,
       invoiceDateFrom: "",
-      invoiceDateTo: ""
+      invoiceDateTo: "",
     });
-    fetchSales();
-  }
-
-  const fetchSales = async (page = 1, pageSize = 10, sortBy = "invoiceDate", isDescending = true) => {
-    setLoading(true);
-    try {
-      const body = {
-        filter: {},
-        pageNumber: page,
-        pageSize,
-        sortBy,
-        isDescending
-      };
-
-      const res = await axiosInstance.post("Sales/List", body);
-      const data = res.data;
-      console.log('====================================');
-      console.log(data.data.items);
-      console.log('====================================');
-      if (data.result) {
-        setSales(data.data.items);
-        setTotalCount(data.data.totalCount);
-        setPageNumber(data.data.pageNumber);
-        console.log('=====sssssssss===============================');
-        console.log(sales);
-        console.log('====================================');
-      }
-
-    } catch (e) {
-      setError("Failed to fetch items");
-    } finally {
-      setLoading(false);
-    }
+    setPageNumber(1);
   };
-    const listFiscalYear = async () => {
-    const res = await axiosInstance.post("FiscalYear/ListAll", {});
-    if (!res.data.result) {
-      alert(res.data.message);
-      return;
-    }
-    setArrFiscalYear(res.data.data);
-  }
-  const GetQuarters = (fiscalYearId) => {
-    let fiscalYear = arrFiscalYear.find(fy => fy.id === parseInt(fiscalYearId));
-    return fiscalYear ? fiscalYear.quarters : [];
-  }
-  useEffect(() => {
-    fetchSales()
-    listFiscalYear()
-       if ((objFilter.invoiceDateFrom == "" || objFilter.invoiceDateTo == "") && objFilter.quarterId == -1) {
-      setBoolDisableExport(true);
-    } else {
-      setBoolDisableExport(false);
-    }
-  }, [objFilter.invoiceDateFrom, objFilter.invoiceDateTo, objFilter.quarterId]);
+
+  const onFilterClick = () => {
+    setPageNumber(1);
+  };
+
+  const onPageChange = (page) => {
+    setPageNumber(page);
+  };
+
+  const Edit = (row) => {
+    navigate(`/sales/UpdateSale/${row.id}`);
+  };
 
   return (
     <>
       <Breadcrumb items={breadcrumbItems} button={breadcrumbButtons} />
+
       <div className="bg-white p-3 mb-3 shadow-sm shadow-lg">
-        <h4 className="font-semibold" style={{ color: "blue" }}>{t("Filter")}</h4>
+        <h4 className="font-semibold" style={{ color: "blue" }}>
+          {t("Filter")}
+        </h4>
+
         <div className="row">
           <div className="col-md-3 mb-3">
-            <label className="form-label">{t("Invoice Date Form")}</label>
-            <input type="date" className="form-control" value={objFilter.invoiceDateFrom} onChange={(e) => setObjFilter({...objFilter, invoiceDateFrom: e.target.value})} />
+            <label className="form-label">{t("Invoice Date From")}</label>
+            <input
+              type="date"
+              className="form-control"
+              value={objFilter.invoiceDateFrom}
+              onChange={(e) =>
+                setObjFilter({ ...objFilter, invoiceDateFrom: e.target.value })
+              }
+            />
           </div>
+
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Invoice Date To")}</label>
-            <input type="date" className="form-control" value={objFilter.invoiceDateTo} onChange={(e) => setObjFilter({...objFilter, invoiceDateTo: e.target.value})} />
+            <input
+              type="date"
+              className="form-control"
+              value={objFilter.invoiceDateTo}
+              onChange={(e) =>
+                setObjFilter({ ...objFilter, invoiceDateTo: e.target.value })
+              }
+            />
           </div>
+
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Fiscal Year")}</label>
-            <select className="form-select" value={objFilter.fiscalYearId} onChange={(e) => {
+            <select
+              className="form-select"
+              value={objFilter.fiscalYearId}
+              onChange={(e) => {
                 const value = Number(e.target.value);
-                setObjFilter(prev => ({...prev, fiscalYearId: value, quarterId: value == -1 ? -1 : prev.quarterId}));
-              }}>
+                setObjFilter({
+                  ...objFilter,
+                  fiscalYearId: value,
+                  quarterId: -1,
+                });
+              }}
+            >
               <option value={-1}>{t("Select Fiscal Year")}</option>
-              {arrFiscalYear.map(item => (
+              {arrFiscalYear.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.yearFromDate} - {item.yearToDate}
                 </option>
               ))}
             </select>
           </div>
-          {objFilter.fiscalYearId != -1 && (<div className="col-md-3 mb-3">
-            <label className="form-label">{t("Quarter")}</label>
-            <select className="form-select" value={objFilter.quarterId} onChange={(e) => setObjFilter({...objFilter, quarterId: e.target.value})}>
-              <option value={-1}>{t("Select Quarter")}</option>
-              {GetQuarters(objFilter.fiscalYearId).map(item => (
-                <option key={item.id} value={item.id}>
-                  {item.dateFrom} - {item.dateTo}
-                </option>
-              ))}
-            </select>
-          </div>)}
+
+          {objFilter.fiscalYearId !== -1 && (
+            <div className="col-md-3 mb-3">
+              <label className="form-label">{t("Quarter")}</label>
+              <select
+                className="form-select"
+                value={objFilter.quarterId}
+                onChange={(e) =>
+                  setObjFilter({ ...objFilter, quarterId: e.target.value })
+                }
+              >
+                <option value={-1}>{t("Select Quarter")}</option>
+                {GetQuarters(objFilter.fiscalYearId).map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.dateFrom} - {item.dateTo}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
+
         <div className="row" dir={strDocDir === "ltr" ? "rtl" : "ltr"}>
           <div className="col-md-3 mb-3">
-            <button className="btn btn-primary" onClick={() => fetchSales()}>{t("Filter")}</button>
+            <button className="btn btn-primary" onClick={onFilterClick}>
+              {t("Filter")}
+            </button>
             &nbsp;
-            <button className="btn btn-danger" onClick={() => Reset()}>{t("Reset")}</button>
+            <button className="btn btn-danger" onClick={Reset}>
+              {t("Reset")}
+            </button>
           </div>
         </div>
       </div>
+
       <Table
         columns={columns}
         data={sales}
         showActions={true}
-onEdit={(row) => {
-  navigate(`/Sales/UpdateSale/${row.id}`);
-}}
-
-
-         showShow={false}
-        onShow={() => { }}
-        onDelete={() => { }}
+        onEdit={Edit}
+        showShow={false}
+        onShow={() => {}}
+        onDelete={HandelDelete}
       />
+
       <Pagination
         pageNumber={pageNumber}
         pageSize={pageSize}
         totalRows={totalCount}
-        onPageChange={setPageNumber}
+        onPageChange={onPageChange}
       />
+
+      {/* Delete Confirmation Modal */}
+      <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div
+            className="modal-content"
+            style={{
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "10px",
+              border: "1px solid #d3d3d3",
+            }}
+          >
+            <div
+              className="modal-header d-flex justify-content-between align-items-center"
+              style={{ borderBottom: "1px solid #d3d3d3" }}
+            >
+              <h5 className="modal-title">{objTitle.Delete}</h5>
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm"
+                data-bs-dismiss="modal"
+              >
+                X
+              </button>
+            </div>
+
+            <div
+              className="modal-body"
+              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
+            >
+              <p>
+                {objTitle.DeleteConfirmation}{" "}
+                <strong> {objCurrentSale.invoiceNumber || objCurrentSale.customerSupplierName} </strong>{" "}
+                {objTitle.QuestionMark}
+              </p>
+            </div>
+
+            <div
+              className="modal-footer"
+              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
+            >
+              <button type="button" className="btn btn-danger" onClick={Delete}>
+                {objTitle.Delete}
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                {objTitle.Cancel}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <SwalComponent />
     </>
   );
 };
