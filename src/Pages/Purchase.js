@@ -130,13 +130,28 @@ const Purchase = () => {
     setLoading(true);
     try {
       const isFilterEmpty =
-        objFilter.fiscalYearId === -1 &&
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
         objFilter.invoiceDateTo === "";
 
+      let Filter = {};
+      if (objFilter.invoiceDateFrom) {
+        Filter.invoiceDateFrom = objFilter.invoiceDateFrom;
+      } else{
+        delete Filter.invoiceDateFrom;
+      }
+      if (objFilter.invoiceDateTo) {
+        Filter.invoiceDateTo = objFilter.invoiceDateTo;
+      } else {
+        delete Filter.invoiceDateTo;
+      }
+      if (objFilter.quarterId !== -1) {
+        Filter.quarterId = Number.parseInt(objFilter.quarterId);
+      } else {
+        delete Filter.quarterId;
+      }
       const body = {
-        filter: isFilterEmpty ? {} : objFilter,
+        filter: isFilterEmpty ? {} : Filter,
         pageNumber: page,
         pageSize,
         sortBy: "invoiceDate",
@@ -227,10 +242,12 @@ const Purchase = () => {
 
   const onFilterClick = () => {
     setPageNumber(1);
+    fetchPurchase();
   };
 
   const onPageChange = (page) => {
     setPageNumber(page);
+    fetchPurchase();
   };
 
   return (

@@ -130,13 +130,28 @@ const Sales = () => {
     setLoading(true);
     try {
       const isFilterEmpty =
-        objFilter.fiscalYearId === -1 &&
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
         objFilter.invoiceDateTo === "";
 
+      let Filter = {};
+      if (objFilter.invoiceDateFrom) {
+        Filter.invoiceDateFrom = objFilter.invoiceDateFrom;
+      } else{
+        delete Filter.invoiceDateFrom;
+      }
+      if (objFilter.invoiceDateTo) {
+        Filter.invoiceDateTo = objFilter.invoiceDateTo;
+      } else {
+        delete Filter.invoiceDateTo;
+      }
+      if (objFilter.quarterId !== -1) {
+        Filter.quarterId = Number.parseInt(objFilter.quarterId);
+      } else {
+        delete Filter.quarterId;
+      }
       const body = {
-        filter: isFilterEmpty ? {} : objFilter,
+        filter: isFilterEmpty ? {} : Filter,
         pageNumber: page,
         pageSize,
         sortBy: "invoiceDate",
@@ -144,7 +159,6 @@ const Sales = () => {
       };
 
       const res = await axiosInstance.post("Sales/List", body);
-
       if (res.data.result) {
         setSales(res.data.data.items);
         setTotalCount(res.data.data.totalCount);
@@ -225,10 +239,12 @@ const Sales = () => {
 
   const onFilterClick = () => {
     setPageNumber(1);
+    fetchsales();
   };
 
   const onPageChange = (page) => {
     setPageNumber(page);
+    fetchsales(page);
   };
 
   const Edit = (row) => {
