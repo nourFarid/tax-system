@@ -4,11 +4,13 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 const AddSales = () => {
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Sales"), link: "/Sales", active: false },
@@ -53,15 +55,15 @@ const AddSales = () => {
     if (res.data.data == null || res.data.data.length == 0) {
       let arr = [
         {
-        label: strInput,
-        value: -1,
-        objItem: {
-          name: strInput,
-          code: "",
-          price: 0
-        }
-      }]
-      ;
+          label: strInput,
+          value: -1,
+          objItem: {
+            name: strInput,
+            code: "",
+            price: 0
+          }
+        }]
+        ;
       return arr;
     }
 
@@ -113,14 +115,22 @@ const AddSales = () => {
   // ADD SALE (POST)
   // ==========================
   const Add = async () => {
-      const response = await axiosInstance.post("/Sales/Add", objSale);
-      if (response.data.result) {
-        alert(response.data.message);
-        resetSale();
-           navigate(`/Sales`);
-      
-      }
-    
+    const response = await axiosInstance.post("/Sales/Add", objSale);
+    if (response.data.result) {
+      showSuccess(
+        t("Success"),
+        t("Sales updated successfully"),
+        {
+
+          onConfirm: () => {
+            resetSale();
+            navigate("/Sales");
+          },
+        }
+      );
+
+    }
+
   };
 
   const fetchDocType = async () => {
@@ -149,7 +159,7 @@ const AddSales = () => {
   const netAmount = totalAmount + taxAmount;
 
   useEffect(() => {
-      if (objSale.itemId === -1) {
+    if (objSale.itemId === -1) {
       setObjSale(prev => ({
         ...prev,
         item: {
@@ -162,9 +172,9 @@ const AddSales = () => {
     fetchDocType();
     fetchStatmentType();
     fetchItemType();
-  },  [objSale.price, objSale.amount]);
+  }, [objSale.price, objSale.amount]);
 
-return (
+  return (
     <>
       <Breadcrumb items={breadcrumbItems} />
 
@@ -179,7 +189,7 @@ return (
 
         <div className="row p-4">
           <div className="col-md-6">
-            <label>{t("Customer")}</label>
+            <label className="mb-2">{t("Customer")}</label>
             <AsyncSelect
               cacheOptions
               defaultOptions={false}
@@ -287,30 +297,30 @@ return (
       </div>
 
       {/* ------------------ Items ------------------ */}
-        <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
+      <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
         <div className="row p-4">
           <div className="col-md-6 form-group">
             <label className="mb-2">{t("Item")}</label>
             <AsyncSelect cacheOption defaultOptions={false} loadOptions={arrItem} value={objItem}
               onChange={(option) => {
                 setObjItem(option);
-                setObjSale(prev => ({...prev, item: option.objItem}));
-                setObjSale(prev => ({...prev, itemId: option.value}));
-                setObjSale(prev => ({...prev, price: option.objItem?.price || 0}));
+                setObjSale(prev => ({ ...prev, item: option.objItem }));
+                setObjSale(prev => ({ ...prev, itemId: option.value }));
+                setObjSale(prev => ({ ...prev, price: option.objItem?.price || 0 }));
               }}
             />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objSale.price} onChange={(e) => {setObjSale(prev => ({...prev, price: Number(e.target.value)}))}} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objSale.price} onChange={(e) => { setObjSale(prev => ({ ...prev, price: Number(e.target.value) })) }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>
-            <input type="number" className="mt-2 form-control" value={objSale.tax} onChange={(e) => setObjSale(prev => ({...prev, tax: Number(e.target.value)}))} />
+            <input type="number" className="mt-2 form-control" value={objSale.tax} onChange={(e) => setObjSale(prev => ({ ...prev, tax: Number(e.target.value) }))} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Amount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="1" value={objSale.amount} onChange={(e) => setObjSale(prev => ({...prev, amount: Number(e.target.value)}))}disabled />
+            <input type="number" className="mt-2 form-control" placeholder="1" value={objSale.amount} onChange={(e) => setObjSale(prev => ({ ...prev, amount: Number(e.target.value) }))} disabled />
           </div>
         </div>
 
@@ -328,6 +338,8 @@ return (
           </div>
         </div>
       </div>
+      <SwalComponent />
+
     </>
   );
 };

@@ -11,14 +11,12 @@ import { Modal } from "bootstrap";
 const Purchase = () => {
   const { t } = useTranslate();
   const navigate = useNavigate();
-
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [purchase, setPurchase] = useState([]);
   const [error, setError] = useState(null);
-
   const [arrFiscalYear, setArrFiscalYear] = useState([]);
   const [boolDisableExport, setBoolDisableExport] = useState(false);
 
@@ -64,7 +62,7 @@ const Purchase = () => {
           );
 
           if (res.data.type === "application/json") {
-            alert("No data to export");
+            showError(t("Error"), "No data to export");
             return;
           }
 
@@ -79,7 +77,8 @@ const Purchase = () => {
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          alert("Export failed");
+          showError(t("Error"), "Export failed");
+
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -109,12 +108,14 @@ const Purchase = () => {
     try {
       const res = await axiosInstance.post("FiscalYear/ListAll", {});
       if (!res.data.result) {
-        alert(res.data.message);
+        showError(t("Error"), res.data.message);
+
         return;
       }
       setArrFiscalYear(res.data.data);
     } catch {
-      alert("Failed to load fiscal years");
+      showError(t("Error"), "Failed to load fiscal years");
+
     }
   };
 

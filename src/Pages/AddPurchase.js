@@ -4,11 +4,13 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 const AddPurchase = () => {
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("purchase"), link: "/purchase", active: false },
@@ -53,15 +55,15 @@ const AddPurchase = () => {
     if (res.data.data == null || res.data.data.length == 0) {
       let arr = [
         {
-        label: strInput,
-        value: -1,
-        objItem: {
-          name: strInput,
-          code: "",
-          price: 0
-        }
-      }]
-      ;
+          label: strInput,
+          value: -1,
+          objItem: {
+            name: strInput,
+            code: "",
+            price: 0
+          }
+        }]
+        ;
       return arr;
     }
 
@@ -113,14 +115,20 @@ const AddPurchase = () => {
   // ADD SALE (POST)
   // ==========================
   const Add = async () => {
-      const response = await axiosInstance.post("/Purchase/Add", objPurchase);
-      if (response.data.result) {
-        alert(response.data.message);
-        resetSale();
-           navigate(`/Purchase`);
-      
-      }
-    
+    const response = await axiosInstance.post("/Purchase/Add", objPurchase);
+    if (response.data.result) {
+      showSuccess(
+        t("Success"),
+        t("Purchase added successfully"),
+        {
+          onConfirm: () => {
+            resetSale();
+            navigate("/Purchase");
+          },
+        }
+      );
+    }
+
   };
 
   const fetchDocType = async () => {
@@ -149,7 +157,7 @@ const AddPurchase = () => {
   const netAmount = totalAmount + taxAmount;
 
   useEffect(() => {
-      if (objPurchase.itemId === -1) {
+    if (objPurchase.itemId === -1) {
       setObjPurchase(prev => ({
         ...prev,
         item: {
@@ -162,9 +170,9 @@ const AddPurchase = () => {
     fetchDocType();
     fetchStatmentType();
     fetchItemType();
-  },  [objPurchase.price, objPurchase.amount]);
+  }, [objPurchase.price, objPurchase.amount]);
 
-return (
+  return (
     <>
       <Breadcrumb items={breadcrumbItems} />
 
@@ -287,30 +295,30 @@ return (
       </div>
 
       {/* ------------------ Items ------------------ */}
-        <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
+      <div className="border rounded p-3 mb-2 bg-white shadow-lg mt-5">
         <div className="row p-4">
           <div className="col-md-6 form-group">
             <label className="mb-2">{t("Item")}</label>
             <AsyncSelect cacheOption defaultOptions={false} loadOptions={arrItem} value={objItem}
               onChange={(option) => {
                 setObjItem(option);
-                setObjPurchase(prev => ({...prev, item: option.objItem}));
-                setObjPurchase(prev => ({...prev, itemId: option.value}));
-                setObjPurchase(prev => ({...prev, price: option.objItem?.price || 0}));
+                setObjPurchase(prev => ({ ...prev, item: option.objItem }));
+                setObjPurchase(prev => ({ ...prev, itemId: option.value }));
+                setObjPurchase(prev => ({ ...prev, price: option.objItem?.price || 0 }));
               }}
             />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objPurchase.price} onChange={(e) => {setObjPurchase(prev => ({...prev, price: Number(e.target.value)}))}} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objPurchase.price} onChange={(e) => { setObjPurchase(prev => ({ ...prev, price: Number(e.target.value) })) }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>
-            <input type="number" className="mt-2 form-control" value={objPurchase.tax} onChange={(e) => setObjPurchase(prev => ({...prev, tax: Number(e.target.value)}))} />
+            <input type="number" className="mt-2 form-control" value={objPurchase.tax} onChange={(e) => setObjPurchase(prev => ({ ...prev, tax: Number(e.target.value) }))} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Amount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="1" value={objPurchase.amount} onChange={(e) => setObjPurchase(prev => ({...prev, amount: Number(e.target.value)}))}disabled />
+            <input type="number" className="mt-2 form-control" placeholder="1" value={objPurchase.amount} onChange={(e) => setObjPurchase(prev => ({ ...prev, amount: Number(e.target.value) }))} disabled />
           </div>
         </div>
 
@@ -328,6 +336,8 @@ return (
           </div>
         </div>
       </div>
+      <SwalComponent />
+
     </>
   );
 };
