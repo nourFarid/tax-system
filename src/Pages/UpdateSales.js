@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import  { useSwal }  from "../Hooks/Alert/Swal";
 
 const UpdateSales = () => {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ const UpdateSales = () => {
   const { t } = useTranslate();
   const { id } = useParams();
   const strDocDir = document.documentElement.dir;
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Sales"), link: "/Sales", active: false },
@@ -151,35 +153,46 @@ const UpdateSales = () => {
   // ==========================
   // UPDATE FUNCTION
   // ==========================
-  const Update = async () => {
-    try {
-      const body = {
-        id: objSale.id,
-        docId: objSale.docId,
-        documentTypeId: objSale.documentTypeId,
-        invoiceNumber: objSale.invoiceNumber,
-        invoiceDate: objSale.invoiceDate,
-        itemId: objSale.itemId,
-        statementTypeId: objSale.statementTypeId,
-        itemTypeId: objSale.itemTypeId,
-        supplierId: objSale.supplierId,
-        customerId: objSale.customerId,
-        price: objSale.price,
-        amount: objSale.amount,
-        tax: objSale.tax,
-      };
+const Update = async () => {
+  try {
+    const body = {
+      id: objSale.id,
+      docId: objSale.docId,
+      documentTypeId: objSale.documentTypeId,
+      invoiceNumber: objSale.invoiceNumber,
+      invoiceDate: objSale.invoiceDate,
+      itemId: objSale.itemId,
+      statementTypeId: objSale.statementTypeId,
+      itemTypeId: objSale.itemTypeId,
+      supplierId: objSale.supplierId,
+      customerId: objSale.customerId,
+      price: objSale.price,
+      amount: objSale.amount,
+      tax: objSale.tax,
+    };
 
-      const response = await axiosInstance.put("/Sales/Update", body);
+    const response = await axiosInstance.put("/Sales/Update", body);
 
-      if (response.data.result) 
-        {alert("Sale updated successfully");
-       navigate(`/Sales`);}
-      else alert(response.data.message);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update sale");
+   if (response.data.result) {
+  showSuccess(
+    t("Success"),
+    t("Sale updated successfully"),
+    {
+      onConfirm: () => {
+        navigate("/Sales");
+      }
     }
-  };
+  );
+} else {
+  showError(t("Error"), response.data.message || t("Update failed"));
+}
+
+  } catch (err) {
+    console.error(err);
+    showError(t("Failed to update sale"));
+  }
+};
+
 
   // ==========================
   // CALCULATIONS
@@ -362,6 +375,8 @@ const UpdateSales = () => {
           </div>
         </div>
       </div>
+          <SwalComponent/>
+
     </>
   );
 };

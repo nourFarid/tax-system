@@ -181,7 +181,7 @@ const FiscalYear = () => {
     }
   };
 
-  const Delete = () => {
+const Delete = () => {
     axiosInstance
       .delete(`/FiscalYear/${objDocType.Id}`)
       .then(() => {
