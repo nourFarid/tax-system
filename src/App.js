@@ -46,12 +46,12 @@ function App() {
               <Route path="/Purchase/Add" element={<AddPurchase/>} />
               <Route path="/Sales" element={<Sales/>} />
               <Route path="/Sales/Add" element={<AddSales/>} />
-<Route path="/Sales/UpdateSale/:id" element={<UpdateSales />} />
-<Route path="/Purchase/UpdatePurchase/:id" element={<UpdatePurchase />} />
+              <Route path="/Sales/UpdateSale/:id" element={<UpdateSales />} />
+              <Route path="/Purchase/UpdatePurchase/:id" element={<UpdatePurchase />} />
               <Route path="/Setup" element={<Setup/>} />
               <Route path="/Document41" element={<Document41/>} />
               <Route path="/Document41/Add" element={<AddDocument41/>} />
-              <Route path="/Document41/Edit" element={<EditDocument41/>} />
+              <Route path="/Document41/UpdateDocument41/:id" element={<EditDocument41/>} />
               <Route path="/Setup/DocumentType" element={<DocumentType/>} />
               <Route path="/ExamplePage" element={<ExamplePage/>} />
               <Route path="/Setup/StatementType" element={<StatementType/>} />;

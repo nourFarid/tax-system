@@ -3,10 +3,11 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import AsyncSelect from "react-select/async";
 import axiosInstance from "../Axios/AxiosInstance";
+import { useParams } from "react-router-dom";
 
 const AddDocument41 = () => {
   const { t } = useTranslate();
-  
+  const { id } = useParams();
   const objTitle = useMemo(
     () => ({
       AddDocumentType: t("Add Document Type"),
@@ -140,7 +141,7 @@ const AddDocument41 = () => {
   }
 
   const loadDocument41 = async () => {
-    const res = await axiosInstance.post("Document41/List", {pageNumber: 1, pageSize: 1, filter: {id: (new URLSearchParams(window.location.search).get("id"))}});
+    const res = await axiosInstance.post("Document41/List", {pageNumber: 1, pageSize: 1, filter: {id: id}});
     const result = res.data;
     if (!result.result) {
       alert(result.message);

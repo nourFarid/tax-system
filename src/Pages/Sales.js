@@ -50,7 +50,7 @@ const Sales = () => {
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
-      link: "/sales/Add",
+      link: "/Sales/Add",
       class: "btn btn-sm btn-success ms-2 float-end",
     },
     {
@@ -329,22 +329,24 @@ const Sales = () => {
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        data={sales}
-        showActions={true}
-        onEdit={Edit}
-        showShow={false}
-        onShow={() => {}}
-        onDelete={HandelDelete}
-      />
+      <div className="bg-white p-3 shadow-sm shadow-lg">
+        <Table
+          columns={columns}
+          data={sales}
+          showActions={true}
+          onEdit={Edit}
+          showShow={false}
+          onShow={() => {}}
+          onDelete={HandelDelete}
+        />
 
-      <Pagination
-        pageNumber={pageNumber}
-        pageSize={pageSize}
-        totalRows={totalCount}
-        onPageChange={onPageChange}
-      />
+        <Pagination
+          pageNumber={pageNumber}
+          pageSize={pageSize}
+          totalRows={totalCount}
+          onPageChange={onPageChange}
+        />
+      </div>
 
       {/* Delete Confirmation Modal */}
       <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true">
@@ -402,7 +404,6 @@ const Sales = () => {
           </div>
         </div>
       </div>
-
       <SwalComponent />
     </>
   );
