@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
-import  { useSwal }  from "../Hooks/Alert/Swal";
+import { useSwal } from "../Hooks/Alert/Swal";
 
 
 const FiscalYear = () => {
@@ -16,6 +17,7 @@ const FiscalYear = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [fiscalYears, setFiscalYears] = useState([]);
+  const navigate = useNavigate();
 
   const objTitle = useMemo(
     () => ({
@@ -101,7 +103,9 @@ const FiscalYear = () => {
     const modal = new Modal(modalElement);
     modal.show();
   };
-  const handleShow = (row) => { };
+  const handleShow = (row) => {
+    navigate(`/Setup/FiscalYear/Info/${row.id}`);
+  };
   const handleDelete = (row) => {
     setObjDocType({
       Id: row.id || -1,
@@ -122,22 +126,22 @@ const FiscalYear = () => {
   };
 
   const handleSave = async () => {
-   try {
-     const payload = {
-      id: 0,
-      fromDate: objDocType.From,
-      toDate: objDocType.To,
-      yearFromDate: objDocType.YrFrom,
-      yearToDate: objDocType.YrTo,
-      isActive: true,
-      quarters: []
-    };
-    const response = await axiosInstance.post("FiscalYear/Add", payload);
-      if (response.status === 200){
-      await getFiscalYears();
-      hideModal("AddFiscalYear");
-      setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-      showSuccess("Success", "Fiscal Year added successfully!");
+    try {
+      const payload = {
+        id: 0,
+        fromDate: objDocType.From,
+        toDate: objDocType.To,
+        yearFromDate: objDocType.YrFrom,
+        yearToDate: objDocType.YrTo,
+        isActive: true,
+        quarters: []
+      };
+      const response = await axiosInstance.post("FiscalYear/Add", payload);
+      if (response.status === 200) {
+        await getFiscalYears();
+        hideModal("AddFiscalYear");
+        setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+        showSuccess("Success", "Fiscal Year added successfully!");
 
       }
 
@@ -149,33 +153,33 @@ const FiscalYear = () => {
 
 
   const handleUpdate = async () => {
-  const payload = {
-    id: objDocType.Id,
-    fromDate: objDocType.From,
-    toDate: objDocType.To,
-    yearFromDate: objDocType.YrFrom,
-    yearToDate: objDocType.YrTo,
-    isActive: true,
-    quarters: []
+    const payload = {
+      id: objDocType.Id,
+      fromDate: objDocType.From,
+      toDate: objDocType.To,
+      yearFromDate: objDocType.YrFrom,
+      yearToDate: objDocType.YrTo,
+      isActive: true,
+      quarters: []
+    };
+
+    try {
+      await axiosInstance.put(
+        `/FiscalYear/${objDocType.Id}`,
+        payload
+      );
+      await getFiscalYears();
+      const modalElement = document.getElementById("EditFiscalYear");
+      const modal = Modal.getInstance(modalElement);
+      modal.hide();
+      setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+      showSuccess("Success", "Fiscal Year updated successfully!");
+
+    } catch (error) {
+      console.error("Update Fiscal Year Error:", error);
+      showError(t("An error occurred while updating the Fiscal Year."));
+    }
   };
-
-  try {
-    await axiosInstance.put(
-      `/FiscalYear/${objDocType.Id}`,
-      payload
-    );
-    await getFiscalYears();
-    const modalElement = document.getElementById("EditFiscalYear");
-    const modal = Modal.getInstance(modalElement);
-    modal.hide();
-    setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-    showSuccess("Success", "Fiscal Year updated successfully!");
-
-  } catch (error) {
-    console.error("Update Fiscal Year Error:", error);
-    showError(t("An error occurred while updating the Fiscal Year."));
-  }
-};
 
   const Delete = () => {
     axiosInstance
@@ -191,7 +195,7 @@ const FiscalYear = () => {
         console.error("Delete Fiscal Year Error:", error);
         showError(t("An error occurred while deleting the Fiscal Year."));
       });
-     
+
   };
   const hideModal = (strModalId) => {
     const modal = Modal.getInstance(document.getElementById(strModalId));
@@ -243,7 +247,7 @@ const FiscalYear = () => {
         data={pagedData}
         showActions={true}
         onEdit={handleEdit}
-        showShow={false}
+        showShow={true}
         onShow={handleShow}
         onDelete={handleDelete}
       />
