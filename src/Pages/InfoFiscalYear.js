@@ -62,22 +62,13 @@ const InfoFiscalYear = () => {
     const handleUpdateQuarter = async () => {
         if (!selectedQuarter) return;
 
-        // Prepare detailed payload as expected by the API
-        // We need to send the full Fiscal Year object with the updated quarter list
-        const updatedQuarters = fiscalYear.quarters.map(q => {
-            if (q.id === selectedQuarter.id) {
-                return { ...q, lockDate: editLockDate };
-            }
-            return q;
-        });
-
         const payload = {
-            ...fiscalYear,
-            quarters: updatedQuarters
+            ...selectedQuarter,
+            lockDate: editLockDate
         };
 
         try {
-            const response = await axiosInstance.put(`/FiscalYear/${fiscalYear.id}`, payload);
+            const response = await axiosInstance.put("/Quarter", payload);
 
             // Re-fetch or update local state
             if (response.status === 200 || response.data.result) {

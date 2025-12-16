@@ -165,7 +165,7 @@ const FiscalYear = () => {
 
     try {
       await axiosInstance.put(
-        `/FiscalYear/${objDocType.Id}`,
+        `/FiscalYear`,
         payload
       );
       await getFiscalYears();
