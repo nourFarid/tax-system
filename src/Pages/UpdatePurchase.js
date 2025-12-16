@@ -5,13 +5,15 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useSwal } from "../Hooks/Alert/Swal";
 
-const Updatepurchases = () => {
+const UpdatePurchases = () => {
     const navigate = useNavigate();
 
   const { t } = useTranslate();
   const { id } = useParams();
   const strDocDir = document.documentElement.dir;
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Purchase"), link: "/Purchase", active: false },
@@ -151,35 +153,45 @@ const Updatepurchases = () => {
   // ==========================
   // UPDATE FUNCTION
   // ==========================
-  const Update = async () => {
-    try {
-      const body = {
-        id: objpurchase.id,
-        docId: objpurchase.docId,
-        documentTypeId: objpurchase.documentTypeId,
-        invoiceNumber: objpurchase.invoiceNumber,
-        invoiceDate: objpurchase.invoiceDate,
-        itemId: objpurchase.itemId,
-        statementTypeId: objpurchase.statementTypeId,
-        itemTypeId: objpurchase.itemTypeId,
-        supplierId: objpurchase.supplierId,
-        customerId: objpurchase.customerId,
-        price: objpurchase.price,
-        amount: objpurchase.amount,
-        tax: objpurchase.tax,
-      };
+const Update = async () => {
+  try {
+    const body = {
+      id: objpurchase.id,
+      docId: objpurchase.docId,
+      documentTypeId: objpurchase.documentTypeId,
+      invoiceNumber: objpurchase.invoiceNumber,
+      invoiceDate: objpurchase.invoiceDate,
+      itemId: objpurchase.itemId,
+      statementTypeId: objpurchase.statementTypeId,
+      itemTypeId: objpurchase.itemTypeId,
+      supplierId: objpurchase.supplierId,
+      customerId: objpurchase.customerId,
+      price: objpurchase.price,
+      amount: objpurchase.amount,
+      tax: objpurchase.tax,
+    };
 
-      const response = await axiosInstance.put("/purchase/Update", body);
+    const response = await axiosInstance.put("/purchase/Update", body);
 
-      if (response.data.result) 
-        {alert("purchase updated successfully");
-       navigate(`/purchases`);}
-      else alert(response.data.message);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update purchase");
+    if (response.data.result) {
+      showSuccess(
+        t("Success"),
+        t("Purchase updated successfully"),
+        {
+          onConfirm: () => {
+            navigate("/Purchase");
+          },
+        }
+      );
+    } else {
+      showError(t("Error"), response.data.message || t("Update failed"));
     }
-  };
+  } catch (err) {
+    console.error(err);
+    showError(t("Error"), t("Failed to update purchase"));
+  }
+};
+
 
   // ==========================
   // CALCULATIONS
@@ -362,8 +374,10 @@ const Updatepurchases = () => {
           </div>
         </div>
       </div>
+      <SwalComponent />
+      
     </>
   );
 };
 
-export default Updatepurchases;
+export default UpdatePurchases;

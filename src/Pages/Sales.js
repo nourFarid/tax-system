@@ -166,9 +166,6 @@ const Sales = () => {
     
   
       const res = await axiosInstance.delete("Sales/" + objCurrentSale.docId);
-      console.log('====================================');
-      console.log(objCurrentSale.docId);
-      console.log('====================================');
       const response = res.data;
       if (response.result) {
         showSuccess(t("Success"), response.message);
