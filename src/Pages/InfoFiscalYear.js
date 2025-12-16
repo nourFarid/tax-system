@@ -177,6 +177,18 @@ const InfoFiscalYear = () => {
                         </div>
                         <div className="modal-body">
                             <div className="mb-3">
+                                {selectedQuarter && (
+                                    <div className="alert alert-info py-2 mb-3">
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <strong>{t("Date From")}:</strong> {selectedQuarter.dateFrom ? selectedQuarter.dateFrom.split('T')[0] : "-"}
+                                            </div>
+                                            <div className="col-6">
+                                                <strong>{t("Date To")}:</strong> {selectedQuarter.dateTo ? selectedQuarter.dateTo.split('T')[0] : "-"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                                 <label className="form-label">{t("Lock Date")}</label>
                                 <input
                                     type="date"
