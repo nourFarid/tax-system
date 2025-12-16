@@ -177,13 +177,14 @@ const Item = () => {
       if (!validateDuplicates(objItem.Name, objItem.Code, objItem.Id)) return;
     try {
       const payload = {
+        Id: objItem.Id,
         Name: objItem.Name,
         Price: Number(objItem.Price),
         Code: objItem.Code,
       };
-      const response = await axiosInstance.put("Item/" + objItem.Id, payload);
+      const response = await axiosInstance.put("Item/Update", payload);
       console.log("Update response:", response);
-      
+
       setObjItem({
         Name: "",
         Price: 0,
