@@ -122,7 +122,7 @@ const Document41 = () => {
   }
 
   const Edit = (objRow) => {
-    window.location.href = `/Document41/Edit?id=${objRow.id}`;
+    window.location.href = `/Document41/UpdateDocument41/${objRow.id}`;
   }
 
   const GetQuarters = (fiscalYearId) => {

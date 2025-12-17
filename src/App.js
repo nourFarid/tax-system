@@ -44,28 +44,26 @@ function App() {
         <Route path="/*" element={
           <Layout>
             <Routes>
-              <Route path="/Purchase" element={<Purchase />} />
-              <Route path="/Purchase/Add" element={<AddPurchase />} />
-              <Route path="/Sales" element={<Sales />} />
-              <Route path="/Sales/Add" element={<AddSales />} />
+              <Route path="/Purchase" element={<Purchase/>} />
+              <Route path="/Purchase/Add" element={<AddPurchase/>} />
+              <Route path="/Sales" element={<Sales/>} />
+              <Route path="/Sales/Add" element={<AddSales/>} />
               <Route path="/Sales/UpdateSale/:id" element={<UpdateSales />} />
               <Route path="/Purchase/UpdatePurchase/:id" element={<UpdatePurchase />} />
-              <Route path="/Setup" element={<Setup />} />
-              <Route path="/Document41" element={<Document41 />} />
-              <Route path="/Document41/Add" element={<AddDocument41 />} />
-              <Route path="/Document41/Edit" element={<EditDocument41 />} />
-              <Route path="/Setup/DocumentType" element={<DocumentType />} />
-              <Route path="/ExamplePage" element={<ExamplePage />} />
-              <Route path="/Setup/StatementType" element={<StatementType />} />;
-              <Route path="/Setup/TaxType" element={<TaxType />} />;
-              <Route path="/Setup/ItemType" element={<ItemType />} />;
-              <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />;
-              <Route path="/Setup/FiscalYear" element={<FiscalYear />} />;
-              <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />
-              <Route path="/Setup/Supplier" element={<Supplier />} />;
-              <Route path="/Setup/Customer" element={<Customer />} />;
-              <Route path="/Setup/Item" element={<Item />} />;
-              <Route path="/Setup/User" element={<User />} />;
+              <Route path="/Setup" element={<Setup/>} />
+              <Route path="/Document41" element={<Document41/>} />
+              <Route path="/Document41/Add" element={<AddDocument41/>} />
+              <Route path="/Document41/UpdateDocument41/:id" element={<EditDocument41/>} />
+              <Route path="/Setup/DocumentType" element={<DocumentType/>} />
+              <Route path="/ExamplePage" element={<ExamplePage/>} />
+              <Route path="/Setup/StatementType" element={<StatementType/>} />;
+              <Route path="/Setup/TaxType" element={<TaxType/>} />;
+              <Route path="/Setup/ItemType" element={<ItemType/>} />;
+              <Route path="/Setup/TransactionNature" element={<NatureOfTransaction/>} />;
+              <Route path="/Setup/FiscalYear" element={<FiscalYear/>} />;
+              <Route path="/Setup/Supplier" element={<Supplier/>} />;
+              <Route path="/Setup/Customer" element={<Customer/>} />;
+              <Route path="/Setup/Item" element={<Item/>} />;
             </Routes>
           </Layout>
         } />

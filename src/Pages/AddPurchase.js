@@ -187,7 +187,7 @@ const AddPurchase = () => {
 
         <div className="row p-4">
           <div className="col-md-6">
-            <label>{t("Supplier")}</label>
+            <label className="mb-2">{t("Supplier")}</label>
             <AsyncSelect
               cacheOptions
               defaultOptions={false}

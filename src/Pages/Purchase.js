@@ -47,7 +47,7 @@ const Purchase = () => {
     {
       label: t("Add"),
       icon: "bi bi-plus-circle",
-      link: "/purchase/Add",
+      link: "/Purchase/Add",
       class: "btn btn-sm btn-success ms-2 float-end",
     },
     {
@@ -130,13 +130,28 @@ const Purchase = () => {
     setLoading(true);
     try {
       const isFilterEmpty =
-        objFilter.fiscalYearId === -1 &&
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
         objFilter.invoiceDateTo === "";
 
+      let Filter = {};
+      if (objFilter.invoiceDateFrom) {
+        Filter.invoiceDateFrom = objFilter.invoiceDateFrom;
+      } else{
+        delete Filter.invoiceDateFrom;
+      }
+      if (objFilter.invoiceDateTo) {
+        Filter.invoiceDateTo = objFilter.invoiceDateTo;
+      } else {
+        delete Filter.invoiceDateTo;
+      }
+      if (objFilter.quarterId !== -1) {
+        Filter.quarterId = Number.parseInt(objFilter.quarterId);
+      } else {
+        delete Filter.quarterId;
+      }
       const body = {
-        filter: isFilterEmpty ? {} : objFilter,
+        filter: isFilterEmpty ? {} : Filter,
         pageNumber: page,
         pageSize,
         sortBy: "invoiceDate",
@@ -227,10 +242,12 @@ const Purchase = () => {
 
   const onFilterClick = () => {
     setPageNumber(1);
+    fetchPurchase();
   };
 
   const onPageChange = (page) => {
     setPageNumber(page);
+    fetchPurchase();
   };
 
   return (
@@ -324,23 +341,24 @@ const Purchase = () => {
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        data={purchase}
-        showActions={true}
-        onEdit={(row) => navigate(`/Purchase/UpdatePurchase/${row.id}`)}
-        showShow={false}
-        onShow={() => { }}
-        onDelete={HandelDelete} // <-- Add the delete handler here
-      />
+      <div className="bg-white p-3 shadow-sm shadow-lg">
+        <Table
+          columns={columns}
+          data={purchase}
+          showActions={true}
+          onEdit={(row) => navigate(`/Purchase/UpdateSale/${row.id}`)}
+          showShow={false}
+          onShow={() => {}}
+          onDelete={HandelDelete} // <-- Add the delete handler here
+        />
 
-      <Pagination
-        pageNumber={pageNumber}
-        pageSize={pageSize}
-        totalRows={totalCount}
-        onPageChange={onPageChange}
-      />
-
+        <Pagination
+          pageNumber={pageNumber}
+          pageSize={pageSize}
+          totalRows={totalCount}
+          onPageChange={onPageChange}
+        />
+      </div>
       {/* Delete Confirmation Modal */}
       <div
         className="modal fade"
