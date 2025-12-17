@@ -20,6 +20,7 @@ const Setup = () => {
     Customer: t("Customer"),
     Supplier: t("Supplier"),
     FiscalYear: t("Fiscal Year"),
+    User: t("User"),
     Preview: t("Preview"),
   };
 
@@ -163,6 +164,21 @@ const Setup = () => {
           </div>
           <div className={textClass}>
             <h1 className="text-2xl font-bold leading-tight">{objTitle.FiscalYear}</h1>
+            <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
+          </div>
+        </div>
+      </div>
+
+      <div
+        onClick={() => navigate("/Setup/User")}
+        className={`bg-gradient-to-br from-cyan-500 to-blue-600 ${cardClass}`}
+      >
+        <div className="flex items-center justify-between w-full">
+          <div className="visual">
+            <i className="bi bi-people-fill opacity-25 text-7xl"></i>
+          </div>
+          <div className={textClass}>
+            <h1 className="text-2xl font-bold leading-tight">{objTitle.User}</h1>
             <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
           </div>
         </div>

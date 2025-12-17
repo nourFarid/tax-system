@@ -26,6 +26,7 @@ const InfoFiscalYear = lazy(() => import('./Pages/InfoFiscalYear'));
 const Supplier = lazy(() => import('./Pages/Supplier'));
 const Customer = lazy(() => import('./Pages/Customer'));
 const Item = lazy(() => import('./Pages/Item'));
+const User = lazy(() => import('./Pages/User'));
 const Auth = lazy(() => import('./Pages/Auth'));
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
               <Route path="/Setup/Supplier" element={<Supplier />} />;
               <Route path="/Setup/Customer" element={<Customer />} />;
               <Route path="/Setup/Item" element={<Item />} />;
+              <Route path="/Setup/User" element={<User />} />;
             </Routes>
           </Layout>
         } />
