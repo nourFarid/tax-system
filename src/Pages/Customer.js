@@ -205,7 +205,7 @@ const Customer = () => {
       console.log("Sending update payload:", payload);
 
       const response = await axiosInstance.put(
-        "CustomerSupplier/" + objDocType.Id,
+        "CustomerSupplier/Update",
         payload
       );
 

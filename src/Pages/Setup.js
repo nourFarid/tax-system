@@ -20,7 +20,7 @@ const Setup = () => {
     Customer: t("Customer"),
     Supplier: t("Supplier"),
     FiscalYear: t("Fiscal Year"),
-    User: t("User"),
+    User: t("Users"),
     Preview: t("Preview"),
   };
 
@@ -47,7 +47,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
+      {/* <div
         onClick={() => navigate("/Setup/TaxType")}
         className={`bg-gradient-to-br from-emerald-500 to-teal-600 ${cardClass}`}
       >
@@ -60,7 +60,7 @@ const Setup = () => {
             <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div
         onClick={() => navigate("/Setup/StatementType")}
@@ -92,7 +92,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
+      {/* <div
         onClick={() => navigate("/Setup/ItemType")}
         className={`bg-gradient-to-br from-amber-500 to-orange-600 ${cardClass}`}
       >
@@ -105,7 +105,7 @@ const Setup = () => {
             <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div
         onClick={() => navigate("/Setup/TransactionNature")}

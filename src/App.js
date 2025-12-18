@@ -65,6 +65,7 @@ function App() {
               <Route path="/Setup/Customer" element={<Customer />} />;
               <Route path="/Setup/Item" element={<Item />} />;
               <Route path="/Setup/User" element={<User />} />;
+              <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />;
             </Routes>
           </Layout>
         } />
