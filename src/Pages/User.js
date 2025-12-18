@@ -64,7 +64,6 @@ const User = () => {
     ];
 
     const columns = [
-        { label: t("ID"), accessor: "userId" },
         { label: t("Username"), accessor: "userName" },
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
@@ -91,6 +90,26 @@ const User = () => {
 
         if (!objUser.FullName || objUser.FullName.trim() === "") {
             newErrors.FullName = "Full Name is required";
+        }
+
+        // UserCode validation - required only when adding, optional when editing
+        if (!isEdit) {
+            if (!objUser.UserCode || objUser.UserCode.trim() === "") {
+                newErrors.UserCode = "User Code is required";
+            } else {
+                const userCodeNum = parseInt(objUser.UserCode, 10);
+                if (isNaN(userCodeNum) || userCodeNum <= 0) {
+                    newErrors.UserCode = "User Code must be a positive number";
+                }
+            }
+        } else {
+            // When editing, validate only if UserCode is provided
+            if (objUser.UserCode && objUser.UserCode.trim() !== "") {
+                const userCodeNum = parseInt(objUser.UserCode, 10);
+                if (isNaN(userCodeNum) || userCodeNum <= 0) {
+                    newErrors.UserCode = "User Code must be a positive number";
+                }
+            }
         }
 
         // Password is required only when adding, optional when editing
@@ -232,43 +251,56 @@ const User = () => {
         if (!validateForm(true)) return;
         try {
             const payload = {
-                Id: objUser.Id,
-                Username: objUser.Username,
-                Email: objUser.Email,
-                FullName: objUser.FullName,
-                UserCode: objUser.UserCode,
-                RoleId: objUser.RoleId,
-                IsActive: objUser.IsActive
+                userId: objUser.Id,
+                userName: objUser.Username,
+                email: objUser.Email,
+                fullName: objUser.FullName,
+                available: objUser.IsActive,
+                newUser: false
             };
+
+            // Only include userCode if it has a value
+            if (objUser.UserCode && objUser.UserCode.trim() !== "") {
+                payload.userCode = objUser.UserCode;
+            }
+
+            // Only include roleId if it has a value
+            if (objUser.RoleId && objUser.RoleId.trim() !== "") {
+                payload.roleId = objUser.RoleId;
+            }
 
             // Only include password if it was changed
             if (objUser.Password && objUser.Password.trim() !== "") {
-                payload.Password = objUser.Password;
+                payload.password = objUser.Password;
             }
 
             console.log("Sending update payload:", payload);
 
-            const response = await axiosInstance.put(
-                "User/" + objUser.Id,
+            const response = await axiosInstance.post(
+                "User/Update",
                 payload
             );
 
             console.log("Update response:", response.data);
 
-            setObjUser({
-                Id: null,
-                Username: "",
-                Email: "",
-                Password: "",
-                FullName: "",
-                UserCode: "",
-                RoleId: "",
-                IsActive: true
-            });
+            if (response.data && response.data.result) {
+                setObjUser({
+                    Id: null,
+                    Username: "",
+                    Email: "",
+                    Password: "",
+                    FullName: "",
+                    UserCode: "",
+                    RoleId: "",
+                    IsActive: true
+                });
 
-            hideModal("EditUser");
-            await fetchUsers(pageNumber);
-            showSuccess("Success", "User updated successfully!");
+                hideModal("EditUser");
+                await fetchUsers(pageNumber);
+                showSuccess("Success", "User updated successfully!");
+            } else {
+                showError("Error", response.data?.message || "Failed to update user");
+            }
 
         } catch (error) {
             console.log(error);
@@ -356,7 +388,8 @@ const User = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <label className="form-label">{objTitle.UserCode}</label>
-                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className="form-control" placeholder={objTitle.UserCode} autoComplete="off" />
+                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
+                                    {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
                                 </div>
 
                                 <div className="col-md-6">
@@ -445,7 +478,8 @@ const User = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <label className="form-label">{objTitle.UserCode}</label>
-                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className="form-control" placeholder={objTitle.UserCode} autoComplete="off" />
+                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
+                                    {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
                                 </div>
 
                                 <div className="col-md-6">
