@@ -318,6 +318,9 @@ const User = () => {
         };
     }, [pageNumber]);
 
+    if (loading) return <div>{t("Loading...")}</div>;
+    if (error) return <div>{t(error)}</div>;
+
     return (
         <>
             <Breadcrumb items={breadcrumbItems} button={breadcrumbButtons} />
@@ -519,18 +522,6 @@ const User = () => {
                             </div>
 
                             <div className="row mt-3">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.UserCode}</label>
-                                    <input
-                                        type="text"
-                                        name="UserCode"
-                                        value={objUser.UserCode}
-                                        onChange={handleChange}
-                                        className="form-control"
-                                        placeholder={objTitle.UserCode}
-                                    />
-                                </div>
-
                                 <div className="col-md-6 d-flex align-items-center">
                                     <input
                                         type="checkbox"
