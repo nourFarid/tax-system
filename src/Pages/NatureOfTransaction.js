@@ -15,11 +15,6 @@ const NatureOfTransaction = () => {
   const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [objItems, setObjItems] = useState({
-    Name: "",
-    Code: "",
-    Price: "",
-  });
   const [touched, setTouched] = useState({});
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);

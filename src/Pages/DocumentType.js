@@ -4,13 +4,49 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
 import Pagination from './../Components/Layout/Pagination';
+import { useSwal } from "../Hooks/Alert/Swal";
+import axiosInstance from "../Axios/AxiosInstance";
 
 const DocumentType = () => {
   const { t } = useTranslate();
+  const [docType, setDocType] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
+  const [objDocType, setObjDocType] = useState({ Name: "", Code: "" });
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const [errors, setErrors] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  const handleAddClick = () => {
+    setObjDocType({
+      Name: "",
+      Code: ""
+    });
+    setErrors({});
+  }
+
+  const fetchDocType = async (page = 1) => {
+    try {
+      const res = await axiosInstance.post("DocumentType/List", { pageNumber: page, pageSize: pageSize });
+      const data = res.data;
+      console.log('====================================');
+      console.log(data.data.totalCount);
+      console.log('====================================');
+      if (data.result) {
+        const DocTypeList = data.data.items;
+        setDocType(DocTypeList);
+        ;
+        setTotalCount(data.data.totalCount);
+        setPageNumber(page);
+      }
+    } catch (e) {
+      setError("Failed to fetch document types.");
+    } finally {
+      setLoading(false);
+    }
+  };
   const objTitle = useMemo(
     () => ({
       AddDocumentType: t("Add Document Type"),
@@ -28,7 +64,6 @@ const DocumentType = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ Name: "", Code: "" });
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -40,6 +75,7 @@ const DocumentType = () => {
       label: t("Add"),
       icon: "bi bi-plus-circle",
       dyalog: "#AddDocumentType",
+      onClick: handleAddClick,
       class: "btn btn-sm btn-success ms-2 float-end",
     },
   ];
@@ -50,10 +86,6 @@ const DocumentType = () => {
     { label: t("Code"), accessor: "code" },
   ];
 
-  const data = [
-    { id: 1, name: "good", code: "test123" },
-    { id: 2, name: "ازيك عامل اية", code: "test123" },
-  ];
 
   const handleEdit = (row) => {
     setObjDocType({
@@ -63,10 +95,11 @@ const DocumentType = () => {
     });
 
     const modalElement = document.getElementById("EditDocumentType");
-    const modal = new Modal(modalElement);
+     let modal = Modal.getInstance(modalElement);
+    if (!modal) modal = new Modal(modalElement);
     modal.show();
   };
-  const handleShow = (row) => {};
+  const handleShow = (row) => { };
   const handleDelete = (row) => {
     setObjDocType({
       Name: row.name || "",
@@ -93,11 +126,87 @@ const DocumentType = () => {
     // the add request should be here
   };
 
-  const Delete = () => {
-    // the add request should be here
+ const Delete = async () => {
+    try {
+      console.log('====================================');
+      console.log(objDocType.Id);
+      console.log('====================================');
+      await axiosInstance.delete(`DocumentType/${objDocType.Id}`);
+      setObjDocType({
+        Name: "",
+        Id: null,
+        Code:""
+      });
+      hideModal("DeleteDocumentType");
+      await fetchDocType(pageNumber);
+      showSuccess("Deleted", "document type deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete document type", error);
+      showError("Error", "Failed to delete document type");
+    }
   };
 
+  const save = async () => {
+  
+    try {
+      const payload = {
+        Name: objDocType.Name,
+        Code:objDocType.Code
+      };
+      const response = await axiosInstance.post("DocumentType/add", payload);
+      if (response.status === 200) {
+        setDocType({
+          Name: "",
+          Code: "",
+
+        });
+        hideModal("AddDocumentType");
+        fetchDocType(pageNumber)
+        showSuccess("Success", "document type added successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to add document type", error);
+      showError("Error", "Failed to add document type!");
+    }
+  };
+
+  const update = async () => {
+  
+    try {
+      const payload = {
+        Id: objDocType.Id,
+        Name: objDocType.Name,
+        Code: objDocType.Code,
+      };
+      const response = await axiosInstance.put("DocumentType/Update", payload);
+      console.log("Update response:", response);
+
+      setObjDocType({
+        Name: "",
+        Id: null,
+        Code:""
+      });
+      hideModal("EditDocumentType");
+      await fetchDocType(pageNumber);
+      showSuccess("Success", "document type updated successfully!");
+    } catch (error) {
+      console.log(error)
+      showError("Error", "Failed to update document type");
+    }
+  };
+
+
+
+  const hideModal = (strModalId) => {
+    const modal = Modal.getInstance(document.getElementById(strModalId));
+    if (modal) {
+      modal.hide();
+    }
+    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
+    backdrops.forEach(b => b.remove());
+  }
   useEffect(() => {
+    fetchDocType(pageNumber);
     const modalIds = ["AddDocumentType", "EditDocumentType", "DeleteDocumentType"];
 
     const handleHidden = () => {
@@ -119,7 +228,7 @@ const DocumentType = () => {
         modalEl.removeEventListener("hidden.bs.modal", handleHidden);
       });
     };
-  }, []);
+  }, [pageNumber]);
 
   return (
     <>
@@ -127,7 +236,7 @@ const DocumentType = () => {
 
       <Table
         columns={columns}
-        data={data}
+        data={docType}
         showActions={true}
         onEdit={handleEdit}
         showShow={false}
@@ -143,7 +252,7 @@ const DocumentType = () => {
 
       <div className="modal fade" id="AddDocumentType" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddDocumentType}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
@@ -166,7 +275,7 @@ const DocumentType = () => {
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleSave} >
+              <button type="button" className="btn btn-success" onClick={save} >
                 {objTitle.Save}
               </button>
               <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
@@ -179,7 +288,7 @@ const DocumentType = () => {
 
       <div className="modal fade" id="EditDocumentType" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.EditDocumentType}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
@@ -202,7 +311,7 @@ const DocumentType = () => {
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleUpdate} >
+              <button type="button" className="btn btn-success" onClick={update} >
                 {objTitle.Save}
               </button>
               <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
@@ -215,7 +324,7 @@ const DocumentType = () => {
 
       <div className="modal fade" id="DeleteDocumentType" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
