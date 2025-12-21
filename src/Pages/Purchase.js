@@ -97,7 +97,7 @@ const Purchase = () => {
     { label: t("Item Name"), accessor: "item.name" },
     { label: t("Statement Type"), accessor: "statementType.name" },
     { label: t("Item Type"), accessor: "itemType.name" },
-    { label: t("Price"), accessor: "item.price" },
+    { label: t("Price"), accessor: "price" },
     { label: t("Amount"), accessor: "amount" },
     { label: t("Tax Amount"), accessor: "tax" },
   ];

@@ -25,6 +25,8 @@ const AddPurchase = () => {
   const [objStatmentType, setObjStatmentType] = useState(null);
   const [objItemType, setObjItemType] = useState(null);
   const [objItem, setObjItem] = useState(null);
+  const [arrSettlementStatment, SetArrSettlementStatment] = useState([]);
+  const [arrDocumentTypeStatment, SetArrDocumentTypeStatment] = useState([]);
 
 
   const [objPurchase, setObjPurchase] = useState({
@@ -38,6 +40,9 @@ const AddPurchase = () => {
     price: 0,
     amount: 1,
     tax: 14,
+    item: {
+      price: 0
+    }
   });
 
   // ==========================
@@ -53,7 +58,7 @@ const AddPurchase = () => {
     const res = await axiosInstance.post("Item/ListAll", objFilter);
 
     if (res.data.data == null || res.data.data.length == 0) {
-      let arr = [
+      /* let arr = [
         {
           label: strInput,
           value: -1,
@@ -64,7 +69,8 @@ const AddPurchase = () => {
           }
         }]
         ;
-      return arr;
+      return arr; */
+      return [];
     }
 
     let arr = res.data.data.map(x => ({
@@ -105,6 +111,9 @@ const AddPurchase = () => {
       price: 0,
       amount: 1,
       tax: 14,
+      item: {
+        price: 0
+      }
     });
 
     setObjItem(null);
@@ -131,6 +140,18 @@ const AddPurchase = () => {
 
   };
 
+  const SetStatmentType = (documentTypeId) => {
+    if (documentTypeId == 2 || documentTypeId == 3) {
+      setObjStatmentType(arrSettlementStatment);
+    } else {
+      setObjStatmentType(arrDocumentTypeStatment);
+    }
+    setObjPurchase(prev => ({
+      ...prev,
+      statementTypeId: -1
+    }));
+  };
+
   const fetchDocType = async () => {
     const response = await axiosInstance.post("/DocumentType/ListAll", {});
     if (!response.data.result) alert(response.data.message);
@@ -140,11 +161,21 @@ const AddPurchase = () => {
   const fetchStatmentType = async () => {
     const response = await axiosInstance.post("/StatementType/ListAll", {});
     if (!response.data.result) alert(response.data.message);
+    let arr1 = [], arr2 = [];
+    for (let i = 0; i < response.data.data.length; i++) {
+      if (response.data.data[i].code == 5) {
+        arr1.push(response.data.data[i]);
+      } else{
+        arr2.push(response.data.data[i]);
+      }
+    }
+    SetArrSettlementStatment(arr1);
+    SetArrDocumentTypeStatment(arr2);
     setObjStatmentType(response.data.data);
   };
 
   const fetchItemType = async () => {
-    const response = await axiosInstance.post("/ItemType/ListAll", {});
+    const response = await axiosInstance.get("/ItemType/ListAll");
     if (!response.data.result) alert(response.data.message);
     setObjItemType(response.data.data);
   };
@@ -204,11 +235,13 @@ const AddPurchase = () => {
             <select
               className="mt-2 form-control"
               value={objPurchase.documentTypeId}
-              onChange={(e) =>
-                setObjPurchase({
-                  ...objPurchase,
-                  documentTypeId: Number(e.target.value),
-                })
+              onChange={(e) => {
+                  setObjPurchase({
+                    ...objPurchase,
+                    documentTypeId: Number(e.target.value),
+                  });
+                  SetStatmentType(e.target.value);
+                }
               }
             >
               <option value={-1}>{t("Document Type")}</option>
@@ -310,7 +343,7 @@ const AddPurchase = () => {
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objPurchase.price} onChange={(e) => { setObjPurchase(prev => ({ ...prev, price: Number(e.target.value) })) }} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objPurchase.item?.price} onChange={(e) => { setObjPurchase(prev => ({ ...prev, price: Number(e.target.value), item: { ...prev.item, price: Number(e.target.value) } })) }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>
@@ -318,7 +351,7 @@ const AddPurchase = () => {
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Amount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="1" value={objPurchase.amount} onChange={(e) => setObjPurchase(prev => ({ ...prev, amount: Number(e.target.value) }))} disabled />
+            <input type="number" className="mt-2 form-control" placeholder="1" value={objPurchase.amount} onChange={(e) => setObjPurchase(prev => ({ ...prev, amount: Number(e.target.value), price: Number(e.target.value * objPurchase.item?.price) }))} />
           </div>
         </div>
 

@@ -25,6 +25,8 @@ const AddSales = () => {
   const [objStatmentType, setObjStatmentType] = useState(null);
   const [objItemType, setObjItemType] = useState(null);
   const [objItem, setObjItem] = useState(null);
+  const [arrSettlementStatment, SetArrSettlementStatment] = useState([]);
+  const [arrDocumentTypeStatment, SetArrDocumentTypeStatment] = useState([]);
 
 
   const [objSale, setObjSale] = useState({
@@ -38,6 +40,9 @@ const AddSales = () => {
     price: 0,
     amount: 1,
     tax: 14,
+    item: {
+      price: 0
+    }
   });
 
   // ==========================
@@ -53,7 +58,7 @@ const AddSales = () => {
     const res = await axiosInstance.post("Item/ListAll", objFilter);
 
     if (res.data.data == null || res.data.data.length == 0) {
-      let arr = [
+      /* let arr = [
         {
           label: strInput,
           value: -1,
@@ -64,7 +69,8 @@ const AddSales = () => {
           }
         }]
         ;
-      return arr;
+      return arr; */
+      return [];
     }
 
     let arr = res.data.data.map(x => ({
@@ -105,6 +111,9 @@ const AddSales = () => {
       price: 0,
       amount: 1,
       tax: 14,
+      item: {
+        price: 0
+      }
     });
 
     setObjItem(null);
@@ -128,9 +137,19 @@ const AddSales = () => {
           },
         }
       );
-
     }
+  };
 
+  const SetStatmentType = (documentTypeId) => {
+    if (documentTypeId == 2 || documentTypeId == 3) {
+      setObjStatmentType(arrSettlementStatment);
+    } else {
+      setObjStatmentType(arrDocumentTypeStatment);
+    }
+    setObjSale(prev => ({
+      ...prev,
+      statementTypeId: -1
+    }));
   };
 
   const fetchDocType = async () => {
@@ -142,11 +161,21 @@ const AddSales = () => {
   const fetchStatmentType = async () => {
     const response = await axiosInstance.post("/StatementType/ListAll", {});
     if (!response.data.result) alert(response.data.message);
+    let arr1 = [], arr2 = [];
+    for (let i = 0; i < response.data.data.length; i++) {
+      if (response.data.data[i].code == 5) {
+        arr1.push(response.data.data[i]);
+      } else{
+        arr2.push(response.data.data[i]);
+      }
+    }
+    SetArrSettlementStatment(arr1);
+    SetArrDocumentTypeStatment(arr2);
     setObjStatmentType(response.data.data);
   };
 
   const fetchItemType = async () => {
-    const response = await axiosInstance.post("/ItemType/ListAll", {});
+    const response = await axiosInstance.get("/ItemType/ListAll");
     if (!response.data.result) alert(response.data.message);
     setObjItemType(response.data.data);
   };
@@ -198,21 +227,21 @@ const AddSales = () => {
               onChange={(option) => {
                 setObjCustomer(option);
                 setObjSale({ ...objSale, customerId: option.value });
-              }}
-            />
+              }} />
           </div>
           <div className="col-md-6">
             <label>{t("Document Type")}</label>
             <select
               className="mt-2 form-control"
               value={objSale.documentTypeId}
-              onChange={(e) =>
-                setObjSale({
-                  ...objSale,
-                  documentTypeId: Number(e.target.value),
-                })
-              }
-            >
+              onChange={(e) => {
+                  setObjSale({
+                    ...objSale,
+                    documentTypeId: Number(e.target.value),
+                  });
+                  SetStatmentType(e.target.value);
+                }
+              }>
               <option value={-1}>{t("Document Type")}</option>
 
               {objDocType?.map((doc) => (
@@ -235,8 +264,7 @@ const AddSales = () => {
                   ...objSale,
                   itemTypeId: Number(e.target.value),
                 })
-              }
-            >
+              }>
               <option value={-1}>{t("Item Type")}</option>
 
               {objItemType?.map((itemType) => (
@@ -256,8 +284,7 @@ const AddSales = () => {
                   ...objSale,
                   statementTypeId: Number(e.target.value),
                 })
-              }
-            >
+              }>
               <option value={-1}>{t("Statement Type")}</option>
 
               {objStatmentType?.map((x) => (
@@ -278,8 +305,7 @@ const AddSales = () => {
               value={objSale.invoiceNumber}
               onChange={(e) =>
                 setObjSale({ ...objSale, invoiceNumber: e.target.value })
-              }
-            />
+              } />
           </div>
 
           <div className="col-md-6">
@@ -290,8 +316,7 @@ const AddSales = () => {
               value={objSale.invoiceDate}
               onChange={(e) =>
                 setObjSale({ ...objSale, invoiceDate: e.target.value })
-              }
-            />
+              } />
           </div>
         </div>
       </div>
@@ -307,12 +332,11 @@ const AddSales = () => {
                 setObjSale(prev => ({ ...prev, item: option.objItem }));
                 setObjSale(prev => ({ ...prev, itemId: option.value }));
                 setObjSale(prev => ({ ...prev, price: option.objItem?.price || 0 }));
-              }}
-            />
+              }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objSale.price} onChange={(e) => { setObjSale(prev => ({ ...prev, price: Number(e.target.value) })) }} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objSale.item?.price} onChange={(e) => { setObjSale(prev => ({ ...prev, price: Number(e.target.value), item: { ...prev.item, price: Number(e.target.value) } })) }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>
@@ -320,7 +344,7 @@ const AddSales = () => {
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Amount")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="1" value={objSale.amount} onChange={(e) => setObjSale(prev => ({ ...prev, amount: Number(e.target.value) }))} disabled />
+            <input type="number" className="mt-2 form-control" placeholder="1" value={objSale.amount} onChange={(e) => { setObjSale(prev => ({ ...prev, amount: Number(e.target.value), price: Number(e.target.value * objSale.item?.price) })); }} />
           </div>
         </div>
 
