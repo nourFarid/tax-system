@@ -77,10 +77,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
-        onClick={() => navigate("/Setup/Item")}
-        className={`bg-gradient-to-br from-blue-500 to-sky-600 ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/Item")} className={`bg-gradient-to-br from-blue-500 to-sky-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-stack-overflow opacity-25 text-7xl"></i>
@@ -107,10 +104,7 @@ const Setup = () => {
         </div>
       </div> */}
 
-      <div
-        onClick={() => navigate("/Setup/TransactionNature")}
-        className={`bg-gradient-to-br from-fuchsia-500 to-purple-700 ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/TransactionNature")} className={`bg-gradient-to-br from-fuchsia-500 to-purple-700 ${cardClass}`} >
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-calculator-fill opacity-25 text-7xl"></i>
@@ -122,10 +116,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
-        onClick={() => navigate("/Setup/Customer")}
-        className={`bg-gradient-to-br from-green-500 to-lime-600 ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/Customer")} className={`bg-gradient-to-br from-green-500 to-lime-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-person-fill opacity-25 text-7xl"></i>
@@ -137,12 +128,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
-        onClick={() => navigate("/Setup/Supplier")}
-        className={`bg-gradient-to-br bg-gradient-to-br from-rose-400 to-pink-500
-
- ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/Supplier")} className={`bg-gradient-to-br bg-gradient-to-br from-rose-400 to-pink-500${cardClass}`}  >
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-buildings-fill opacity-25 text-7xl"></i>

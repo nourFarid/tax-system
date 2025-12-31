@@ -300,9 +300,7 @@ const Purchase = () => {
             >
               <option value={-1}>{t("Select Fiscal Year")}</option>
               {arrFiscalYear.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.yearFromDate} - {item.yearToDate}
-                </option>
+                <option key={item.id} value={item.id}> {item.yearFromDate} - {item.yearToDate} </option>
               ))}
             </select>
           </div>
@@ -319,9 +317,7 @@ const Purchase = () => {
               >
                 <option value={-1}>{t("Select Quarter")}</option>
                 {GetQuarters(objFilter.fiscalYearId).map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.dateFrom} - {item.dateTo}
-                  </option>
+                  <option key={item.id} value={item.id}> {item.dateFrom} - {item.dateTo}</option>
                 ))}
               </select>
             </div>
@@ -330,13 +326,9 @@ const Purchase = () => {
 
         <div className="row" dir={strDocDir === "ltr" ? "rtl" : "ltr"}>
           <div className="col-md-3 mb-3">
-            <button className="btn btn-primary" onClick={onFilterClick}>
-              {t("Filter")}
-            </button>
+            <button className="btn btn-primary" onClick={onFilterClick}> {t("Filter")} </button>
             &nbsp;
-            <button className="btn btn-danger" onClick={Reset}>
-              {t("Reset")}
-            </button>
+            <button className="btn btn-danger" onClick={Reset}>{t("Reset")} </button>
           </div>
         </div>
       </div>
@@ -360,41 +352,15 @@ const Purchase = () => {
         />
       </div>
       {/* Delete Confirmation Modal */}
-      <div
-        className="modal fade"
-        id="Delete"
-        tabIndex="-1"
-        aria-hidden="true"
-      >
+      <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true" >
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"}}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }} >
               <p>
                 {objTitle.DeleteConfirmation}{" "}
                 <strong>{objCurrentPurchase.invoiceNumber || objCurrentPurchase.customerSupplierName || ""}</strong>{" "}
@@ -402,29 +368,13 @@ const Purchase = () => {
               </p>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={Delete}
-              >
-                {objTitle.Delete}
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
+              <button type="button" className="btn btn-danger" onClick={Delete}> {objTitle.Delete}</button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
       </div>
-
       <SwalComponent />
     </>
   );

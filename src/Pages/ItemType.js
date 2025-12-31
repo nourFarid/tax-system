@@ -146,9 +146,7 @@ const ItemType = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddItemType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -164,14 +162,9 @@ const ItemType = () => {
                 </div>
               </div>
             </div>
-
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleSave} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
+              <button type="button" className="btn btn-success" onClick={handleSave} >{objTitle.Save}</button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >{objTitle.Cancel}</button>
             </div>
           </div>
         </div>
@@ -182,9 +175,7 @@ const ItemType = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.EditStatementType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -202,12 +193,8 @@ const ItemType = () => {
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleUpdate} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
+              <button type="button" className="btn btn-success" onClick={handleUpdate} > {objTitle.Save} </button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" > {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
@@ -218,9 +205,7 @@ const ItemType = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"  }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -228,12 +213,8 @@ const ItemType = () => {
             </div>
 
             <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
+              <button type="button" className="btn btn-danger" onClick={Delete} > {objTitle.Delete} </button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" > {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
