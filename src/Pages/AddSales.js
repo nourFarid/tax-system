@@ -210,9 +210,7 @@ const AddSales = () => {
       <div className="border rounded p-3 mb-2 bg-white shadow-lg">
         <div className="row p-4">
           <div className="col-md-4">
-            <h1>
-              <strong className="text-primary">{t("Sales")}</strong>
-            </h1>
+            <h1> <strong className="text-primary">{t("Sales")}</strong> </h1>
           </div>
         </div>
 
@@ -231,8 +229,7 @@ const AddSales = () => {
           </div>
           <div className="col-md-6">
             <label>{t("Document Type")}</label>
-            <select
-              className="mt-2 form-control"
+            <select className="mt-2 form-control"
               value={objSale.documentTypeId}
               onChange={(e) => {
                   setObjSale({
@@ -245,9 +242,7 @@ const AddSales = () => {
               <option value={-1}>{t("Document Type")}</option>
 
               {objDocType?.map((doc) => (
-                <option key={doc.id} value={doc.id}>
-                  {doc.name}
-                </option>
+                <option key={doc.id} value={doc.id}> {doc.name} </option>
               ))}
             </select>
           </div>
@@ -256,8 +251,7 @@ const AddSales = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Item Type")}</label>
-            <select
-              className="mt-2 form-control"
+            <select className="mt-2 form-control"
               value={objSale.itemTypeId}
               onChange={(e) =>
                 setObjSale({
@@ -276,22 +270,10 @@ const AddSales = () => {
           </div>
           <div className="col-md-6">
             <label>{t("Statement Type")}</label>
-            <select
-              className="mt-2 form-control"
-              value={objSale.statementTypeId}
-              onChange={(e) =>
-                setObjSale({
-                  ...objSale,
-                  statementTypeId: Number(e.target.value),
-                })
-              }>
+            <select className="mt-2 form-control"value={objSale.statementTypeId}
+              onChange={(e) => setObjSale({...objSale, statementTypeId: Number(e.target.value),}) }>
               <option value={-1}>{t("Statement Type")}</option>
-
-              {objStatmentType?.map((x) => (
-                <option key={x.id} value={x.id}>
-                  {x.name}
-                </option>
-              ))}
+              {objStatmentType?.map((x) => (<option key={x.id} value={x.id}> {x.name} </option> ))}
             </select>
           </div>
         </div>
@@ -299,24 +281,14 @@ const AddSales = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Invoice Number")}</label>
-            <input
-              type="text"
-              className="mt-2 form-control"
-              value={objSale.invoiceNumber}
-              onChange={(e) =>
-                setObjSale({ ...objSale, invoiceNumber: e.target.value })
-              } />
+            <input type="text" className="mt-2 form-control" value={objSale.invoiceNumber}
+              onChange={(e) => setObjSale({ ...objSale, invoiceNumber: e.target.value })} />
           </div>
 
           <div className="col-md-6">
             <label>{t("Invoice Date")}</label>
-            <input
-              type="date"
-              className="mt-2 form-control"
-              value={objSale.invoiceDate}
-              onChange={(e) =>
-                setObjSale({ ...objSale, invoiceDate: e.target.value })
-              } />
+            <input type="date" className="mt-2 form-control" value={objSale.invoiceDate}
+              onChange={(e) => setObjSale({ ...objSale, invoiceDate: e.target.value })} />
           </div>
         </div>
       </div>

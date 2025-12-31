@@ -263,9 +263,7 @@ const Delete = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddFiscalYear}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>

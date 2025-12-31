@@ -210,40 +210,18 @@ const AddPurchase = () => {
       <div className="border rounded p-3 mb-2 bg-white shadow-lg">
         <div className="row p-4">
           <div className="col-md-4">
-            <h1>
-              <strong className="text-primary">{t("Purchase")}</strong>
-            </h1>
+            <h1><strong className="text-primary">{t("Purchase")}</strong></h1>
           </div>
         </div>
 
         <div className="row p-4">
           <div className="col-md-6">
             <label className="mb-2">{t("Supplier")}</label>
-            <AsyncSelect
-              cacheOptions
-              defaultOptions={false}
-              loadOptions={arrSupplier}
-              value={objSupplier}
-              onChange={(option) => {
-                setObjSupplier(option);
-                setObjPurchase({ ...objPurchase, supplierId: option.value });
-              }}
-            />
+            <AsyncSelect cacheOptions defaultOptions={false} loadOptions={arrSupplier} value={objSupplier} onChange={(option) => {setObjSupplier(option); setObjPurchase({ ...objPurchase, supplierId: option.value });}} />
           </div>
           <div className="col-md-6">
             <label>{t("Document Type")}</label>
-            <select
-              className="mt-2 form-control"
-              value={objPurchase.documentTypeId}
-              onChange={(e) => {
-                  setObjPurchase({
-                    ...objPurchase,
-                    documentTypeId: Number(e.target.value),
-                  });
-                  SetStatmentType(e.target.value);
-                }
-              }
-            >
+            <select className="mt-2 form-control" value={objPurchase.documentTypeId} onChange={(e) => {setObjPurchase({...objPurchase,documentTypeId: Number(e.target.value),});SetStatmentType(e.target.value);}} >
               <option value={-1}>{t("Document Type")}</option>
 
               {objDocType?.map((doc) => (
