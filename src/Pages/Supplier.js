@@ -318,9 +318,7 @@ const Supplier = () => {
           <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddSupplier}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -351,17 +349,9 @@ const Supplier = () => {
                   <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
                   {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
                 </div>
-
-
-
               </div>
               <div className="row">
-
-
-
               </div>
-
-
               <div className="row" mt-3>
                 <div className="col-md-6 d-flex align-items-center">
                   <input

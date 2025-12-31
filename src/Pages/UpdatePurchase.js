@@ -271,9 +271,7 @@ const Update = async () => {
             >
               <option value={-1}>{t("Statement Type")}</option>
               {objStatmentType.map((x) => (
-                <option key={x.id} value={x.id}>
-                  {x.name}
-                </option>
+                <option key={x.id} value={x.id}> {x.name} </option>
               ))}
             </select>
           </div>
