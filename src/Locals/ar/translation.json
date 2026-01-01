@@ -182,5 +182,9 @@
   "Select Fiscal Year": "اختر السنة المالية",
   "Export": "تصدير",
   "Transaction Date Form": "تاريخ التعامل من",
-  "Transaction Date To": "تاريخ التعامل إلى"
+  "Transaction Date To": "تاريخ التعامل إلى",
+  "Is Prepaid payments": "دفعات مسبقة الدفع",
+  "Issue Date": "تاريخ الإصدار",
+  "Prepaid payments": "دفعات مسبقة الدفع",
+  "Not Prepaid payments": "غير مسبقة الدفع"
 }

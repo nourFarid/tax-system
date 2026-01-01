@@ -10,6 +10,7 @@ import { SET_LANGUAGE } from "../Redux/actions/languageActions.js";
 import axiosInstance from './../Axios/AxiosInstance';
 import { useNavigate } from "react-router-dom";
 import { setAuthUser } from "../Hooks/Services/Storage.js"
+import Spinner from "../Components/Layout/Spinner.js";
 
 const Auth = () => {
     const navigate = useNavigate();
@@ -21,12 +22,14 @@ const Auth = () => {
         userName: "",
         password: ""
     });
+  const [loading, setLoading] = useState(false);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
     const loginFun = async () => {
         try {
+            setLoading(true);
             const payload = {
                 userName: login.userName,
                 password: login.password,
@@ -34,8 +37,10 @@ const Auth = () => {
             };
             const response = await axiosInstance.post("Auth/Login", payload);
             setAuthUser(response.data.token);
+            setLoading(false);
             navigate("/Setup");
         } catch (error) {
+            setLoading(false);
             console.error("Failed to login", error);
         }
     };
@@ -53,156 +58,37 @@ const Auth = () => {
         dispatch({ type: SET_LANGUAGE, payload: newLang });
     };
 
-
     return (
-        <div className="
-            min-h-screen 
-            bg-primary-500 
-            flex items-center justify-center 
-            p-4 md:p-3 lg:p-5 3xl:p-10
-            overflow-auto
-        ">
-
-
+        <>
+        <div className="min-h-screen bg-primary-500 flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto">
             {/* Main Container */}
-            <div className="
-                w-full 
-                my-auto
-                max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px]
-                bg-white 
-                rounded-[30px] md:rounded-[40px] lg:rounded-[50px]
-                p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20
-                shadow-2xl
-                overflow-auto
-                relative
-            ">
-
-
+            <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] bg-white rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative">
                 {/* Language Toggle Button - Inside Container */}
-                <button
-                    onClick={toggleLanguage}
-                    className="
-                    absolute
-                    top-4 md:top-6 lg:top-8
-                    ltr:right-4 rtl:left-4
-                    md:ltr:right-6 md:rtl:left-6
-                    lg:ltr:right-8 lg:rtl:left-8
-                    z-50
-                    bg-primary-500
-                    hover:bg-primary-600
-                    active:bg-primary-700
-                    text-white
-                    rounded-full
-                    w-10 h-10 md:w-12 md:h-12
-                    flex items-center justify-center
-                    shadow-lg
-                    hover:shadow-xl
-                    transition-all
-                    duration-200
-                    border-2 border-white
-                "
-                    aria-label="Toggle Language"
-                    title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
-                >
+                <button onClick={toggleLanguage} className="absolute top-4 md:top-6 lg:top-8 ltr:right-4 rtl:left-4 md:ltr:right-6 md:rtl:left-6 lg:ltr:right-8 lg:rtl:left-8 z-50 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white" aria-label="Toggle Language" title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}>
                     <span className="font-Cairo font-bold text-sm md:text-base">
                         {currentLang === 'ar' ? 'EN' : 'ع'}
                     </span>
                 </button>
 
-
-
                 {/* Grid Layout: Image on left, Form on right (responsive) */}
-                <div className="
-                    w-full
-                    grid 
-                    grid-cols-1 lg:grid-cols-2 
-                    gap-6 md:gap-6 lg:gap-8 xl:gap-12
-                    place-items-center
-                ">
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-6 lg:gap-8 xl:gap-12 place-items-center ">
                     {/* Right Side - Form Section (shows first on mobile) */}
-                    <div className="
-                        order-2 lg:order-1
-                        w-full
-                        max-w-md lg:max-w-full
-                        flex flex-col 
-                        justify-center
-                        items-center
-                        gap-4 md:gap-4 lg:gap-4 xl:gap-6
-                        py-4
-                    ">
-
-
+                    <div className="order-2 lg:order-1 w-full max-w-md lg:max-w-full flex flex-col justify-center items-center gap-4 md:gap-4 lg:gap-4 xl:gap-6 py-4">
                         {/* Title */}
-                        <h1 className="
-                            font-Cairo 
-                            font-bold
-                            text-primary-500
-                            text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 3xl:text-6xl
-                            text-center
-                            mb-2 md:mb-3 lg:mb-2
-                        ">
+                        <h1 className="font-Cairo font-bold text-primary-500 text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 3xl:text-6xl text-center mb-2 md:mb-3 lg:mb-2">
                             {t("Tax Management")}
                         </h1>
-
-
                         {/* Logo Image */}
-                        <div className="
-                            w-full 
-                            flex justify-center
-                            mb-2 md:mb-3 lg:mb-2
-                        ">
-                            <img
-                                src={EgyptAirLogo}
-                                alt="Logo"
-                                className="
-                                    w-[200px] sm:w-[280px] md:w-[350px] lg:w-[320px] xl:w-[400px] 3xl:w-[490px]
-                                    h-auto
-                                    object-contain
-                                "
-                            />
+                        <div className="w-full flex justify-center mb-2 md:mb-3 lg:mb-2">
+                            <img src={EgyptAirLogo} alt="Logo" className="w-[200px] sm:w-[280px] md:w-[350px] lg:w-[320px] xl:w-[400px] 3xl:w-[490px] h-auto object-contain" />
                         </div>
 
 
                         {/* Email Input with Icon */}
                         <div className="relative w-full sm:w-[350px] md:w-[400px] lg:w-[300px] xl:w-[350px] 3xl:w-[400px]">
-                            <i className="
-                                ri-mail-line
-                                absolute
-                                ltr:left-5 rtl:right-5
-                                md:ltr:left-8 md:rtl:right-8
-                                lg:ltr:left-10 lg:rtl:right-10
-                                top-1/2
-                                transform -translate-y-1/2
-                                text-gray-500
-                                text-lg md:text-xl lg:text-2xl 3xl:text-3xl
-                                pointer-events-none
-                            "></i>
-                            <input
-                                type="email"
-                                placeholder={t("Email")}
-                                className="
-                                    w-full 
-                                    h-[50px] md:h-[60px] lg:h-[65px] xl:h-[75px] 3xl:h-[93px]
-                                    rounded-[25px] md:rounded-[30px] lg:rounded-[30px] 3xl:rounded-[40px]
-                                    border border-black
-                                    ltr:pl-12 rtl:pr-12
-                                    md:ltr:pl-16 md:rtl:pr-16
-                                    lg:ltr:pl-20 lg:rtl:pr-20
-                                    3xl:ltr:pl-24 3xl:rtl:pr-24
-                                    ltr:pr-5 rtl:pl-5
-                                    md:ltr:pr-8 md:rtl:pl-8
-                                    lg:ltr:pr-10 lg:rtl:pl-10
-                                    text-base md:text-lg lg:text-xl 3xl:text-2xl
-                                    font-inter
-                                    text-gray-700
-                                    focus:outline-none 
-                                    focus:border-primary-500 
-                                    focus:ring-2 
-                                    focus:ring-primary-300
-                                    transition-all
-                                "
-                                value={login.userName}
-                                onChange={(e) => setlogin({ ...login, userName: e.target.value })}
+                            <i className="ri-mail-line absolute ltr:left-5 rtl:right-5 md:ltr:left-8 md:rtl:right-8 lg:ltr:left-10 lg:rtl:right-10 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg md:text-xl lg:text-2xl 3xl:text-3xl pointer-events-none"></i>
+                            <input type="email" placeholder={t("Email")} className="w-full h-[50px] md:h-[60px] lg:h-[65px] xl:h-[75px] 3xl:h-[93px] rounded-[25px] md:rounded-[30px] lg:rounded-[30px] 3xl:rounded-[40px] border border-black ltr:pl-12 rtl:pr-12 md:ltr:pl-16 md:rtl:pr-16 lg:ltr:pl-20 lg:rtl:pr-20 3xl:ltr:pl-24 3xl:rtl:pr-24 ltr:pr-5 rtl:pl-5 md:ltr:pr-8 md:rtl:pl-8 lg:ltr:pr-10 lg:rtl:pl-10 text-base md:text-lg lg:text-xl 3xl:text-2xl font-inter text-gray-700 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-300 transition-all"
+                                value={login.userName} onChange={(e) => setlogin({ ...login, userName: e.target.value })}
                             />
                         </div>
 
@@ -316,6 +202,8 @@ const Auth = () => {
                 </div>
             </div>
         </div>
+        {loading && <Spinner></Spinner>}
+        </>
     );
 }
 

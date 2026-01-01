@@ -100,5 +100,9 @@
   "Quarter": "Quarter",
   "Serial Number": "Serial Number",
   "Select Quarter": "Select Quarter",
-  "Select Fiscal Year": "Select Fiscal Year"
+  "Select Fiscal Year": "Select Fiscal Year",
+  "Is Prepaid payments": "Is Prepaid payments",
+  "Issue Date": "Issue Date",
+  "Prepaid payments": "Prepaid payments",
+  "Not Prepaid payments": "Not Prepaid payments"
 }

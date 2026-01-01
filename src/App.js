@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import i18n from "./i18n";
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HandleAuth from './HandleAuth';
 const Layout = lazy(() => import('./Components/Layout/Layout'));
 const ExamplePage = lazy(() => import('./Pages/ExamplePage'));
 const Setup = lazy(() => import('./Pages/Setup'));
@@ -30,7 +31,7 @@ const User = lazy(() => import('./Pages/User'));
 const Auth = lazy(() => import('./Pages/Auth'));
 
 function App() {
-  const lang = useSelector((state) => state.language.lang)
+  const lang = useSelector((state) => state.language.lang);
 
   useEffect(() => {
     i18n.changeLanguage(lang);

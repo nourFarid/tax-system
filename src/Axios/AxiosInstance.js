@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '../Redux/store';
-import { getAuthUser } from '../Hooks/Services/Storage'; 
+import { getAuthUser } from '../Hooks/Services/Storage';
 
 const axiosInstance = axios.create({
     baseURL: 'http://localhost:5256/api/',

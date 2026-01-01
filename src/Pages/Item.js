@@ -291,9 +291,6 @@ const Item = () => {
       document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
   }, [pageNumber]);
-  if (loading) {
-    return <Spinner></Spinner>
-  }
 
   if (error) return <p>{error}</p>;
   return (
@@ -467,6 +464,7 @@ const Item = () => {
         </div>
       </div>
       <SwalComponent />
+      {loading && <Spinner></Spinner>}
     </>
   );
 };
