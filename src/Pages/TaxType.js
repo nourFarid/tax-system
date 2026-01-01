@@ -174,13 +174,7 @@ const TaxType = () => {
               style={{ borderBottom: "1px solid #d3d3d3" }}
             >
               <h5 className="modal-title">{objTitle.AddTaxType}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body"style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
@@ -244,27 +238,14 @@ const TaxType = () => {
                     }
                     className="form-check-input me-2"
                   />
-                  <label htmlFor="IsPurchase" className="form-check-label">
-                    {objTitle.Purchase}
-                  </label>
+                  <label htmlFor="IsPurchase" className="form-check-label"> {objTitle.Purchase} </label>
                 </div>
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button type="button" className="btn btn-success" onClick={handleSave}>
-                {objTitle.Save}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
+              <button type="button" className="btn btn-success" onClick={handleSave}> {objTitle.Save} </button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
@@ -272,28 +253,10 @@ const TaxType = () => {
   {/* Edit */}
       <div className="modal fade" id="EditTaxType" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }} >
               <h5 className="modal-title">{objTitle.EditTaxType}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm"  data-bs-dismiss="modal" > X </button>
             </div>
 
             <div
@@ -342,9 +305,7 @@ const TaxType = () => {
                     }
                     className="form-check-input me-2"
                   />
-                  <label htmlFor="IsSalesEdit" className="form-check-label">
-                    {objTitle.Sales}
-                  </label>
+                  <label htmlFor="IsSalesEdit" className="form-check-label"> {objTitle.Sales} </label>
                 </div>
 
                 <div className="col-md-6 d-flex align-items-center">
@@ -368,24 +329,9 @@ const TaxType = () => {
               </div>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleUpdate}
-              >
-                {objTitle.Save}
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
+              <button type="button" className="btn btn-success" onClick={handleUpdate} > {objTitle.Save} </button>
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" > {objTitle.Cancel} </button>
             </div>
           </div>
         </div>
@@ -393,54 +339,22 @@ const TaxType = () => {
   {/* Delete */}
       <div className="modal fade" id="DeleteTaxType" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }} >
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }} >
               <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button
-                type="button"
-                className="btn btn-outline-danger btn-sm"
-                data-bs-dismiss="modal"
-              >
-                X
-              </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal" > X </button>
             </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
+            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }} >
               <p>
                 {objTitle.DeleteConfirmation} <strong>{objDocType.Name}</strong>{" "}
                 {objTitle.QuestionMark}
               </p>
             </div>
 
-            <div
-              className="modal-footer"
-              style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-            >
-              <button type="button" className="btn btn-danger" onClick={Delete}>
-                {objTitle.Delete}
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                {objTitle.Cancel}
-              </button>
+            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
+              <button type="button" className="btn btn-danger" onClick={Delete}> {objTitle.Delete} </button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
             </div>
           </div>
         </div>

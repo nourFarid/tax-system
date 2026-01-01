@@ -130,7 +130,7 @@
   "Supplier Tax Registration Number": "رقم التسجيل الضريبي للمورد",
   "Supplier Tax File Number": "رقم الملف الضريبي للمورد",
   "National ID / Passport Number": "الرقم القومي / رقم جواز السفر",
-  "Passport Number":"رقم جواز السفر",
+  "Passport Number": "رقم جواز السفر",
   "Mobile Number": "رقم الموبيل",
   "Invoice Date": "تاريخ الفاتورة",
   "Product Name": "إسم المنتج",
@@ -186,5 +186,15 @@
   "Is Prepaid payments": "دفعات مسبقة الدفع",
   "Issue Date": "تاريخ الإصدار",
   "Prepaid payments": "دفعات مسبقة الدفع",
-  "Not Prepaid payments": "غير مسبقة الدفع"
+  "Not Prepaid payments": "غير مسبقة الدفع",
+  "Quarters": "الارباع",
+  "Fiscal Year Details" : "تفاصيل السنة المالية",
+  "Lock Date" : "تاريخ القفل",
+  "Date From" : "التاريخ من",
+  "Date To" : "التاريخ إلى",
+  "From Date" : "من التاريخ",
+  "To Date" : "إلى التاريخ",
+  "Info Fiscal Year" : "معلومات السنة المالية",
+  "Edit Lock Date" : "تعديل تاريخ القفل",
+  "Save Changes" : "حفظ التعديلات"
 }
