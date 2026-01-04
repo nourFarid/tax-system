@@ -128,7 +128,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/Supplier")} className={`bg-gradient-to-br bg-gradient-to-br from-rose-400 to-pink-500${cardClass}`}  >
+      <div onClick={() => navigate("/Setup/Supplier")} className={`bg-gradient-to-br bg-gradient-to-br from-rose-400 to-pink-500 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-buildings-fill opacity-25 text-7xl"></i>
@@ -140,10 +140,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
-        onClick={() => navigate("/Setup/FiscalYear")}
-        className={`bg-gradient-to-br from-red-600 to-red-400 ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/FiscalYear")} className={`bg-gradient-to-br from-red-600 to-red-400 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-bank2 opacity-25 text-7xl"></i>
@@ -155,10 +152,7 @@ const Setup = () => {
         </div>
       </div>
 
-      <div
-        onClick={() => navigate("/Setup/User")}
-        className={`bg-gradient-to-br from-cyan-500 to-blue-600 ${cardClass}`}
-      >
+      <div onClick={() => navigate("/Setup/User")} className={`bg-gradient-to-br from-cyan-500 to-blue-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-people-fill opacity-25 text-7xl"></i>
