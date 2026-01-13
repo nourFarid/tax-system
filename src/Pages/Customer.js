@@ -6,6 +6,7 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const Customer = () => {
   const { t } = useTranslate();
@@ -168,6 +169,10 @@ const Customer = () => {
         isCustomer: true
       };
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
       console.log("Add response:", response.data);
         setObjDocType({
           NationalID: "",
@@ -176,15 +181,13 @@ const Customer = () => {
           TaxNumber: "",
           AddressLine: "",
           IsSupplier: false,
-          IsCustomer: false
+          IsCustomer: true
         });
-      hideModal("AddCustomer");    
+      hideModal("AddCustomer");
       await fetchCustomers(pageNumber);
-      showSuccess("Success", "Customer added successfully!");
-      
+      toast.success(response.data.message);
     } catch (error) {
-      console.error("Failed to add Customer", error);
-      showError("Error", error.response?.data?.message || "Failed to add Customer");
+      toast.error(error.response?.data?.message || "Failed to add Customer");
     }
   };
 
@@ -208,8 +211,10 @@ const Customer = () => {
         "CustomerSupplier/Update",
         payload
       );
-
-      console.log("Update response:", response.data);
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
 
       setObjDocType({
         Id: null,
@@ -225,11 +230,11 @@ const Customer = () => {
      
       hideModal("EditCustomer");  
       await fetchCustomers(pageNumber);
-      showSuccess("Success", "Customer updated successfully!");
+      toast.success(response.data.message);
 
     } catch (error) {
       console.log(error);
-      showError("Error", "Failed to update customer");
+      toast.error(error.response?.data?.message || "Failed to update customer");
     }
   };
 
@@ -240,13 +245,13 @@ const Customer = () => {
       if (response.status === 200 || response.status === 204) {
         console.log("Customer deleted successfully");
 
-        showSuccess("Success", "Customer deleted successfully!");
+        toast.success(response.data.message);
         hideModal("DeleteCustomer");
         await fetchCustomers(pageNumber);
       }
     } catch (error) {
       console.error("Failed to delete customer", error);
-      showError("Error", "Failed to delete customer");
+      toast.error(error.response?.data?.message || "Failed to delete customer");
     }
   };
    const hideModal = (strModalId) => {
@@ -513,6 +518,7 @@ const Customer = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
       <SwalComponent />
     </>
   );

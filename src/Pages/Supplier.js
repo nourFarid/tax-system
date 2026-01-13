@@ -6,6 +6,7 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const Supplier = () => {
   const { t } = useTranslate();
@@ -174,7 +175,10 @@ const Supplier = () => {
 
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
       console.log("Add response:", response.data);
-
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
       if (response.status === 200) {
         // Reset form
         setObjDocType({
@@ -189,15 +193,13 @@ const Supplier = () => {
 
         hideModal("AddSupplier");
         fetchSuppliers(pageNumber);
-        showSuccess("Success", "Supplier added successfully!");
-
-
+        toast.success("Supplier added successfully!");
       } else {
-        showError("Error", response.data?.message || "Failed to add Supplier");
+        toast.error(response.data?.message || "Failed to add Supplier");
       }
     } catch (error) {
       console.error("Failed to add supplier", error);
-      showError("Error", error.response?.data?.message || "Failed to add Supplier");
+      toast.error(error.response?.data?.message || "Failed to add Supplier");
     }
   };
 
@@ -221,6 +223,11 @@ const Supplier = () => {
         payload
       );
 
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
+
       console.log("Update response:", response.data);
 
       setObjDocType({
@@ -235,11 +242,11 @@ const Supplier = () => {
       });
       hideModal("EditSupplier");
       await fetchSuppliers(pageNumber);
-      showSuccess("Success", "Supplier updated successfully!");
+      toast.success(response.data.message);
 
     } catch (error) {
       console.log(error);
-      showError("Error", "Failed to update supplier");
+      toast.error(error.response?.data?.message || "Failed to update supplier");
     }
   };
 
@@ -250,13 +257,13 @@ const Supplier = () => {
 
       if (response.status === 200 || response.status === 204) {
         console.log("Supplier deleted successfully");
-        showSuccess("Success", "Supplier deleted successfully!");
+        toast.success("Supplier deleted successfully!");
         hideModal("DeleteSupplier");
         await fetchSuppliers(pageNumber);
       }
     } catch (error) {
       console.error("Failed to delete supplier", error);
-      showError("Error", "Failed to delete supplier");
+      toast.error(error.response?.data?.message || "Failed to delete supplier");
     }
   };
   const hideModal = (strModalId) => {
@@ -543,6 +550,7 @@ const Supplier = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
       <SwalComponent />
     </>
   );

@@ -43,7 +43,6 @@ const AddPurchase = () => {
     issueDate: "",
     supplierId: -1,
     totalPrice: 0,
-    isPrepayment: false,
     row: [{ ...emptyRow }],
   });
 
@@ -215,16 +214,6 @@ const AddPurchase = () => {
               onChange={e =>
                 setObjPurchase(prev => ({ ...prev, issueDate: e.target.value }))
               } />
-          </div>
-        </div>
-
-        <div className="row p-4">
-          <div className="col-md-6">
-            <input id="isPrePaid" type="checkbox" checked={objPurchase.isPrepayment}
-              onChange={e =>
-                setObjPurchase(prev => ({ ...prev, isPrepayment: e.target.checked }))
-              } />
-            <label className="me-2" htmlFor="isPrePaid">{t("Is Prepaid payments")}</label>
           </div>
         </div>
       </div>
