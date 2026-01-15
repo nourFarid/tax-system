@@ -66,30 +66,34 @@ const Supplier = () => {
     // { label: t("Customer"), accessor: "IsCustomer" },
   ];
 
-  const validateForm = () => {
-    const newErrors = {};
+const validateForm = () => {
+  const newErrors = {};
 
-    if (!objDocType.Name || objDocType.Name.trim() === "") {
-      newErrors.Name = "Name is required";
-    }
+  if (!objDocType.Name || objDocType.Name.trim() === "") {
+    newErrors.Name = "Name is required";
+  }
 
-    if (!objDocType.NationalID || objDocType.NationalID.trim() === "") {
-      newErrors.NationalID = "National ID or Passport is required";
-    }
+  const hasNationalId =
+    objDocType.NationalID && objDocType.NationalID.trim() !== "";
 
-    // Check both AddressLine (for Add) and Address (for Edit)
-    const address = objDocType.AddressLine || objDocType.Address;
-    if (!address || address.trim() === "") {
-      newErrors.Address = "Address is required";
-    }
+  const hasTaxNumber =
+    objDocType.TaxNumber && objDocType.TaxNumber.trim() !== "";
 
-    if (!objDocType.TaxNumber || objDocType.TaxNumber.trim() === "") {
-      newErrors.TaxNumber = "Tax Number is required";
-    }
+  // لازم واحد فيهم على الأقل
+  if (!hasNationalId && !hasTaxNumber) {
+    newErrors.NationalID = "National ID or Passport is required if Tax Number is empty";
+    newErrors.TaxNumber = "Tax Number is required if National ID is empty";
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const address = objDocType.AddressLine || objDocType.Address;
+  if (!address || address.trim() === "") {
+    newErrors.Address = "Address is required";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const fetchSuppliers = async (page = 1) => {
     setLoading(true);
