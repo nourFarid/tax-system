@@ -67,7 +67,7 @@ const Document41 = () => {
   const columns = [
     { label: t("Supplier Name"), accessor: "supplier.name" },
     { label: t("Transaction Date"), accessor: "transactionDate" },
-    { label: t("Amount"), accessor: "amount" },
+    // { label: t("Amount"), accessor: "amount" },
     { label: t("Transaction Nature"), accessor: "transactionNature.name" },
     { label: t("Price"), accessor: "price" },
     { label: t("Tax Percent"), accessor: "transactionNature.ratePercent" },

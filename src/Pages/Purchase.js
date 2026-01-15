@@ -87,19 +87,23 @@ const Purchase = () => {
   ];
 
   const columns = [
-    { label: t("Document Type"), accessor: "documentType.name" },
+    // { label: t("Document Type"), accessor: "documentType.name" },
     { label: t("Invoice Number"), accessor: "invoiceNumber" },
     { label: t("Supplier Name"), accessor: "customerSupplierName" },
     { label: t("Tax Registration Number"), accessor: "customerSupplierTaxRegistrationNumber" },
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Invoice Date"), accessor: "invoiceDate" },
-    { label: t("Item Name"), accessor: "item.name" },
-    { label: t("Statement Type"), accessor: "statementType.name" },
-    { label: t("Item Type"), accessor: "itemType.name" },
-    { label: t("Price"), accessor: "price" },
-    { label: t("Amount"), accessor: "amount" },
-    { label: t("Tax Amount"), accessor: "tax" },
+    // { label: t("Item Name"), accessor: "item.name" },
+    // { label: t("Statement Type"), accessor: "statementType.name" },
+    // { label: t("Item Type"), accessor: "itemType.name" },
+    // { label: t("Price"), accessor: "price" },
+    // { label: t("Amount"), accessor: "amount" },
+    // { label: t("Tax Amount"), accessor: "tax" },
+     { label: t("Valid"), accessor: "isValid" },
+    { label: t("Updated By User"), accessor: "updatedByUser.userName" },
+    { label: t("Created At"), accessor: "createdAt" },
+    { label: t("Updated At"), accessor: "updateAt" },
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -338,7 +342,7 @@ const Purchase = () => {
           columns={columns}
           data={purchase}
           showActions={true}
-          onEdit={(row) => navigate(`/Purchase/UpdateSale/${row.id}`)}
+          onEdit={(row) => navigate(`/Purchase/UpdatePurchase/${row.id}`)}
           showShow={false}
           onShow={() => {}}
           onDelete={HandelDelete} // <-- Add the delete handler here
