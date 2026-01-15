@@ -7,6 +7,7 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
+import { toast, ToastContainer } from "react-toastify";
 
 const Item = () => {
   const { t } = useTranslate();
@@ -193,10 +194,10 @@ const Item = () => {
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
-      showSuccess("Success", "Item updated successfully!");
+      toast.success("Item updated successfully!");
     } catch (error) {
       console.log(error)
-      showError("Error", "Failed to update item");
+      toast.error("Failed to update item");
     }
   };
 
@@ -212,10 +213,10 @@ const Item = () => {
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
-      showSuccess("Deleted", "Item deleted successfully!");
+      toast.success("Deleted", "Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item", error);
-      showError("Error", "Failed to delete item");
+      toast.error("Failed to delete item");
     }
   };
 
@@ -240,11 +241,11 @@ const Item = () => {
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
-        showSuccess("Success", "Item added successfully!");
+        toast.success("Item added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item", error);
-      showError("Error", "Failed to add item!");
+      toast.error("Failed to add item!");
     }
   };
 
@@ -463,7 +464,9 @@ const Item = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
       <SwalComponent />
+
       {loading && <Spinner></Spinner>}
     </>
   );

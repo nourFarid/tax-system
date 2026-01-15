@@ -92,7 +92,7 @@ const UpdatePurchases = () => {
   };
 
   const fetchItemType = async () => {
-    const response = await axiosInstance.post("/ItemType/ListAll", {});
+    const response = await axiosInstance.get("/ItemType/ListAll", {});
     if (!response.data.result) alert(response.data.message);
     else setObjItemType(response.data.data);
   };
@@ -355,15 +355,45 @@ const Update = async () => {
             />
           </div>
         </div>
-
+{/* 
         <div className="row p-4">
           <div className="col-md-2 border border-black me-3">
             <strong>{t("Total Amount")}:</strong> {totalAmount} <br />
             <strong>{t("Tax Amount")}:</strong> {taxAmount} <br />
             <strong>{t("Net Amount")}:</strong> {netAmount}
           </div>
-        </div>
+        </div> */}
 
+    <div
+          className="border rounded p-4 mt-5"
+          style={{ background: "#f8f9fa" }}
+          dir={strDocDir}
+        >
+          <div className="row align-items-end">
+
+            <div className="col-md-3">
+              <strong>{t("Total Amount")}</strong>
+              <div className="fs-5 text-primary">
+                {totalAmount.toFixed(2)}
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <strong>{t("Total Tax")}</strong>
+              <div className="fs-5 text-danger">
+                {taxAmount.toFixed(2)}
+              </div>
+            </div>
+
+            <div className="col-md-3">
+              <strong>{t("Net Amount")}</strong>
+              <div className="fs-4 fw-bold text-success">
+                {netAmount.toFixed(2)}
+              </div>
+            </div>
+
+          </div>
+        </div>
         <div className="row p-4">
           <div className="col-md-3">
             <button className="btn btn-success" onClick={Update}>

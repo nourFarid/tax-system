@@ -23,7 +23,7 @@ const AddSale = () => {
   const { showSuccess, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
-    { label: t("sale"), link: "/sale", active: false },
+    { label: t("sale"), link: "/Sales", active: false },
     { label: t("Add"), link: "", active: true },
   ];
 
@@ -33,6 +33,7 @@ const AddSale = () => {
   const [objStatmentType, setObjStatmentType] = useState([]);
   const [arrSettlementStatment, setArrSettlementStatment] = useState([]);
   const [arrDocumentTypeStatment, setArrDocumentTypeStatment] = useState([]);
+  const [objItemType, setObjItemType] = useState([]);
 
   const [objSale, setObjSale] = useState({
     invoiceNumber: "",
@@ -40,39 +41,39 @@ const AddSale = () => {
     issueDate: "",
     customerId: -1,
     totalPrice: 0,
-    row: [{ ...emptyRow }],
+    documentItems: [{ ...emptyRow }],
   });
 
   // ===================== HELPERS =====================
   const updateRow = (index, field, value) => {
     setObjSale(prev => {
-      const rows = [...prev.row];
+      const rows = [...prev.documentItems];
       rows[index] = { ...rows[index], [field]: value };
-      return { ...prev, row: rows };
+      return { ...prev, documentItems: rows };
     });
   };
 
   const addRow = () => {
     setObjSale(prev => ({
       ...prev,
-      row: [...prev.row, { ...emptyRow }],
+      documentItems: [...prev.documentItems, { ...emptyRow }],
     }));
   };
 
   const removeRow = (index) => {
     setObjSale(prev => ({
       ...prev,
-      row: prev.row.filter((_, i) => i !== index),
+      documentItems: prev.documentItems.filter((_, i) => i !== index),
     }));
   };
 
   // ===================== TOTALS =====================
-  const totalAmount = objSale.row.reduce(
+  const totalAmount = objSale.documentItems.reduce(
     (sum, r) => sum + r.price * r.amount,
     0
   );
 
-  const totalTax = objSale.row.reduce(
+  const totalTax = objSale.documentItems.reduce(
     (sum, r) => sum + (r.price * r.amount * r.tax) / 100,
     0
   );
@@ -111,6 +112,11 @@ const AddSale = () => {
     setObjDocType(res.data.data);
   };
 
+    const fetchItemType = async () => {
+    const res = await axiosInstance.get("/ItemType/ListAll");
+    setObjItemType(res.data.data);
+  };
+
   const fetchStatmentType = async () => {
     const res = await axiosInstance.post("/StatementType/ListAll", {});
     const arr1 = [], arr2 = [];
@@ -138,10 +144,10 @@ const AddSale = () => {
 
   // ===================== SUBMIT =====================
   const Add = async () => {
-    const response = await axiosInstance.post("/Sale/Add", objSale);
+    const response = await axiosInstance.post("/Sales/Add", objSale);
     if (response.data.result) {
       showSuccess(t("Success"), t("Sale added successfully"), {
-        onConfirm: () => navigate("/Sale"),
+        onConfirm: () => navigate("/Sales"),
       });
     }
   };
@@ -150,6 +156,8 @@ const AddSale = () => {
   useEffect(() => {
     fetchDocType();
     fetchStatmentType();
+        fetchItemType();
+
   }, []);
 
   // ===================== RENDER =====================
@@ -219,7 +227,7 @@ const AddSale = () => {
 
       {/* ================= ITEMS PANELS ================= */}
       <div className="border rounded p-3 bg-white shadow-lg mt-4 p-4">
-        {objSale.row.map((r, index) => (
+        {objSale.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
             <div className="row g-2 align-items-end">
 
@@ -296,9 +304,26 @@ const AddSale = () => {
                   ))}
                 </select>
               </div>
+                   <div className="col-md-2">
+  <label>{t("Item Type")}</label>
+  <select
+    className="form-control"
+    value={r.itemTypeId}
+    onChange={(e) =>
+      updateRow(index, "itemTypeId", Number(e.target.value))
+    }
+  >
+    <option value={-1}>{t("Item Type")}</option>
+    {objItemType.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.name}
+      </option>
+    ))}
+  </select>
+</div>
 
               <div className="col-md-1 text-end">
-                {objSale.row.length > 1 && (
+                {objSale.documentItems.length > 1 && (
                   <button
                     className="btn btn-danger"
                     onClick={() => removeRow(index)}

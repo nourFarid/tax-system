@@ -6,7 +6,7 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import { useSwal } from "../Hooks/Alert/Swal";
 import axiosInstance from "../Axios/AxiosInstance";
-
+import { toast, ToastContainer } from "react-toastify";
 const ItemType = () => {
   const { t } = useTranslate();
   const [itemTypes, setItemTypes] = useState([]);
@@ -61,6 +61,7 @@ const ItemType = () => {
     { label: t("Name"), accessor: "name" },
     { label: t("Code"), accessor: "code" },
   ];
+  
 
   const fetchItemTypes = async () => {
     try {
@@ -138,11 +139,11 @@ const ItemType = () => {
         });
         hideModal("AddItemType");
         fetchItemTypes();
-        showSuccess("Success", "Item type added successfully!");
+        toast.success("Item type added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item type", error);
-      showError("Error", "Failed to add item type!");
+      toast.error("Failed to add item type!");
     }
   };
 
@@ -163,10 +164,10 @@ const ItemType = () => {
       });
       hideModal("EditItemType");
       await fetchItemTypes();
-      showSuccess("Success", "Item type updated successfully!");
+      toast.success("Item type updated successfully!");
     } catch (error) {
       console.log(error);
-      showError("Error", "Failed to update item type");
+      toast.error("Failed to update item type");
     }
   };
 
@@ -180,10 +181,10 @@ const ItemType = () => {
       });
       hideModal("DeleteItemType");
       await fetchItemTypes();
-      showSuccess("Deleted", "Item type deleted successfully!");
+      toast.success("Item type deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item type", error);
-      showError("Error", "Failed to delete item type");
+      toast.error("Failed to delete item type");
     }
   };
 
@@ -314,6 +315,7 @@ const ItemType = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

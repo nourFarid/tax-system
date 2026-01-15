@@ -8,7 +8,7 @@ import { useSwal } from "../Hooks/Alert/Swal";
 
 const emptyRow = {
   itemId: -1,
-  price: 0,
+  unitPrice: 0,
   amount: 1,
   statementTypeId: -1,
   itemTypeId: -1,
@@ -43,40 +43,41 @@ const AddPurchase = () => {
     issueDate: "",
     supplierId: -1,
     totalPrice: 0,
-    row: [{ ...emptyRow }],
+    isPrePaid: null,
+    documentItems: [{ ...emptyRow }],
   });
 
   // ===================== HELPERS =====================
   const updateRow = (index, field, value) => {
     setObjPurchase(prev => {
-      const rows = [...prev.row];
+      const rows = [...prev.documentItems];
       rows[index] = { ...rows[index], [field]: value };
-      return { ...prev, row: rows };
+      return { ...prev, documentItems: rows };
     });
   };
 
   const addRow = () => {
     setObjPurchase(prev => ({
       ...prev,
-      row: [...prev.row, { ...emptyRow }],
+      documentItems: [...prev.documentItems, { ...emptyRow }],
     }));
   };
 
   const removeRow = (index) => {
     setObjPurchase(prev => ({
       ...prev,
-      row: prev.row.filter((_, i) => i !== index),
+      documentItems: prev.documentItems.filter((_, i) => i !== index),
     }));
   };
 
   // ===================== TOTALS =====================
-  const totalAmount = objPurchase.row.reduce(
-    (sum, r) => sum + r.price * r.amount,
+  const totalAmount = objPurchase.documentItems.reduce(
+    (sum, r) => sum + r.unitPrice * r.amount,
     0
   );
 
-  const totalTax = objPurchase.row.reduce(
-    (sum, r) => sum + (r.price * r.amount * r.tax) / 100,
+  const totalTax = objPurchase.documentItems.reduce(
+    (sum, r) => sum + (r.unitPrice * r.amount * r.tax) / 100,
     0
   );
 
@@ -111,7 +112,7 @@ const AddPurchase = () => {
       IsSupplier: true,
     });
     return res.data.data.map(x => ({
-      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name} (${x.isPrePaid ? t("Prepaid payments") : t("Not Prepaid payments")})`,
+      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name}`,
       value: x.id,
     }));
   };
@@ -149,6 +150,7 @@ const AddPurchase = () => {
         ? arrSettlementStatment
         : arrDocumentTypeStatment;
   };
+
 
   // ===================== SUBMIT =====================
   const Add = async () => {
@@ -215,12 +217,37 @@ const AddPurchase = () => {
                 setObjPurchase(prev => ({ ...prev, issueDate: e.target.value }))
               } />
           </div>
+
+         <div className="row p-4">
+  <div className="col-md-6">
+    <label className="mb-2 d-block">
+      {t("Prepaid payments")}
+    </label>
+
+    <select
+      id="isPrePaid"
+      className="form-control"
+      value={String(objPurchase.isPrePaid)}
+      onChange={(e) =>
+        setObjPurchase(prev => ({
+          ...prev,
+          isPrePaid: e.target.value === "true"
+        }))
+      }
+    >
+      <option value={null}>{t("choose Prepaid payments option")}</option>
+      <option value="true">{t("Prepaid payments")}</option>
+      <option value="false">{t("Not Prepaid payments")}</option>
+    </select>
+  </div>
+</div>
+
         </div>
       </div>
 
       {/* ================= ITEMS PANELS ================= */}
       <div className="border rounded p-3 bg-white shadow-lg mt-4 p-4">
-        {objPurchase.row.map((r, index) => (
+        {objPurchase.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
             <div className="row g-2 align-items-end">
 
@@ -229,14 +256,14 @@ const AddPurchase = () => {
                 <AsyncSelect loadOptions={arrItem}
                   onChange={(o) => {
                     updateRow(index, "itemId", o.value);
-                    updateRow(index, "price", o.objItem?.price || 0);
+                    updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
                   }} />
               </div>
 
               <div className="col-md-1">
                 <label>{t("Price")}</label>
-                <input type="number" className="form-control" value={r.price}
-                  onChange={e => updateRow(index, "price", +e.target.value)} />
+                <input type="number" className="form-control" value={r.unitPrice}
+                  onChange={e => updateRow(index, "unitPrice", +e.target.value)} />
               </div>
 
               <div className="col-md-1">
@@ -277,6 +304,24 @@ const AddPurchase = () => {
                   ))}
                 </select>
               </div>
+       <div className="col-md-2">
+  <label>{t("Item Type")}</label>
+  <select
+    className="form-control"
+    value={r.itemTypeId}
+    onChange={(e) =>
+      updateRow(index, "itemTypeId", Number(e.target.value))
+    }
+  >
+    <option value={-1}>{t("Item Type")}</option>
+    {objItemType.map((type) => (
+      <option key={type.id} value={type.id}>
+        {type.name}
+      </option>
+    ))}
+  </select>
+</div>
+
               <div className="col-md-1 form-group">
                 <label>{t("Transaction Nature")}</label>
                 <select className="mt-2 form-control" value={r.transactionNatureId}
@@ -293,7 +338,7 @@ const AddPurchase = () => {
               </div>
 
               <div className="col-md-1 text-end">
-                {objPurchase.row.length > 1 && (
+                {objPurchase.documentItems.length > 1 && (
                   <button
                     className="btn btn-danger"
                     onClick={() => removeRow(index)}
