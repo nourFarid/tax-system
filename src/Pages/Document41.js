@@ -34,12 +34,6 @@ const Document41 = () => {
 
   const breadcrumbButtons = [
     {
-      label: t("Add"),
-      icon: "bi bi-plus-circle",
-      link: "/Document41/Add",
-      class: "btn btn-sm btn-success ms-2 float-end"
-    },
-    {
       label: t("Export"),
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
