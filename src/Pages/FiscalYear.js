@@ -7,6 +7,9 @@ import { Modal } from "bootstrap";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
+import Spinner from "../Components/Layout/Spinner";
+
 
 
 const FiscalYear = () => {
@@ -67,6 +70,7 @@ const FiscalYear = () => {
 
   const getFiscalYears = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.post("FiscalYear/ListAll", {});
 
       const list = response.data?.data || [];
@@ -84,6 +88,8 @@ const FiscalYear = () => {
 
     } catch (error) {
       console.error("Fetch Fiscal Years Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,13 +147,13 @@ const FiscalYear = () => {
         await getFiscalYears();
         hideModal("AddFiscalYear");
         setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-        showSuccess("Success", "Fiscal Year added successfully!");
+        toast.success("Fiscal Year added successfully!");
 
       }
 
     } catch (error) {
       console.error("Add Fiscal Year Error:", error);
-      showError(t("An error occurred while adding the Fiscal Year."));
+      toast.error(t("An error occurred while adding the Fiscal Year."));
     }
   };
 
@@ -173,15 +179,15 @@ const FiscalYear = () => {
       const modal = Modal.getInstance(modalElement);
       modal.hide();
       setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-      showSuccess("Success", "Fiscal Year updated successfully!");
+      toast.success("Fiscal Year updated successfully!");
 
     } catch (error) {
       console.error("Update Fiscal Year Error:", error);
-      showError(t("An error occurred while updating the Fiscal Year."));
+      toast.error(t("An error occurred while updating the Fiscal Year."));
     }
   };
 
-const Delete = () => {
+  const Delete = () => {
     axiosInstance
       .delete(`/FiscalYear/${objDocType.Id}`)
       .then(() => {
@@ -189,11 +195,11 @@ const Delete = () => {
         const modalElement = document.getElementById("DeleteFiscalYear");
         const modal = Modal.getInstance(modalElement);
         modal.hide();
-        showSuccess("Success", "Fiscal Year deleted successfully!");
+        toast.success("Fiscal Year deleted successfully!");
       })
       .catch((error) => {
         console.error("Delete Fiscal Year Error:", error);
-        showError(t("An error occurred while deleting the Fiscal Year."));
+        toast.error(t("An error occurred while deleting the Fiscal Year."));
       });
 
   };
@@ -242,21 +248,27 @@ const Delete = () => {
     <>
       <Breadcrumb items={breadcrumbItems} button={breadcrumbButtons} />
 
-      <Table
-        columns={columns}
-        data={pagedData}
-        showActions={true}
-        onEdit={handleEdit}
-        showShow={true}
-        onShow={handleShow}
-        onDelete={handleDelete}
-      />
-      <Pagination
-        pageNumber={pageNumber}
-        pageSize={pageSize}
-        totalRows={totalCount}
-        onPageChange={setPageNumber}
-      />
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <Table
+            columns={columns}
+            data={pagedData}
+            showActions={true}
+            onEdit={handleEdit}
+            showShow={true}
+            onShow={handleShow}
+            onDelete={handleDelete}
+          />
+          <Pagination
+            pageNumber={pageNumber}
+            pageSize={pageSize}
+            totalRows={totalCount}
+            onPageChange={setPageNumber}
+          />
+        </>
+      )}
 
       <div className="modal fade" id="AddFiscalYear" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -378,6 +390,7 @@ const Delete = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
       <SwalComponent />
     </>
   );
