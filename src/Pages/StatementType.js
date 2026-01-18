@@ -7,6 +7,7 @@ import  { useSwal }  from "../Hooks/Alert/Swal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
+import { toast, ToastContainer } from "react-toastify";
 
 const StatementType = () => {
   const { t } = useTranslate();
@@ -169,11 +170,12 @@ const fetchItems = async (page = 1) => {
     if (!validateDuplicates(objItem.Name, objItem.Code, objItem.Id)) return;
     try {
       const payload = {
+      id: objItem.Id,
       name: objItem.Name,              
       code: objItem.Code,               
      
       };
-      const response = await axiosInstance.put("StatementType/" + objItem.Id, payload);
+      const response = await axiosInstance.put("StatementType/Update", payload);
       console.log("Update response:", response);
       
       setObjItem({
@@ -184,11 +186,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("EditItem");
       await fetchItems(pageNumber);
-      showSuccess("Success", "Item updated successfully!");
+      toast.success("Item updated successfully!");
     } catch (error) {
       console.log(error)
-      alert("Failed to update item");
-      showError("Error", "Failed to update item");
+      
+      toast.error("Failed to update item");
     }
   };
 
@@ -204,11 +206,11 @@ const fetchItems = async (page = 1) => {
       });
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
-      showSuccess("Deleted", "Item deleted successfully!");
+      toast.success("Item deleted successfully!");
     } catch (error) {
       console.error("Failed to delete item", error);
       alert("Failed to delete item");
-       showError("Error", "Failed to delete item");
+       toast.error("Failed to delete item");
     }
   };
 
@@ -232,12 +234,12 @@ const fetchItems = async (page = 1) => {
         });
         hideModal("AddItem");
         fetchItems(pageNumber)
-        showSuccess("Success", "Item added successfully!");
+        toast.success("Item added successfully!");
       }
     } catch (error) {
       console.error("Failed to add item", error);
       alert("Failed to add item");
-      showError("Error", "Failed to add item!");
+      toast.error("Failed to add item!");
     }
   };
 
@@ -434,6 +436,7 @@ const fetchItems = async (page = 1) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
       <SwalComponent />
     </>
   );
