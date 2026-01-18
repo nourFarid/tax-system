@@ -3,11 +3,11 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { Modal } from "bootstrap";
-import  { useSwal }  from "../Hooks/Alert/Swal";
+import { useSwal } from "../Hooks/Alert/Swal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
-import  { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 const NatureOfTransaction = () => {
   const { t } = useTranslate();
@@ -40,32 +40,32 @@ const NatureOfTransaction = () => {
     Price: 0,
     Code: ""
   });
-const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
-const validateDuplicates = (name, code, id = null) => {
-  let newErrors = { Name: "", Code: "" };
-  let hasError = false;
+  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const validateDuplicates = (name, code, id = null) => {
+    let newErrors = { Name: "", Code: "" };
+    let hasError = false;
 
-  // Check duplicate name
-  const nameExists = items.some(
-    item => item.name.toLowerCase() === name.toLowerCase() && item.id !== id
-  );
-  if (nameExists) {
-    newErrors.Name = "This name already exists";
-    hasError = true;
-  }
+    // Check duplicate name
+    const nameExists = items.some(
+      item => item.name.toLowerCase() === name.toLowerCase() && item.id !== id
+    );
+    if (nameExists) {
+      newErrors.Name = "This name already exists";
+      hasError = true;
+    }
 
-  // Check duplicate code
-  const codeExists = items.some(
-    item => item.code.toLowerCase() === code.toLowerCase() && item.id !== id
-  );
-  if (codeExists) {
-    newErrors.Code = "This code already exists";
-    hasError = true;
-  }
+    // Check duplicate code
+    const codeExists = items.some(
+      item => item.code.toLowerCase() === code.toLowerCase() && item.id !== id
+    );
+    if (codeExists) {
+      newErrors.Code = "This code already exists";
+      hasError = true;
+    }
 
-  setErrors(prev => ({ ...prev, ...newErrors }));
-  return !hasError;
-};
+    setErrors(prev => ({ ...prev, ...newErrors }));
+    return !hasError;
+  };
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -108,10 +108,10 @@ const validateDuplicates = (name, code, id = null) => {
       const data = res.data;
 
       if (data.result) {
-        const itemsList = data.data; 
+        const itemsList = data.data;
         setItems(itemsList);
-        setTotalCount(itemsList.length); 
-        setPageNumber(page); 
+        setTotalCount(itemsList.length);
+        setPageNumber(page);
       }
     } catch (e) {
       setError("Failed to fetch items");
@@ -188,8 +188,8 @@ const validateDuplicates = (name, code, id = null) => {
     try {
       const payload = {
         id: objItem.Id,
-        name: objItem.Name,               
-        code: objItem.Code,              
+        name: objItem.Name,
+        code: objItem.Code,
         ratePercent: Number(objItem.Price)
       };
       const response = await axiosInstance.put("TransactionNature/Update", payload);
@@ -214,7 +214,7 @@ const validateDuplicates = (name, code, id = null) => {
 
   const Delete = async () => {
     try {
-      await axiosInstance.delete(`TransactionNature/${objItem.Id}`);
+      await axiosInstance.put(`TransactionNature/SoftDelete?id=${objItem.Id}`);
       setObjItem({
         Name: "",
         Price: 0,
@@ -302,7 +302,7 @@ const validateDuplicates = (name, code, id = null) => {
       document.getElementById("EditItem")?.removeEventListener("hidden.bs.modal", reset);
       document.getElementById("DeleteItem")?.removeEventListener("hidden.bs.modal", reset);
     };
-  }, [pageNumber]);     
+  }, [pageNumber]);
   if (loading) {
     return <Spinner></Spinner>
   }
@@ -331,24 +331,24 @@ const validateDuplicates = (name, code, id = null) => {
       {/* Add Item Modal */}
       <div className="modal fade" id="AddItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex",flexDirection: "column",borderRadius: "10px",border: "1px solid #d3d3d3",}}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
             <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.AddItem}</h5>
-              <button type="button"className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
+              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
             </div>
 
             <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row"> 
+              <div className="row">
 
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objItem.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`}placeholder={objTitle.Name}/>
+                  <input type="text" name="Name" value={objItem.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
                   {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
                 </div>
 
                 <div className="col-md-4 mb-3">
                   <label className="form-label">{objTitle.Code}</label>
-                  <input type="text" name="Code"value={objItem.Code} onChange={handleChange}
+                  <input type="text" name="Code" value={objItem.Code} onChange={handleChange}
                     className={`form-control ${errors.Code ? "is-invalid" : ""}`}
                     placeholder={objTitle.Code} />
                   {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
@@ -373,8 +373,8 @@ const validateDuplicates = (name, code, id = null) => {
       {/* Edit Item Modal */}
       <div className="modal fade" id="EditItem" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
-            <div className="modal-header d-flex justify-content-between align-items-center"style={{ borderBottom: "1px solid #d3d3d3" }}>
+          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
+            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
               <h5 className="modal-title">{objTitle.EditItem}</h5>
               <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
             </div>

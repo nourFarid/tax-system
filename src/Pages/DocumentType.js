@@ -95,7 +95,7 @@ const DocumentType = () => {
     });
 
     const modalElement = document.getElementById("EditDocumentType");
-     let modal = Modal.getInstance(modalElement);
+    let modal = Modal.getInstance(modalElement);
     if (!modal) modal = new Modal(modalElement);
     modal.show();
   };
@@ -126,16 +126,16 @@ const DocumentType = () => {
     // the add request should be here
   };
 
- const Delete = async () => {
+  const Delete = async () => {
     try {
       console.log('====================================');
       console.log(objDocType.Id);
       console.log('====================================');
-      await axiosInstance.delete(`DocumentType/${objDocType.Id}`);
+      await axiosInstance.put(`DocumentType/SoftDelete?id=${objDocType.Id}`);
       setObjDocType({
         Name: "",
         Id: null,
-        Code:""
+        Code: ""
       });
       hideModal("DeleteDocumentType");
       await fetchDocType(pageNumber);
@@ -147,11 +147,11 @@ const DocumentType = () => {
   };
 
   const save = async () => {
-  
+
     try {
       const payload = {
         Name: objDocType.Name,
-        Code:objDocType.Code
+        Code: objDocType.Code
       };
       const response = await axiosInstance.post("DocumentType/add", payload);
       if (response.status === 200) {
@@ -171,7 +171,7 @@ const DocumentType = () => {
   };
 
   const update = async () => {
-  
+
     try {
       const payload = {
         Id: objDocType.Id,
@@ -184,7 +184,7 @@ const DocumentType = () => {
       setObjDocType({
         Name: "",
         Id: null,
-        Code:""
+        Code: ""
       });
       hideModal("EditDocumentType");
       await fetchDocType(pageNumber);
