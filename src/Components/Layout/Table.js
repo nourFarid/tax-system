@@ -77,6 +77,27 @@ const Table = ({
     return "-";
   };
 
+  // Get raw cell value without transformations (for custom render functions)
+  const getRawCellValue = (row, accessor) => {
+    if (!row) return null;
+    if (typeof accessor === "function") return accessor(row);
+    if (typeof accessor === "string" && accessor.includes(".")) {
+      return accessor.split(".").reduce((acc, key) => {
+        return acc && acc[key] !== undefined ? acc[key] : null;
+      }, row);
+    }
+    if (accessor in row) {
+      return row[accessor];
+    }
+    // Case-insensitive fallback
+    const keys = Object.keys(row);
+    const foundKey = keys.find(
+      (k) => k.toLowerCase() === String(accessor).toLowerCase()
+    );
+    if (foundKey) return row[foundKey];
+    return null;
+  };
+
   return (
     <div className="container-fluid p-4">
       <div className="table-responsive">
@@ -97,7 +118,10 @@ const Table = ({
               data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {columns.map((col, colIndex) => {
-                    const cellValue = getCellValue(row, col.accessor);
+                    // Use raw value for custom render functions, formatted value otherwise
+                    const cellValue = col.render
+                      ? getRawCellValue(row, col.accessor)
+                      : getCellValue(row, col.accessor);
                     return (
                       <td className="whitespace-nowrap" key={colIndex}>
                         {col.render ? col.render(cellValue, row) : cellValue}

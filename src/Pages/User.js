@@ -91,7 +91,13 @@ const User = () => {
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
-        { label: t("Active"), accessor: "available", render: (value) => (value ? "Yes" : "No") }
+        {
+            label: t("Active"), accessor: "isActive", render: (value, row) => {
+                // Check both possible field names
+                const isActive = value ?? row?.available ?? row?.isActive ?? false;
+                return isActive ? "Yes" : "No";
+            }
+        }
     ];
 
     const validateForm = (isEdit = false) => {
