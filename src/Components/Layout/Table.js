@@ -8,26 +8,26 @@ const Table = ({
   showEdit = true,
   showDelete = true,
   showShow = true,
-  onEdit = () => {},
-  onDelete = () => {},
-  onShow = () => {},
+  onEdit = () => { },
+  onDelete = () => { },
+  onShow = () => { },
 }) => {
   const { t } = useTranslate();
 
-const formatDate = (value) => {
-  if (!value) return "-";
+  const formatDate = (value) => {
+    if (!value) return "-";
 
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return "-";
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return "-";
 
-  if (date.getFullYear() < 1900) return "-";
+    if (date.getFullYear() < 1900) return "-";
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
-  return `${year}/${month}/${day}`;
-};
+    return `${year}/${month}/${day}`;
+  };
 
 
   const isDateValue = (val) => {
@@ -96,11 +96,14 @@ const formatDate = (value) => {
             {Array.isArray(data) && data.length > 0 ? (
               data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.map((col, colIndex) => (
-                    <td className="whitespace-nowrap" key={colIndex}>
-                      {getCellValue(row, col.accessor)}
-                    </td>
-                  ))}
+                  {columns.map((col, colIndex) => {
+                    const cellValue = getCellValue(row, col.accessor);
+                    return (
+                      <td className="whitespace-nowrap" key={colIndex}>
+                        {col.render ? col.render(cellValue, row) : cellValue}
+                      </td>
+                    );
+                  })}
 
                   {showActions && (
                     <td>

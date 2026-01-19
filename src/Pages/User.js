@@ -49,6 +49,29 @@ const User = () => {
     });
     const { showSuccess, showError, SwalComponent } = useSwal();
 
+    // Function to reset form to initial state
+    const resetForm = () => {
+        setObjUser({
+            Id: null,
+            Username: "",
+            Email: "",
+            Password: "",
+            FullName: "",
+            UserCode: "",
+            RoleId: "",
+            IsActive: true
+        });
+        setErrors({});
+    };
+
+    // Handler for opening Add modal
+    const handleOpenAddModal = () => {
+        resetForm();
+        const modalEl = document.getElementById("AddUser");
+        const modal = new Modal(modalEl);
+        modal.show();
+    };
+
     const breadcrumbItems = [
         { label: t("Setup"), link: "/Setup", active: false },
         { label: t("User"), active: true },
@@ -58,7 +81,7 @@ const User = () => {
         {
             label: t("Add"),
             icon: "bi bi-plus-circle",
-            dyalog: "#AddUser",
+            fun: handleOpenAddModal,
             class: "btn btn-sm btn-success ms-2 float-end",
         },
     ];
@@ -67,7 +90,7 @@ const User = () => {
         { label: t("Username"), accessor: "userName" },
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
-        { label: t("User Code"), accessor: "userCode" },
+        { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
         { label: t("Active"), accessor: "available", render: (value) => (value ? "Yes" : "No") }
     ];
 
@@ -177,15 +200,22 @@ const User = () => {
     ];
 
     const handleEdit = (row) => {
+        console.log("Edit row data:", row);
+        // Reset errors before populating edit data
+        setErrors({});
+
+        // Extract userCode from userName if not available (remove non-digit characters)
+        const extractedUserCode = row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : "");
+
         setObjUser({
             Id: row.userId,
             Username: row.userName,
             Email: row.email,
             Password: "", // Password is optional when editing
             FullName: row.fullName,
-            UserCode: row.userCode || "",
+            UserCode: extractedUserCode,
             RoleId: row.roleId || "",
-            IsActive: row.available
+            IsActive: row.available ?? row.isActive ?? true
         });
 
         const modalEl = document.getElementById("EditUser");
@@ -227,15 +257,7 @@ const User = () => {
             const response = await axiosInstance.post("User/Add", payload);
             console.log("Add response:", response.data);
 
-            setObjUser({
-                Username: "",
-                Email: "",
-                Password: "",
-                FullName: "",
-                UserCode: "",
-                RoleId: "",
-                IsActive: true
-            });
+            resetForm();
 
             hideModal("AddUser");
             await fetchUsers(pageNumber);
@@ -256,20 +278,14 @@ const User = () => {
                 email: objUser.Email,
                 fullName: objUser.FullName,
                 available: objUser.IsActive,
-                newUser: false
+                isActive: objUser.IsActive,  // Send both field names to match backend
+                newUser: false,
+                // Send null for empty values instead of empty strings
+                userCode: (objUser.UserCode && objUser.UserCode.toString().trim() !== "") ? objUser.UserCode : null,
+                roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null
             };
 
-            // Only include userCode if it has a value
-            if (objUser.UserCode && objUser.UserCode.trim() !== "") {
-                payload.userCode = objUser.UserCode;
-            }
-
-            // Only include roleId if it has a value
-            if (objUser.RoleId && objUser.RoleId.trim() !== "") {
-                payload.roleId = objUser.RoleId;
-            }
-
-            // Only include password if it was changed
+            // Only include password if it has a value (completely exclude from payload otherwise)
             if (objUser.Password && objUser.Password.trim() !== "") {
                 payload.password = objUser.Password;
             }
@@ -284,16 +300,7 @@ const User = () => {
             console.log("Update response:", response.data);
 
             if (response.data && response.data.result) {
-                setObjUser({
-                    Id: null,
-                    Username: "",
-                    Email: "",
-                    Password: "",
-                    FullName: "",
-                    UserCode: "",
-                    RoleId: "",
-                    IsActive: true
-                });
+                resetForm();
 
                 hideModal("EditUser");
                 await fetchUsers(pageNumber);
@@ -323,16 +330,7 @@ const User = () => {
         const modalIds = ["AddUser", "EditUser"];
 
         const handleHidden = () => {
-            setObjUser({
-                Username: "",
-                Email: "",
-                Password: "",
-                FullName: "",
-                UserCode: "",
-                RoleId: "",
-                IsActive: true
-            });
-            setErrors({});
+            resetForm();
         };
 
         const modals = modalIds
