@@ -188,16 +188,15 @@
   "Prepaid payments": "دفعات مسبقة الدفع",
   "Not Prepaid payments": "غير مسبقة الدفع",
   "Quarters": "الارباع",
-  "Fiscal Year Details" : "تفاصيل السنة المالية",
-  "Lock Date" : "تاريخ القفل",
-  "Date From" : "التاريخ من",
-  "Date To" : "التاريخ إلى",
-  "From Date" : "من التاريخ",
-  "To Date" : "إلى التاريخ",
-  "Info Fiscal Year" : "معلومات السنة المالية",
-  "Edit Lock Date" : "تعديل تاريخ القفل",
-  "Save Changes" : "حفظ التعديلات",
-  "choose Prepaid payments option" : "اختر خيار الدفعات المسبقة الدفع"
-
-
+  "Fiscal Year Details": "تفاصيل السنة المالية",
+  "Lock Date": "تاريخ القفل",
+  "Date From": "التاريخ من",
+  "Date To": "التاريخ إلى",
+  "From Date": "من التاريخ",
+  "To Date": "إلى التاريخ",
+  "Info Fiscal Year": "معلومات السنة المالية",
+  "Edit Lock Date": "تعديل تاريخ القفل",
+  "Save Changes": "حفظ التعديلات",
+  "choose Prepaid payments option": "اختر خيار الدفعات المسبقة الدفع",
+  "Sale": "المبيعات"
 }
