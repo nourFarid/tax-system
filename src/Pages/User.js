@@ -96,7 +96,7 @@ const User = () => {
             label: t("Active"), accessor: "isActive", render: (value, row) => {
                 // Check both possible field names
                 const isActive = value ?? row?.available ?? row?.isActive ?? false;
-                return isActive ? "Yes" : "No";
+                return isActive ? "Active" : "Inactive";
             }
         }
     ];
@@ -430,7 +430,7 @@ const User = () => {
                                     <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
                                         <option value="">Select Role</option>
                                         {roles.map(role => (
-                                            <option key={role.id} value={role.id}>{role.name}</option>
+                                            <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                                         ))}
                                     </select>
                                 </div>
