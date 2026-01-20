@@ -90,6 +90,7 @@ const User = () => {
         { label: t("Username"), accessor: "userName" },
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
+        { label: t("User Role"), accessor: "roleName", render: (value) => value || "-" },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
         {
             label: t("Active"), accessor: "isActive", render: (value, row) => {
