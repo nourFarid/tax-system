@@ -11,6 +11,7 @@ const Table = ({
   onEdit = () => { },
   onDelete = () => { },
   onShow = () => { },
+  customActions = null, // Function that receives (row) and returns JSX
 }) => {
   const { t } = useTranslate();
 
@@ -132,6 +133,7 @@ const Table = ({
                   {showActions && (
                     <td>
                       <div className="d-flex justify-content-center gap-2">
+                        {customActions && customActions(row)}
                         {showEdit && (
                           <button
                             type="button"

@@ -4,6 +4,7 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from "../Components/Layout/Pagination";
+import Switch from "../Components/Layout/Switch";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
@@ -188,10 +189,14 @@ const Departments = () => {
                     showActions={true}
                     showEdit={false}
                     showShow={false}
-                    showDelete={true}
-                    onDelete={handleToggle}
-                    deleteLabel={t("Toggle")}
-                    deleteIcon="bi bi-toggle-on"
+                    showDelete={false}
+                    customActions={(row) => (
+                        <Switch
+                            id={`switch-${row.id}`}
+                            checked={row.isActive}
+                            onChange={() => handleToggle(row)}
+                        />
+                    )}
                 />
 
                 <Pagination
