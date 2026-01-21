@@ -1,10 +1,12 @@
 // Navbar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import EgyptAirLogo from "../../Assets/Images/EgyptAir.png";
 import "remixicon/fonts/remixicon.css";
 import useTranslate from "../../Hooks/Translation/useTranslate";
 import { SET_LANGUAGE } from "../../Redux/actions/languageActions";
+import { logout } from "../../Redux/actions/authAction";
 
 const Navbar = ({ toggleSidebar }) => {
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
@@ -12,6 +14,7 @@ const Navbar = ({ toggleSidebar }) => {
 
     const { t } = useTranslate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const currentLang = useSelector((state) => state.language.lang);
 
     const languageDropdownRef = useRef(null);
@@ -35,33 +38,34 @@ const Navbar = ({ toggleSidebar }) => {
     };
 
     const handleLogout = () => {
-        // Add your logout action here
+        dispatch(logout());
         setIsProfileDropdownOpen(false);
+        navigate('/');
     };
 
     // Minimal country flag SVGs (replace with flag icons or your own component if you like)
     const USFlag = () => (
         <svg className="w-5 h-5 rounded-full" viewBox="0 0 512 512">
-            <rect width="512" height="512" fill="#fff"/>
+            <rect width="512" height="512" fill="#fff" />
             <g fill="#b22234">
-                <rect width="512" height="39.38" y="0"/>
-                <rect width="512" height="39.38" y="78.77"/>
-                <rect width="512" height="39.38" y="157.54"/>
-                <rect width="512" height="39.38" y="236.31"/>
-                <rect width="512" height="39.38" y="315.08"/>
-                <rect width="512" height="39.38" y="393.85"/>
-                <rect width="512" height="39.38" y="472.62"/>
+                <rect width="512" height="39.38" y="0" />
+                <rect width="512" height="39.38" y="78.77" />
+                <rect width="512" height="39.38" y="157.54" />
+                <rect width="512" height="39.38" y="236.31" />
+                <rect width="512" height="39.38" y="315.08" />
+                <rect width="512" height="39.38" y="393.85" />
+                <rect width="512" height="39.38" y="472.62" />
             </g>
-            <rect width="204.8" height="275.69" fill="#3c3b6e"/>
+            <rect width="204.8" height="275.69" fill="#3c3b6e" />
         </svg>
     );
 
     const EgyptFlag = () => (
         <svg className="w-5 h-5 rounded-full" viewBox="0 0 512 512">
-            <rect width="512" height="170.67" fill="#ce1126"/>
-            <rect width="512" height="170.67" y="170.67" fill="#fff"/>
-            <rect width="512" height="170.67" y="341.33" fill="#000"/>
-            <circle cx="256" cy="256" r="50" fill="#c09300"/>
+            <rect width="512" height="170.67" fill="#ce1126" />
+            <rect width="512" height="170.67" y="170.67" fill="#fff" />
+            <rect width="512" height="170.67" y="341.33" fill="#000" />
+            <circle cx="256" cy="256" r="50" fill="#c09300" />
         </svg>
     );
 
@@ -74,11 +78,11 @@ const Navbar = ({ toggleSidebar }) => {
                             <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Toggle Sidebar">
                                 <i className="ri-menu-line text-2xl"></i>
                             </button>
-                            <a href="/" className="flex items-center">
+                            <div className="flex items-center cursor-pointer">
                                 <div className="flex justify-center items-center py-4 md:py-5 lg:py-6 border-gray-200">
                                     <img src={EgyptAirLogo} alt="Egypt Air Logo" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 xl:h-24 object-contain" />
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div className="flex items-center ltr:space-x-4 rtl:space-x-reverse px-4 md:px-6 lg:px-8">
                             <div className="relative" ref={languageDropdownRef}>
