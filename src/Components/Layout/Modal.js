@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { Modal as BootstrapModal } from "bootstrap";
 
 /**
- * Reusable Modal Component - Modern Design with Navy Blue Header
+ * 
  * 
  * @param {string} id - Unique modal ID (required)
  * @param {string} title - Modal header title

@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import Checkbox from "../Components/Layout/Checkbox";
 import Pagination from "../Components/Layout/Pagination";
 
 const TaxType = () => {
@@ -170,8 +171,7 @@ const TaxType = () => {
 
         <div className="row mt-3">
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="IsSales"
               name="IsSales"
               checked={objDocType.IsSales}
@@ -181,16 +181,12 @@ const TaxType = () => {
                   IsSales: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
+              label={objTitle.Sales}
             />
-            <label htmlFor="IsSales" className="form-check-label">
-              {objTitle.Sales}
-            </label>
           </div>
 
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="IsPurchase"
               name="IsPurchase"
               checked={objDocType.IsPurchase}
@@ -200,9 +196,8 @@ const TaxType = () => {
                   IsPurchase: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
+              label={objTitle.Purchase}
             />
-            <label htmlFor="IsPurchase" className="form-check-label"> {objTitle.Purchase} </label>
           </div>
         </div>
       </Modal>
@@ -245,8 +240,7 @@ const TaxType = () => {
 
         <div className="row mt-3">
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="IsSalesEdit"
               name="IsSales"
               checked={objDocType.IsSales}
@@ -256,14 +250,12 @@ const TaxType = () => {
                   IsSales: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
+              label={objTitle.Sales}
             />
-            <label htmlFor="IsSalesEdit" className="form-check-label"> {objTitle.Sales} </label>
           </div>
 
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="IsPurchaseEdit"
               name="IsPurchase"
               checked={objDocType.IsPurchase}
@@ -273,11 +265,7 @@ const TaxType = () => {
                   IsPurchase: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
             />
-            <label htmlFor="IsPurchaseEdit" className="form-check-label">
-              {objTitle.Purchase}
-            </label>
           </div>
         </div>
       </Modal>

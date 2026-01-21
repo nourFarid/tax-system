@@ -26,6 +26,7 @@
     "reactstrap": "^9.2.3",
     "recharts": "^3.3.0",
     "remixicon": "^4.7.0",
+    "styled-components": "^6.3.8",
     "sweetalert": "^2.1.2",
     "web-vitals": "^2.1.4",
     "yup": "^1.7.1"

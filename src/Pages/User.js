@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import Checkbox from "../Components/Layout/Checkbox";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -404,8 +405,7 @@ const User = () => {
 
                 <div className="row mt-3">
                     <div className="col-md-6 d-flex align-items-center">
-                        <input
-                            type="checkbox"
+                        <Checkbox
                             id="AddIsActive"
                             name="IsActive"
                             checked={objUser.IsActive}
@@ -415,9 +415,8 @@ const User = () => {
                                     IsActive: e.target.checked,
                                 }))
                             }
-                            className="form-check-input me-2"
+                            label={objTitle.IsActive}
                         />
-                        <label htmlFor="AddIsActive" className="form-label">{objTitle.IsActive}</label>
                     </div>
                 </div>
             </Modal>
@@ -514,17 +513,15 @@ const User = () => {
 
                 <div className="row mt-3">
                     <div className="col-md-6 d-flex align-items-center">
-                        <input
-                            type="checkbox"
+                        <Checkbox
                             id="EditIsActive"
                             name="IsActive"
                             checked={objUser.IsActive}
                             onChange={(e) =>
                                 setObjUser((prev) => ({ ...prev, IsActive: e.target.checked }))
                             }
-                            className="form-check-input me-2"
+                            label={objTitle.IsActive}
                         />
-                        <label htmlFor="EditIsActive" className="form-label">{objTitle.IsActive}</label>
                     </div>
                 </div>
             </Modal>

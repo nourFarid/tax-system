@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import Checkbox from "../Components/Layout/Checkbox";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -321,8 +322,7 @@ const Customer = () => {
 
         <div className="row mt-3">
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="AddIsCustomer"
               name="IsCustomer"
               checked={objDocType.IsCustomer}
@@ -332,14 +332,12 @@ const Customer = () => {
                   IsCustomer: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
+              label={objTitle.IsCustomer}
             />
-            <label htmlFor="AddIsCustomer" className="form-label">{objTitle.IsCustomer}</label>
           </div>
 
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="AddIsSupplier"
               name="IsSupplier"
               checked={objDocType.IsSupplier}
@@ -349,9 +347,8 @@ const Customer = () => {
                   IsSupplier: e.target.checked,
                 }))
               }
-              className="form-check-input me-2"
+              label={objTitle.IsSupplier}
             />
-            <label htmlFor="AddIsSupplier" className="form-label">{objTitle.IsSupplier}</label>
           </div>
         </div>
       </Modal>
@@ -426,31 +423,27 @@ const Customer = () => {
 
         <div className="row mt-3">
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="EditIsCustomer"
               name="IsCustomer"
               checked={objDocType.IsCustomer}
               onChange={(e) =>
                 setObjDocType((prev) => ({ ...prev, IsCustomer: e.target.checked }))
               }
-              className="form-check-input me-2"
+              label={objTitle.IsCustomer}
             />
-            <label htmlFor="EditIsCustomer" className="form-label">{objTitle.IsCustomer}</label>
           </div>
 
           <div className="col-md-6 d-flex align-items-center">
-            <input
-              type="checkbox"
+            <Checkbox
               id="EditIsSupplier"
               name="IsSupplier"
               checked={objDocType.IsSupplier}
               onChange={(e) =>
                 setObjDocType((prev) => ({ ...prev, IsSupplier: e.target.checked }))
               }
-              className="form-check-input me-2"
+              label={objTitle.IsSupplier}
             />
-            <label htmlFor="EditIsSupplier" className="form-label">{objTitle.IsSupplier}</label>
           </div>
         </div>
       </Modal>
