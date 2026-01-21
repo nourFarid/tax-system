@@ -29,6 +29,7 @@ const Customer = lazy(() => import('./Pages/Customer'));
 const Item = lazy(() => import('./Pages/Item'));
 const User = lazy(() => import('./Pages/User'));
 const Departments = lazy(() => import('./Pages/Departments'));
+const Position = lazy(() => import('./Pages/Position'));
 const Auth = lazy(() => import('./Pages/Auth'));
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
               <Route path="/Setup/Item" element={<Item />} />;
               <Route path="/Setup/User" element={<User />} />;
               <Route path="/Setup/Departments" element={<Departments />} />;
+              <Route path="/Setup/Position" element={<Position />} />;
               <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />;
             </Routes>
           </Layout>
