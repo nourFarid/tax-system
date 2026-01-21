@@ -8,8 +8,8 @@ import { useSwal } from "../Hooks/Alert/Swal";
 
 const emptyRow = {
   itemId: -1,
+  documentId:-1,
   unitPrice: 0,
-  totalPrice: 0,
   amount: 1,
   statementTypeId: -1,
   itemTypeId: -1,
@@ -17,15 +17,16 @@ const emptyRow = {
   tax: 14,
 };
 
-const AddSale = () => {
+const EditSale = () => {
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
   const { showSuccess, SwalComponent } = useSwal();
+  const LOAD_OPTION_DOCUMENT_ITEMS = 1;
 
   const breadcrumbItems = [
     { label: t("sale"), link: "/Sales", active: false },
-    { label: t("Add"), link: "", active: true },
+    { label: t("Edit"), link: "", active: true },
   ];
 
   // ===================== STATE =====================
@@ -55,6 +56,7 @@ const AddSale = () => {
   };
 
   const addRow = () => {
+    emptyRow.documentId = objSale.docId;
     setObjSale(prev => ({
       ...prev,
       documentItems: [...prev.documentItems, { ...emptyRow }],
@@ -129,6 +131,37 @@ const AddSale = () => {
     setObjStatmentType(res.data.data);
   };
 
+  const loadSale = async () => {
+    const body = {
+        filter: {id: window.location.pathname.split("/").pop() },
+        pageNumber: 1,
+        pageSize: 1,
+        sortBy: "invoiceDate",
+        isDescending: true,
+        loadOption: [LOAD_OPTION_DOCUMENT_ITEMS],
+      };
+
+      const res = await axiosInstance.post("Sales/List", body);
+      const sale = res.data.data.items[0];
+
+      setObjSale(sale);
+      setObjSale(prev => ({
+        ...prev,
+        documentItems: sale.documentItem.map(di => ({
+          ...di,
+          id: di.id,
+          itemId: di.itemId,
+          totalPrice: di.totalPrice,
+          amount: di.amount,
+          unitPrice: di.unitPrice,
+          statementTypeId: di.statementTypeId,
+          itemTypeId: di.itemTypeId,
+          documentTypeId: di.documentTypeId,
+          tax: di.tax,
+        })),
+      }));
+  };
+
   const SetStatmentType = (docTypeId) => {
     setObjStatmentType(
       docTypeId === 2 || docTypeId === 3
@@ -144,21 +177,36 @@ const AddSale = () => {
   };
 
   // ===================== SUBMIT =====================
-  const Add = async () => {
-    const response = await axiosInstance.post("/Sales/Add", objSale);
+  const Edit = async () => {
+    const response = await axiosInstance.post("/Sales/Edit", objSale);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale added successfully"), {
+      showSuccess(t("Success"), t("Sale Edited successfully"), {
         onConfirm: () => navigate("/Sales"),
       });
     }
   };
 
+  const AddDocItem = async (obj) => {
+    console.log(obj);
+    const response = await axiosInstance.post("/Sales/AddDocumentItem", obj);
+    if (response.data.result) {
+      showSuccess(t("Success"), t("Sale item added successfully"));
+    }
+  };
+
+  const EditDocItem = async (obj) => {
+    console.log(obj);
+    const response = await axiosInstance.put("/Sales/UpdateDocumentItem", obj);
+    if (response.data.result) {
+      showSuccess(t("Success"), t("Sale item edited successfully"));
+    }
+  };
   // ===================== EFFECT =====================
   useEffect(() => {
     fetchDocType();
     fetchStatmentType();
-        fetchItemType();
-
+    fetchItemType();
+    loadSale();
   }, []);
 
   // ===================== RENDER =====================
@@ -223,6 +271,12 @@ const AddSale = () => {
               }
             />
           </div>
+        </div>
+
+        <div className="col-md-3 text-end mt-3">
+          <button className="btn btn-primary btn-lg" onClick={Edit}>
+            {t("Save")}
+          </button>
         </div>
       </div>
 
@@ -305,34 +359,41 @@ const AddSale = () => {
                   ))}
                 </select>
               </div>
-                   <div className="col-md-2">
-  <label>{t("Item Type")}</label>
-  <select
-    className="form-control"
-    value={r.itemTypeId}
-    onChange={(e) =>
-      updateRow(index, "itemTypeId", Number(e.target.value))
-    }
-  >
-    <option value={-1}>{t("Item Type")}</option>
-    {objItemType.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.name}
-      </option>
-    ))}
-  </select>
-</div>
+              <div className="col-md-2">
+              <label>{t("Item Type")}</label>
+              <select
+                className="form-control"
+                value={r.itemTypeId}
+                onChange={(e) =>
+                  updateRow(index, "itemTypeId", Number(e.target.value))
+                }
+              >
+                <option value={-1}>{t("Item Type")}</option>
+                {objItemType.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div className="col-md-1 text-end">
-                {objSale.documentItems.length > 1 && (
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => removeRow(index)}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
+            <div className="col-md-1 text-end">
+              {objSale.documentItems.length > 1 && (
+                <button className="btn btn-danger" onClick={() => removeRow(index)}>
+                  ✕
+                </button>
+              )}
+            </div>
+            <div className="col-md-3 text-end">
+              {r.id ?
+              <button className="btn btn-primary btn-lg" onClick={() => EditDocItem(r)}>
+                {t("Save")}
+              </button> :
+              <button className="btn btn-primary btn-lg" onClick={() => AddDocItem(r)}>
+                {t("Save")}
+              </button>
+              }
+            </div>
 
             </div>
           </div>
@@ -375,12 +436,6 @@ const AddSale = () => {
 
           </div>
         </div>
-
-        <div className="col-md-3 text-end mt-3">
-          <button className="btn btn-primary btn-lg" onClick={Add}>
-            {t("Save")}
-          </button>
-        </div>
       </div>
 
       <SwalComponent />
@@ -388,4 +443,4 @@ const AddSale = () => {
   );
 };
 
-export default AddSale;
+export default EditSale;
