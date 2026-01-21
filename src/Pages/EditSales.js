@@ -178,7 +178,7 @@ const EditSale = () => {
 
   // ===================== SUBMIT =====================
   const Edit = async () => {
-    const response = await axiosInstance.post("/Sales/Edit", objSale);
+    const response = await axiosInstance.put("/Sales/Update", objSale);
     if (response.data.result) {
       showSuccess(t("Success"), t("Sale Edited successfully"), {
         onConfirm: () => navigate("/Sales"),
