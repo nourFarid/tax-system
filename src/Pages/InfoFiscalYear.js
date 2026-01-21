@@ -3,7 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import { useParams } from 'react-router-dom';
 import axiosInstance from "../Axios/AxiosInstance";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
 
 const InfoFiscalYear = () => {
@@ -54,9 +54,7 @@ const InfoFiscalYear = () => {
     const handleEditLockDate = (quarter) => {
         setSelectedQuarter(quarter);
         setEditLockDate(quarter.lockDate ? quarter.lockDate.split('T')[0] : "");
-        const modalElement = document.getElementById("EditQuarterLockDate");
-        const modal = new Modal(modalElement);
-        modal.show();
+        showModal("EditQuarterLockDate");
     };
 
     const handleUpdateQuarter = async () => {
@@ -73,11 +71,7 @@ const InfoFiscalYear = () => {
             // Re-fetch or update local state
             if (response.status === 200 || response.data.result) {
                 showSuccess("Success", "Quarter updated successfully!");
-                // Hide modal
-                const modalElement = document.getElementById("EditQuarterLockDate");
-                const modal = Modal.getInstance(modalElement);
-                modal.hide();
-
+                hideModal("EditQuarterLockDate");
                 await fetchFiscalYear(); // Refresh data
             } else {
                 showError("Error", "Failed to update quarter");
@@ -87,6 +81,11 @@ const InfoFiscalYear = () => {
             console.error("Error updating quarter:", error);
             showError("Error", "An error occurred while updating the quarter.");
         }
+    };
+
+    const reset = () => {
+        setSelectedQuarter(null);
+        setEditLockDate("");
     };
 
     if (loading) return <div>{t("Loading...")}</div>;
@@ -168,43 +167,39 @@ const InfoFiscalYear = () => {
             </div>
 
             {/* Edit Lock Date Modal */}
-            <div className="modal fade" id="EditQuarterLockDate" tabIndex="-1" aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{t("Edit Lock Date")}</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="mb-3">
-                                {selectedQuarter && (
-                                    <div className="alert alert-info py-2 mb-3">
-                                        <div className="row">
-                                            <div className="col-6">
-                                                <strong>{t("Date From")}:</strong> {selectedQuarter.dateFrom ? selectedQuarter.dateFrom.split('T')[0] : "-"}
-                                            </div>
-                                            <div className="col-6">
-                                                <strong>{t("Date To")}:</strong> {selectedQuarter.dateTo ? selectedQuarter.dateTo.split('T')[0] : "-"}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                <label className="form-label">{t("Lock Date")}</label>
-                                <input
-                                    type="date"
-                                    className="form-control"
-                                    value={editLockDate}
-                                    onChange={(e) => setEditLockDate(e.target.value)}
-                                />
+            <Modal
+                id="EditQuarterLockDate"
+                title={t("Edit Lock Date")}
+                size="md"
+                onSave={handleUpdateQuarter}
+                onHide={reset}
+                saveLabel={t("Save Changes")}
+                cancelLabel={t("Cancel")}
+                saveButtonClass="btn btn-primary"
+                cancelButtonClass="btn btn-secondary"
+            >
+                <div className="mb-3">
+                    {selectedQuarter && (
+                        <div className="alert alert-info py-2 mb-3">
+                            <div className="row">
+                                <div className="col-6">
+                                    <strong>{t("Date From")}:</strong> {selectedQuarter.dateFrom ? selectedQuarter.dateFrom.split('T')[0] : "-"}
+                                </div>
+                                <div className="col-6">
+                                    <strong>{t("Date To")}:</strong> {selectedQuarter.dateTo ? selectedQuarter.dateTo.split('T')[0] : "-"}
+                                </div>
                             </div>
                         </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">{t("Cancel")}</button>
-                            <button type="button" className="btn btn-primary" onClick={handleUpdateQuarter}>{t("Save Changes")}</button>
-                        </div>
-                    </div>
+                    )}
+                    <label className="form-label">{t("Lock Date")}</label>
+                    <input
+                        type="date"
+                        className="form-control"
+                        value={editLockDate}
+                        onChange={(e) => setEditLockDate(e.target.value)}
+                    />
                 </div>
-            </div>
+            </Modal>
             <SwalComponent />
         </>
     );

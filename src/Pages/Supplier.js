@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -62,37 +62,34 @@ const Supplier = () => {
     { label: t("Name"), accessor: "Name" },
     { label: t("Tax Number"), accessor: "taxRegistrationNumber" },
     { label: t("Address"), accessor: "Address" }
-
-    // { label: t("Customer"), accessor: "IsCustomer" },
   ];
 
-const validateForm = () => {
-  const newErrors = {};
+  const validateForm = () => {
+    const newErrors = {};
 
-  if (!objDocType.Name || objDocType.Name.trim() === "") {
-    newErrors.Name = "Name is required";
-  }
+    if (!objDocType.Name || objDocType.Name.trim() === "") {
+      newErrors.Name = "Name is required";
+    }
 
-  const hasNationalId =
-    objDocType.NationalID && objDocType.NationalID.trim() !== "";
+    const hasNationalId =
+      objDocType.NationalID && objDocType.NationalID.trim() !== "";
 
-  const hasTaxNumber =
-    objDocType.TaxNumber && objDocType.TaxNumber.trim() !== "";
+    const hasTaxNumber =
+      objDocType.TaxNumber && objDocType.TaxNumber.trim() !== "";
 
-  // لازم واحد فيهم على الأقل
-  if (!hasNationalId && !hasTaxNumber) {
-    newErrors.NationalID = "National ID or Passport is required if Tax Number is empty";
-    newErrors.TaxNumber = "Tax Number is required if National ID is empty";
-  }
+    if (!hasNationalId && !hasTaxNumber) {
+      newErrors.NationalID = "National ID or Passport is required if Tax Number is empty";
+      newErrors.TaxNumber = "Tax Number is required if National ID is empty";
+    }
 
-  const address = objDocType.AddressLine || objDocType.Address;
-  if (!address || address.trim() === "") {
-    newErrors.Address = "Address is required";
-  }
+    const address = objDocType.AddressLine || objDocType.Address;
+    if (!address || address.trim() === "") {
+      newErrors.Address = "Address is required";
+    }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const fetchSuppliers = async (page = 1) => {
@@ -102,7 +99,6 @@ const validateForm = () => {
       const data = res.data;
 
       if (data.result) {
-        // Filter to only show suppliers (where isSupplier is true)
         const suppliersList = data.data.filter(item => item.isSupplier === true);
         setSuppliers(suppliersList);
         setTotalCount(suppliersList.length);
@@ -119,7 +115,6 @@ const validateForm = () => {
     updatedByUserName: s.updatedByUser ? s.updatedByUser.userName : ""
   }));
 
-  // وتستخدم accessor جديد للـ Table
   const columnsUpdated = [
     ...columns,
     { label: "Updated By", accessor: "updatedByUserName" }
@@ -138,10 +133,7 @@ const validateForm = () => {
       IsCustomer: row.isCustomer,
       IsSupplier: row.isSupplier
     });
-
-    const modalEl = document.getElementById("EditSupplier");
-    const modal = new Modal(modalEl);
-    modal.show();
+    showModal("EditSupplier");
   };
   const handleShow = (row) => { };
   const handleDelete = (row) => {
@@ -154,10 +146,7 @@ const validateForm = () => {
       IsSupplier: row.isSupplier || false,
       IsCustomer: row.isCustomer || false,
     });
-
-    const modalElement = document.getElementById("DeleteSupplier");
-    const modal = new Modal(modalElement);
-    modal.show();
+    showModal("DeleteSupplier");
   };
 
   const handleChange = (e) => {
@@ -184,7 +173,6 @@ const validateForm = () => {
         return;
       }
       if (response.status === 200) {
-        // Reset form
         setObjDocType({
           NationalID: "",
           Name: "",
@@ -270,38 +258,13 @@ const validateForm = () => {
       toast.error(error.response?.data?.message || "Failed to delete supplier");
     }
   };
-  const hideModal = (strModalId) => {
-    const modal = Modal.getInstance(document.getElementById(strModalId));
-    if (modal) {
-      modal.hide();
-    }
-    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
-    backdrops.forEach(b => b.remove());
-  }
-// Reset object when any modal is hidden
+
+  const reset = () => {
+    setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: true });
+  };
+
   useEffect(() => {
     fetchSuppliers(pageNumber);
-    const modalIds = ["AddSupplier", "EditSupplier", "DeleteSupplier"];
-
-    const handleHidden = () => {
-      // Reset object when any modal is hidden
-      setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: true });
-    };
-
-    const modals = modalIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    modals.forEach((modalEl) => {
-      modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    });
-
-    // Cleanup
-    return () => {
-      modals.forEach((modalEl) => {
-        modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-      });
-    };
   }, [pageNumber]);
 
   return (
@@ -324,236 +287,194 @@ const validateForm = () => {
         onPageChange={setPageNumber}
       />
 
-      <div className="modal fade" id="AddSupplier" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.AddSupplier}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
-            </div>
+      {/* Add Supplier Modal */}
+      <Modal
+        id="AddSupplier"
+        title={objTitle.AddSupplier}
+        size="lg"
+        onSave={handleSave}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Name}</label>
+            <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
+            {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
+          </div>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input type="text" name="Name" value={objDocType.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
-                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.NationalID}</label>
-                  <input type="text" name="NationalID" value={objDocType.NationalID} onChange={handleChange} className={`form-control ${errors.NationalID ? "is-invalid" : ""}`} placeholder={objTitle.NationalID} />
-                  {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-12">
-                  <label className="form-label">{objTitle.AddressLine}</label>
-                  <input type="text" name="AddressLine" value={objDocType.AddressLine} onChange={handleChange} className={`form-control ${errors.Address ? "is-invalid" : ""}`} placeholder={objTitle.AddressLine} />
-                  {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
-                </div>
-              </div>
-              <div className="row">
-
-                <div className="col-md-4">
-                  <label className="form-label">{objTitle.TaxNumber}</label>
-                  <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
-                  {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
-                </div>
-              </div>
-              <div className="row">
-              </div>
-              <div className="row" mt-3>
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsSupplier"
-                    name="IsSupplier"
-                    checked={objDocType.IsSupplier}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsSupplier: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsSupplier" className="form-label">{objTitle.IsSupplier}</label>
-                </div>
-
-                <div className="col-md-6 d-flex align-items-center">
-
-                  <input
-                    type="checkbox"
-                    id="IsCustomer"
-                    name="IsCustomer"
-                    checked={objDocType.IsCustomer}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsCustomer: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsCustomer" className="form-label">{objTitle.IsCustomer}</label>
-                </div>
-
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleSave} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.NationalID}</label>
+            <input type="text" name="NationalID" value={objDocType.NationalID} onChange={handleChange} className={`form-control ${errors.NationalID ? "is-invalid" : ""}`} placeholder={objTitle.NationalID} />
+            {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
           </div>
         </div>
-      </div>
-
-      <div className="modal fade" id="EditSupplier" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.EditSupplier}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
-            </div>
-
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objDocType.Name}
-                    onChange={handleChange}
-                    className={`form-control ${errors.Name ? "is-invalid" : ""}`}
-                    placeholder={objTitle.Name}
-                  />
-                  {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.NationalID}</label>
-                  <input
-                    type="text"
-                    name="NationalID"
-                    value={objDocType.NationalID}
-                    onChange={handleChange}
-                    className={`form-control ${errors.NationalID ? "is-invalid" : ""}`}
-                    placeholder={objTitle.NationalID}
-                  />
-                  {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-12">
-                  <label className="form-label">{objTitle.AddressLine}</label>
-                  <input
-                    type="text"
-                    name="Address"
-                    value={objDocType.Address}
-                    onChange={handleChange}
-                    className={`form-control ${errors.Address ? "is-invalid" : ""}`}
-                    placeholder={objTitle.AddressLine}
-                  />
-                  {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
-                </div>
-              </div>
-
-              <div className="row">
-
-                <div className="col-md-4">
-                  <label className="form-label">{objTitle.TaxNumber}</label>
-                  <input
-                    type="text"
-                    name="TaxNumber"
-                    value={objDocType.TaxNumber}
-                    onChange={handleChange}
-                    className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`}
-                    placeholder={objTitle.TaxNumber}
-                  />
-                  {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
-                </div>
-
-              </div>
-
-              <div className="row mt-3">
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsSupplier"
-                    name="IsSupplier"
-                    checked={objDocType.IsSupplier}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({ ...prev, IsSupplier: e.target.checked }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsSupplier" className="form-label">{objTitle.IsSupplier}</label>
-                </div>
-
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsCustomer"
-                    name="IsCustomer"
-                    checked={objDocType.IsCustomer}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({ ...prev, IsCustomer: e.target.checked }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsCustomer" className="form-label">{objTitle.IsCustomer}</label>
-                </div>
-              </div>
-            </div>
-
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleUpdate} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+        <div className="row">
+          <div className="col-md-12">
+            <label className="form-label">{objTitle.AddressLine}</label>
+            <input type="text" name="AddressLine" value={objDocType.AddressLine} onChange={handleChange} className={`form-control ${errors.Address ? "is-invalid" : ""}`} placeholder={objTitle.AddressLine} />
+            {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
           </div>
         </div>
-      </div>
-
-      <div className="modal fade" id="DeleteSupplier" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
-            </div>
-
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+        <div className="row">
+          <div className="col-md-4">
+            <label className="form-label">{objTitle.TaxNumber}</label>
+            <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
+            {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
           </div>
         </div>
-      </div>
+        <div className="row mt-3">
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsSupplier"
+              name="IsSupplier"
+              checked={objDocType.IsSupplier}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsSupplier: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsSupplier" className="form-label">{objTitle.IsSupplier}</label>
+          </div>
+
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsCustomer"
+              name="IsCustomer"
+              checked={objDocType.IsCustomer}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsCustomer: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsCustomer" className="form-label">{objTitle.IsCustomer}</label>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Supplier Modal */}
+      <Modal
+        id="EditSupplier"
+        title={objTitle.EditSupplier}
+        size="lg"
+        onSave={handleUpdate}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Name}</label>
+            <input
+              type="text"
+              name="Name"
+              value={objDocType.Name}
+              onChange={handleChange}
+              className={`form-control ${errors.Name ? "is-invalid" : ""}`}
+              placeholder={objTitle.Name}
+            />
+            {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.NationalID}</label>
+            <input
+              type="text"
+              name="NationalID"
+              value={objDocType.NationalID}
+              onChange={handleChange}
+              className={`form-control ${errors.NationalID ? "is-invalid" : ""}`}
+              placeholder={objTitle.NationalID}
+            />
+            {errors.NationalID && <div className="invalid-feedback">{errors.NationalID}</div>}
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-12">
+            <label className="form-label">{objTitle.AddressLine}</label>
+            <input
+              type="text"
+              name="Address"
+              value={objDocType.Address}
+              onChange={handleChange}
+              className={`form-control ${errors.Address ? "is-invalid" : ""}`}
+              placeholder={objTitle.AddressLine}
+            />
+            {errors.Address && <div className="invalid-feedback">{errors.Address}</div>}
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-4">
+            <label className="form-label">{objTitle.TaxNumber}</label>
+            <input
+              type="text"
+              name="TaxNumber"
+              value={objDocType.TaxNumber}
+              onChange={handleChange}
+              className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`}
+              placeholder={objTitle.TaxNumber}
+            />
+            {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
+          </div>
+        </div>
+
+        <div className="row mt-3">
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsSupplierEdit"
+              name="IsSupplier"
+              checked={objDocType.IsSupplier}
+              onChange={(e) =>
+                setObjDocType((prev) => ({ ...prev, IsSupplier: e.target.checked }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsSupplierEdit" className="form-label">{objTitle.IsSupplier}</label>
+          </div>
+
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsCustomerEdit"
+              name="IsCustomer"
+              checked={objDocType.IsCustomer}
+              onChange={(e) =>
+                setObjDocType((prev) => ({ ...prev, IsCustomer: e.target.checked }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsCustomerEdit" className="form-label">{objTitle.IsCustomer}</label>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Supplier Modal */}
+      <Modal
+        id="DeleteSupplier"
+        title={objTitle.Delete}
+        size="lg"
+        onSave={Delete}
+        onHide={reset}
+        saveLabel={objTitle.Delete}
+        cancelLabel={objTitle.Cancel}
+        saveButtonClass="btn btn-danger"
+        cancelButtonClass="btn btn-primary"
+      >
+        <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
+      </Modal>
+
       <ToastContainer />
       <SwalComponent />
     </>

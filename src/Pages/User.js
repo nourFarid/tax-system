@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -67,9 +67,7 @@ const User = () => {
     // Handler for opening Add modal
     const handleOpenAddModal = () => {
         resetForm();
-        const modalEl = document.getElementById("AddUser");
-        const modal = new Modal(modalEl);
-        modal.show();
+        showModal("AddUser");
     };
 
     const breadcrumbItems = [
@@ -225,9 +223,7 @@ const User = () => {
             IsActive: row.available ?? row.isActive ?? true
         });
 
-        const modalEl = document.getElementById("EditUser");
-        const modal = new Modal(modalEl);
-        modal.show();
+        showModal("EditUser");
     };
 
     const handleShow = (row) => {
@@ -322,37 +318,9 @@ const User = () => {
         }
     };
 
-    const hideModal = (strModalId) => {
-        const modal = Modal.getInstance(document.getElementById(strModalId));
-        if (modal) {
-            modal.hide();
-        }
-        const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
-        backdrops.forEach(b => b.remove());
-    }
-
     useEffect(() => {
         fetchUsers(pageNumber);
         fetchRoles();
-        const modalIds = ["AddUser", "EditUser"];
-
-        const handleHidden = () => {
-            resetForm();
-        };
-
-        const modals = modalIds
-            .map((id) => document.getElementById(id))
-            .filter(Boolean);
-
-        modals.forEach((modalEl) => {
-            modalEl.addEventListener("hidden.bs.modal", handleHidden);
-        });
-
-        return () => {
-            modals.forEach((modalEl) => {
-                modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-            });
-        };
     }, [pageNumber]);
 
     if (loading) return <div>{t("Loading...")}</div>;
@@ -379,215 +347,187 @@ const User = () => {
             />
 
             {/* Add User Modal */}
-            <div className="modal fade" id="AddUser" tabIndex="-1" aria-hidden="true">
-                <div className="modal-dialog modal-lg modal-dialog-centered">
-                    <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-                        <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-                            <h5 className="modal-title">{objTitle.AddUser}</h5>
-                            <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                                X
-                            </button>
-                        </div>
+            <Modal
+                id="AddUser"
+                title={objTitle.AddUser}
+                size="lg"
+                onSave={handleSave}
+                onHide={resetForm}
+                saveLabel={objTitle.Save}
+                cancelLabel={objTitle.Cancel}
+            >
+                <div className="row">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.UserCode}</label>
+                        <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
+                        {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
+                    </div>
 
-                        <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.UserCode}</label>
-                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
-                                    {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
-                                </div>
-
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Username}</label>
-                                    <input type="text" name="Username" value={objUser.Username} onChange={handleChange} className="form-control" placeholder={objTitle.Username} autoComplete="off" readOnly disabled style={{ backgroundColor: "#e9ecef" }} />
-                                    <small className="text-muted">Auto-generated: GS + User Code</small>
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Email}</label>
-                                    <input type="email" name="Email" value={objUser.Email} onChange={handleChange} className={`form-control ${errors.Email ? "is-invalid" : ""}`} placeholder={objTitle.Email} autoComplete="off" />
-                                    {errors.Email && <div className="invalid-feedback">{errors.Email}</div>}
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Password}</label>
-                                    <input type="password" name="Password" value={objUser.Password} onChange={handleChange} className={`form-control ${errors.Password ? "is-invalid" : ""}`} placeholder={objTitle.Password} autoComplete="new-password" />
-                                    {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
-                                    <small className="text-muted">Must contain: uppercase, lowercase, and special character (!@#$%^&*)</small>
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.FullName}</label>
-                                    <input type="text" name="FullName" value={objUser.FullName} onChange={handleChange} className={`form-control ${errors.FullName ? "is-invalid" : ""}`} placeholder={objTitle.FullName} />
-                                    {errors.FullName && <div className="invalid-feedback">{errors.FullName}</div>}
-                                </div>
-
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Role}</label>
-                                    <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                                        <option value="">Select Role</option>
-                                        {roles.map(role => (
-                                            <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6 d-flex align-items-center">
-                                    <input
-                                        type="checkbox"
-                                        id="AddIsActive"
-                                        name="IsActive"
-                                        checked={objUser.IsActive}
-                                        onChange={(e) =>
-                                            setObjUser((prev) => ({
-                                                ...prev,
-                                                IsActive: e.target.checked,
-                                            }))
-                                        }
-                                        className="form-check-input me-2"
-                                    />
-                                    <label htmlFor="AddIsActive" className="form-label">{objTitle.IsActive}</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-                            <button type="button" className="btn btn-success" onClick={handleSave}>
-                                {objTitle.Save}
-                            </button>
-                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                                {objTitle.Cancel}
-                            </button>
-                        </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Username}</label>
+                        <input type="text" name="Username" value={objUser.Username} onChange={handleChange} className="form-control" placeholder={objTitle.Username} autoComplete="off" readOnly disabled style={{ backgroundColor: "#e9ecef" }} />
+                        <small className="text-muted">Auto-generated: GS + User Code</small>
                     </div>
                 </div>
-            </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Email}</label>
+                        <input type="email" name="Email" value={objUser.Email} onChange={handleChange} className={`form-control ${errors.Email ? "is-invalid" : ""}`} placeholder={objTitle.Email} autoComplete="off" />
+                        {errors.Email && <div className="invalid-feedback">{errors.Email}</div>}
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Password}</label>
+                        <input type="password" name="Password" value={objUser.Password} onChange={handleChange} className={`form-control ${errors.Password ? "is-invalid" : ""}`} placeholder={objTitle.Password} autoComplete="new-password" />
+                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
+                        <small className="text-muted">Must contain: uppercase, lowercase, and special character (!@#$%^&*)</small>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.FullName}</label>
+                        <input type="text" name="FullName" value={objUser.FullName} onChange={handleChange} className={`form-control ${errors.FullName ? "is-invalid" : ""}`} placeholder={objTitle.FullName} />
+                        {errors.FullName && <div className="invalid-feedback">{errors.FullName}</div>}
+                    </div>
+
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Role}</label>
+                        <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
+                            <option value="">Select Role</option>
+                            {roles.map(role => (
+                                <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6 d-flex align-items-center">
+                        <input
+                            type="checkbox"
+                            id="AddIsActive"
+                            name="IsActive"
+                            checked={objUser.IsActive}
+                            onChange={(e) =>
+                                setObjUser((prev) => ({
+                                    ...prev,
+                                    IsActive: e.target.checked,
+                                }))
+                            }
+                            className="form-check-input me-2"
+                        />
+                        <label htmlFor="AddIsActive" className="form-label">{objTitle.IsActive}</label>
+                    </div>
+                </div>
+            </Modal>
 
             {/* Edit User Modal */}
-            <div className="modal fade" id="EditUser" tabIndex="-1" aria-hidden="true">
-                <div className="modal-dialog modal-lg modal-dialog-centered">
-                    <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-                        <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-                            <h5 className="modal-title">{objTitle.EditUser}</h5>
-                            <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                                X
-                            </button>
-                        </div>
+            <Modal
+                id="EditUser"
+                title={objTitle.EditUser}
+                size="lg"
+                onSave={handleUpdate}
+                onHide={resetForm}
+                saveLabel={objTitle.Save}
+                cancelLabel={objTitle.Cancel}
+            >
+                <div className="row">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.UserCode}</label>
+                        <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
+                        {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
+                    </div>
 
-                        <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.UserCode}</label>
-                                    <input type="text" name="UserCode" value={objUser.UserCode} onChange={handleChange} className={`form-control ${errors.UserCode ? "is-invalid" : ""}`} placeholder={objTitle.UserCode} autoComplete="off" />
-                                    {errors.UserCode && <div className="invalid-feedback">{errors.UserCode}</div>}
-                                </div>
-
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Username}</label>
-                                    <input
-                                        type="text"
-                                        name="Username"
-                                        value={objUser.Username}
-                                        onChange={handleChange}
-                                        className="form-control"
-                                        placeholder={objTitle.Username}
-                                        autoComplete="off"
-                                        readOnly
-                                        disabled
-                                        style={{ backgroundColor: "#e9ecef" }}
-                                    />
-                                    <small className="text-muted">Auto-generated: GS + User Code</small>
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Email}</label>
-                                    <input
-                                        type="email"
-                                        name="Email"
-                                        value={objUser.Email}
-                                        onChange={handleChange}
-                                        className={`form-control ${errors.Email ? "is-invalid" : ""}`}
-                                        placeholder={objTitle.Email}
-                                        autoComplete="off"
-                                    />
-                                    {errors.Email && <div className="invalid-feedback">{errors.Email}</div>}
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.FullName}</label>
-                                    <input
-                                        type="text"
-                                        name="FullName"
-                                        value={objUser.FullName}
-                                        onChange={handleChange}
-                                        className={`form-control ${errors.FullName ? "is-invalid" : ""}`}
-                                        placeholder={objTitle.FullName}
-                                    />
-                                    {errors.FullName && <div className="invalid-feedback">{errors.FullName}</div>}
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Role}</label>
-                                    <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                                        <option value="">Select Role</option>
-                                        {roles.map(role => (
-                                            <option key={role.id} value={role.id}>{role.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <label className="form-label">{objTitle.Password} (Optional)</label>
-                                    <input
-                                        type="password"
-                                        name="Password"
-                                        value={objUser.Password}
-                                        onChange={handleChange}
-                                        className={`form-control ${errors.Password ? "is-invalid" : ""}`}
-                                        placeholder="Leave blank to keep current password"
-                                        autoComplete="new-password"
-                                    />
-                                    {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
-                                    <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
-                                </div>
-                            </div>
-
-                            <div className="row mt-3">
-                                <div className="col-md-6 d-flex align-items-center">
-                                    <input
-                                        type="checkbox"
-                                        id="EditIsActive"
-                                        name="IsActive"
-                                        checked={objUser.IsActive}
-                                        onChange={(e) =>
-                                            setObjUser((prev) => ({ ...prev, IsActive: e.target.checked }))
-                                        }
-                                        className="form-check-input me-2"
-                                    />
-                                    <label htmlFor="EditIsActive" className="form-label">{objTitle.IsActive}</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-                            <button type="button" className="btn btn-success" onClick={handleUpdate}>
-                                {objTitle.Save}
-                            </button>
-                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                                {objTitle.Cancel}
-                            </button>
-                        </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Username}</label>
+                        <input
+                            type="text"
+                            name="Username"
+                            value={objUser.Username}
+                            onChange={handleChange}
+                            className="form-control"
+                            placeholder={objTitle.Username}
+                            autoComplete="off"
+                            readOnly
+                            disabled
+                            style={{ backgroundColor: "#e9ecef" }}
+                        />
+                        <small className="text-muted">Auto-generated: GS + User Code</small>
                     </div>
                 </div>
-            </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Email}</label>
+                        <input
+                            type="email"
+                            name="Email"
+                            value={objUser.Email}
+                            onChange={handleChange}
+                            className={`form-control ${errors.Email ? "is-invalid" : ""}`}
+                            placeholder={objTitle.Email}
+                            autoComplete="off"
+                        />
+                        {errors.Email && <div className="invalid-feedback">{errors.Email}</div>}
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.FullName}</label>
+                        <input
+                            type="text"
+                            name="FullName"
+                            value={objUser.FullName}
+                            onChange={handleChange}
+                            className={`form-control ${errors.FullName ? "is-invalid" : ""}`}
+                            placeholder={objTitle.FullName}
+                        />
+                        {errors.FullName && <div className="invalid-feedback">{errors.FullName}</div>}
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Role}</label>
+                        <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
+                            <option value="">Select Role</option>
+                            {roles.map(role => (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Password} (Optional)</label>
+                        <input
+                            type="password"
+                            name="Password"
+                            value={objUser.Password}
+                            onChange={handleChange}
+                            className={`form-control ${errors.Password ? "is-invalid" : ""}`}
+                            placeholder="Leave blank to keep current password"
+                            autoComplete="new-password"
+                        />
+                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
+                        <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6 d-flex align-items-center">
+                        <input
+                            type="checkbox"
+                            id="EditIsActive"
+                            name="IsActive"
+                            checked={objUser.IsActive}
+                            onChange={(e) =>
+                                setObjUser((prev) => ({ ...prev, IsActive: e.target.checked }))
+                            }
+                            className="form-check-input me-2"
+                        />
+                        <label htmlFor="EditIsActive" className="form-label">{objTitle.IsActive}</label>
+                    </div>
+                </div>
+            </Modal>
 
             <SwalComponent />
         </>

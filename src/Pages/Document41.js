@@ -4,8 +4,8 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
-import  { useSwal }  from "../Hooks/Alert/Swal";
-import { Modal } from "bootstrap";
+import { useSwal } from "../Hooks/Alert/Swal";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 
 const Document41 = () => {
   const [boolDisableExport, setBoolDisableExport] = useState(false);
@@ -80,7 +80,7 @@ const Document41 = () => {
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
-    const res = await axiosInstance.post("Document41/List", {pageNumber: pageNumber, pageSize: pageSize, filter: objFilter});
+    const res = await axiosInstance.post("Document41/List", { pageNumber: pageNumber, pageSize: pageSize, filter: objFilter });
     const result = res.data;
     if (!result.result) {
       alert(result.message);
@@ -126,19 +126,7 @@ const Document41 = () => {
 
   const HandelDelete = (row) => {
     setObjCurrentDoc(row);
-    const modalElement = document.getElementById("Delete");
-    let modal = Modal.getInstance(modalElement);
-    if (!modal) modal = new Modal(modalElement);
-    modal.show();
-  }
-
-  const hideModal = (strModalId) => {
-    const modal = Modal.getInstance(document.getElementById(strModalId));
-    if (modal) {
-      modal.hide();
-    }
-    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
-    backdrops.forEach(b => b.remove());
+    showModal("Delete");
   }
 
   const listFiscalYear = async () => {
@@ -158,12 +146,6 @@ const Document41 = () => {
     }
     List();
     listFiscalYear();
-
-    document.getElementById("Delete")?.addEventListener("hidden.bs.modal", Reset);
-
-    return () => {
-      document.getElementById("Delete")?.removeEventListener("hidden.bs.modal", Reset);
-    };
   }, [objFilter.transactionDateFrom, objFilter.transactionDateTo, objFilter.quarterId]);
 
   return (
@@ -174,18 +156,18 @@ const Document41 = () => {
         <div className="row">
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Transaction Date Form")}</label>
-            <input type="date" className="form-control" value={objFilter.transactionDateFrom} onChange={(e) => setObjFilter({...objFilter, transactionDateFrom: e.target.value})} />
+            <input type="date" className="form-control" value={objFilter.transactionDateFrom} onChange={(e) => setObjFilter({ ...objFilter, transactionDateFrom: e.target.value })} />
           </div>
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Transaction Date To")}</label>
-            <input type="date" className="form-control" value={objFilter.transactionDateTo} onChange={(e) => setObjFilter({...objFilter, transactionDateTo: e.target.value})} />
+            <input type="date" className="form-control" value={objFilter.transactionDateTo} onChange={(e) => setObjFilter({ ...objFilter, transactionDateTo: e.target.value })} />
           </div>
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Fiscal Year")}</label>
             <select className="form-select" value={objFilter.fiscalYearId} onChange={(e) => {
-                const value = Number(e.target.value);
-                setObjFilter(prev => ({...prev, fiscalYearId: value, quarterId: value == -1 ? -1 : prev.quarterId}));
-              }}>
+              const value = Number(e.target.value);
+              setObjFilter(prev => ({ ...prev, fiscalYearId: value, quarterId: value == -1 ? -1 : prev.quarterId }));
+            }}>
               <option value={-1}>{t("Select Fiscal Year")}</option>
               {arrFiscalYear.map(item => (
                 <option key={item.id} value={item.id}>
@@ -196,7 +178,7 @@ const Document41 = () => {
           </div>
           {objFilter.fiscalYearId != -1 && (<div className="col-md-3 mb-3">
             <label className="form-label">{t("Quarter")}</label>
-            <select className="form-select" value={objFilter.quarterId} onChange={(e) => setObjFilter({...objFilter, quarterId: e.target.value})}>
+            <select className="form-select" value={objFilter.quarterId} onChange={(e) => setObjFilter({ ...objFilter, quarterId: e.target.value })}>
               <option value={-1}>{t("Select Quarter")}</option>
               {GetQuarters(objFilter.fiscalYearId).map(item => (
                 <option key={item.id} value={item.id}>
@@ -232,25 +214,21 @@ const Document41 = () => {
         />
       </div>
 
-      <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
-            </div>
+      {/* Delete Confirmation Modal */}
+      <Modal
+        id="Delete"
+        title={objTitle.Delete}
+        size="lg"
+        onSave={Delete}
+        onHide={Reset}
+        saveLabel={objTitle.Delete}
+        cancelLabel={objTitle.Cancel}
+        saveButtonClass="btn btn-danger"
+        cancelButtonClass="btn btn-primary"
+      >
+        <p>{objTitle.DeleteConfirmation} <strong> {objCurrentDoc.Name} </strong> {objTitle.QuestionMark}</p>
+      </Modal>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>{objTitle.DeleteConfirmation} <strong> {objCurrentDoc.Name} </strong> {objTitle.QuestionMark}</p>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >{objTitle.Delete}</button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >{objTitle.Cancel}</button>
-            </div>
-          </div>
-        </div>
-      </div>
       <SwalComponent />
     </>
   );

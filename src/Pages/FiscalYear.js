@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -104,10 +104,7 @@ const FiscalYear = () => {
       YrFrom: row.YrFrom || "",
       YrTo: row.YrTo || "",
     });
-
-    const modalElement = document.getElementById("EditFiscalYear");
-    const modal = new Modal(modalElement);
-    modal.show();
+    showModal("EditFiscalYear");
   };
   const handleShow = (row) => {
     navigate(`/Setup/FiscalYear/Info/${row.id}`);
@@ -120,10 +117,7 @@ const FiscalYear = () => {
       YrFrom: row.YrFrom || "",
       YrTo: row.YrTo || "",
     });
-
-    const modalElement = document.getElementById("DeleteFiscalYear");
-    const modal = new Modal(modalElement);
-    modal.show();
+    showModal("DeleteFiscalYear");
   };
 
   const handleChange = (e) => {
@@ -175,9 +169,7 @@ const FiscalYear = () => {
         payload
       );
       await getFiscalYears();
-      const modalElement = document.getElementById("EditFiscalYear");
-      const modal = Modal.getInstance(modalElement);
-      modal.hide();
+      hideModal("EditFiscalYear");
       setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
       toast.success("Fiscal Year updated successfully!");
 
@@ -192,9 +184,7 @@ const FiscalYear = () => {
       .delete(`/FiscalYear/${objDocType.Id}`)
       .then(() => {
         getFiscalYears();
-        const modalElement = document.getElementById("DeleteFiscalYear");
-        const modal = Modal.getInstance(modalElement);
-        modal.hide();
+        hideModal("DeleteFiscalYear");
         toast.success("Fiscal Year deleted successfully!");
       })
       .catch((error) => {
@@ -203,41 +193,15 @@ const FiscalYear = () => {
       });
 
   };
-  const hideModal = (strModalId) => {
-    const modal = Modal.getInstance(document.getElementById(strModalId));
-    if (modal) {
-      modal.hide();
-    }
-    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
-    backdrops.forEach(b => b.remove());
-  }
+
+  const reset = () => {
+    setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+  };
+
   useEffect(() => {
-    const modalIds = ["AddFiscalYear", "EditFiscalYear", "DeleteFiscalYear"];
-
-    const handleHidden = () => {
-      // Reset object when any modal is hidden
-      setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-    };
-
-    const modals = modalIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    modals.forEach((modalEl) => {
-      modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    });
-
-
-
     getFiscalYears();
-
-    // Cleanup
-    return () => {
-      modals.forEach((modalEl) => {
-        modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-      });
-    };
   }, []);
+
   const pagedData = useMemo(() => {
     const start = (pageNumber - 1) * pageSize;
     const end = start + pageSize;
@@ -270,126 +234,92 @@ const FiscalYear = () => {
         </>
       )}
 
-      <div className="modal fade" id="AddFiscalYear" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.AddFiscalYear}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">X</button>
-            </div>
+      {/* Add Fiscal Year Modal */}
+      <Modal
+        id="AddFiscalYear"
+        title={objTitle.AddFiscalYear}
+        size="lg"
+        onSave={handleSave}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.From}</label>
+            <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
+          </div>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.From}</label>
-                  <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.To}</label>
-                  <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.YrFrom}</label>
-                  <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.YrTo}</label>
-                  <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleSave} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.To}</label>
+            <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
           </div>
         </div>
-      </div>
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.YrFrom}</label>
+            <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
+          </div>
 
-      <div className="modal fade" id="EditFiscalYear" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.EditFiscalYear}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
-            </div>
-
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.From}</label>
-                  <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.To}</label>
-                  <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.YrFrom}</label>
-                  <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.YrTo}</label>
-                  <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-success" onClick={handleUpdate} >
-                {objTitle.Save}
-              </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.YrTo}</label>
+            <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
           </div>
         </div>
-      </div>
+      </Modal>
 
-      <div className="modal fade" id="DeleteFiscalYear" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3" }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal">
-                X
-              </button>
-            </div>
+      {/* Edit Fiscal Year Modal */}
+      <Modal
+        id="EditFiscalYear"
+        title={objTitle.EditFiscalYear}
+        size="lg"
+        onSave={handleUpdate}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.From}</label>
+            <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
+          </div>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <p>
-                {objTitle.DeleteConfirmation}{" "}
-                <strong>{objDocType.YrFrom} - {objDocType.YrTo}</strong> {objTitle.QuestionMark}
-              </p>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}>
-              <button type="button" className="btn btn-danger" onClick={Delete} >
-                {objTitle.Delete}
-              </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" >
-                {objTitle.Cancel}
-              </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.To}</label>
+            <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
           </div>
         </div>
-      </div>
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.YrFrom}</label>
+            <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.YrTo}</label>
+            <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Fiscal Year Modal */}
+      <Modal
+        id="DeleteFiscalYear"
+        title={objTitle.Delete}
+        size="lg"
+        onSave={Delete}
+        onHide={reset}
+        saveLabel={objTitle.Delete}
+        cancelLabel={objTitle.Cancel}
+        saveButtonClass="btn btn-danger"
+        cancelButtonClass="btn btn-primary"
+      >
+        <p>
+          {objTitle.DeleteConfirmation}{" "}
+          <strong>{objDocType.YrFrom} - {objDocType.YrTo}</strong> {objTitle.QuestionMark}
+        </p>
+      </Modal>
+
       <ToastContainer />
       <SwalComponent />
     </>

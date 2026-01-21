@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from "../Components/Layout/Pagination";
 
 const TaxType = () => {
@@ -73,13 +73,10 @@ const TaxType = () => {
       IsPurchase: row.IsPurchase || false,
       IsSales: row.IsSales || false,
     });
-
-    const modalElement = document.getElementById("EditTaxType");
-    const modal = new Modal(modalElement);
-    modal.show();
+    showModal("EditTaxType");
   };
 
-  const handleShow = (row) => {};
+  const handleShow = (row) => { };
 
   const handleDelete = (row) => {
     setObjDocType({
@@ -89,10 +86,7 @@ const TaxType = () => {
       IsPurchase: row.IsPurchase || false,
       IsSales: row.IsSales || false,
     });
-
-    const modalElement = document.getElementById("DeleteTaxType");
-    const modal = new Modal(modalElement);
-    modal.show();
+    showModal("DeleteTaxType");
   };
 
   const handleChange = (e) => {
@@ -113,27 +107,9 @@ const TaxType = () => {
     console.log("Deleting:", objDocType);
   };
 
-  useEffect(() => {
-    const modalIds = ["AddTaxType", "EditTaxType", "DeleteTaxType"];
-
-    const handleHidden = () => {
-      setObjDocType({ Name: "", Code: "", IsSales: false, IsPurchase: false });
-    };
-
-    const modals = modalIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean);
-
-    modals.forEach((modalEl) => {
-      modalEl.addEventListener("hidden.bs.modal", handleHidden);
-    });
-
-    return () => {
-      modals.forEach((modalEl) => {
-        modalEl.removeEventListener("hidden.bs.modal", handleHidden);
-      });
-    };
-  }, []);
+  const reset = () => {
+    setObjDocType({ Name: "", Code: "", IsSales: false, IsPurchase: false });
+  };
 
   return (
     <>
@@ -156,209 +132,173 @@ const TaxType = () => {
         onPageChange={setPageNumber}
       />
 
-  {/* Add */}
-      <div className="modal fade" id="AddTaxType" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div
-            className="modal-content"
-            style={{
-              maxHeight: "90vh",
-              display: "flex",
-              flexDirection: "column",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <div
-              className="modal-header d-flex justify-content-between align-items-center"
-              style={{ borderBottom: "1px solid #d3d3d3" }}
-            >
-              <h5 className="modal-title">{objTitle.AddTaxType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
-            </div>
+      {/* Add Tax Type Modal */}
+      <Modal
+        id="AddTaxType"
+        title={objTitle.AddTaxType}
+        size="lg"
+        onSave={handleSave}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Name}</label>
+            <input
+              type="text"
+              name="Name"
+              value={objDocType.Name}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.Name}
+            />
+          </div>
 
-            <div className="modal-body"style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}>
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objDocType.Name}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Name}
-                  />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Code}</label>
-                  <input
-                    type="text"
-                    name="Code"
-                    value={objDocType.Code}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Code}
-                  />
-                </div>
-              </div>
-
-              <div className="row mt-3">
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsSales"
-                    name="IsSales"
-                    checked={objDocType.IsSales}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsSales: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsSales" className="form-check-label">
-                    {objTitle.Sales}
-                  </label>
-                </div>
-
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsPurchase"
-                    name="IsPurchase"
-                    checked={objDocType.IsPurchase}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsPurchase: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsPurchase" className="form-check-label"> {objTitle.Purchase} </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
-              <button type="button" className="btn btn-success" onClick={handleSave}> {objTitle.Save} </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Code}</label>
+            <input
+              type="text"
+              name="Code"
+              value={objDocType.Code}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.Code}
+            />
           </div>
         </div>
-      </div>
-  {/* Edit */}
-      <div className="modal fade" id="EditTaxType" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }} >
-              <h5 className="modal-title">{objTitle.EditTaxType}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm"  data-bs-dismiss="modal" > X </button>
-            </div>
 
-            <div
-              className="modal-body"
-              style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-            >
-              <div className="row">
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Name}</label>
-                  <input
-                    type="text"
-                    name="Name"
-                    value={objDocType.Name}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Name}
-                  />
-                </div>
+        <div className="row mt-3">
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsSales"
+              name="IsSales"
+              checked={objDocType.IsSales}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsSales: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsSales" className="form-check-label">
+              {objTitle.Sales}
+            </label>
+          </div>
 
-                <div className="col-md-6">
-                  <label className="form-label">{objTitle.Code}</label>
-                  <input
-                    type="text"
-                    name="Code"
-                    value={objDocType.Code}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder={objTitle.Code}
-                  />
-                </div>
-              </div>
-
-              {/* ✅ Checkboxes */}
-              <div className="row mt-3">
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsSalesEdit"
-                    name="IsSales"
-                    checked={objDocType.IsSales}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsSales: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsSalesEdit" className="form-check-label"> {objTitle.Sales} </label>
-                </div>
-
-                <div className="col-md-6 d-flex align-items-center">
-                  <input
-                    type="checkbox"
-                    id="IsPurchaseEdit"
-                    name="IsPurchase"
-                    checked={objDocType.IsPurchase}
-                    onChange={(e) =>
-                      setObjDocType((prev) => ({
-                        ...prev,
-                        IsPurchase: e.target.checked,
-                      }))
-                    }
-                    className="form-check-input me-2"
-                  />
-                  <label htmlFor="IsPurchaseEdit" className="form-check-label">
-                    {objTitle.Purchase}
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
-              <button type="button" className="btn btn-success" onClick={handleUpdate} > {objTitle.Save} </button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" > {objTitle.Cancel} </button>
-            </div>
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsPurchase"
+              name="IsPurchase"
+              checked={objDocType.IsPurchase}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsPurchase: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsPurchase" className="form-check-label"> {objTitle.Purchase} </label>
           </div>
         </div>
-      </div>
-  {/* Delete */}
-      <div className="modal fade" id="DeleteTaxType" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3", }} >
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }} >
-              <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal" > X </button>
-            </div>
+      </Modal>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }} >
-              <p>
-                {objTitle.DeleteConfirmation} <strong>{objDocType.Name}</strong>{" "}
-                {objTitle.QuestionMark}
-              </p>
-            </div>
+      {/* Edit Tax Type Modal */}
+      <Modal
+        id="EditTaxType"
+        title={objTitle.EditTaxType}
+        size="lg"
+        onSave={handleUpdate}
+        onHide={reset}
+        saveLabel={objTitle.Save}
+        cancelLabel={objTitle.Cancel}
+      >
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Name}</label>
+            <input
+              type="text"
+              name="Name"
+              value={objDocType.Name}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.Name}
+            />
+          </div>
 
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
-              <button type="button" className="btn btn-danger" onClick={Delete}> {objTitle.Delete} </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.Code}</label>
+            <input
+              type="text"
+              name="Code"
+              value={objDocType.Code}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.Code}
+            />
           </div>
         </div>
-      </div>
+
+        <div className="row mt-3">
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsSalesEdit"
+              name="IsSales"
+              checked={objDocType.IsSales}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsSales: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsSalesEdit" className="form-check-label"> {objTitle.Sales} </label>
+          </div>
+
+          <div className="col-md-6 d-flex align-items-center">
+            <input
+              type="checkbox"
+              id="IsPurchaseEdit"
+              name="IsPurchase"
+              checked={objDocType.IsPurchase}
+              onChange={(e) =>
+                setObjDocType((prev) => ({
+                  ...prev,
+                  IsPurchase: e.target.checked,
+                }))
+              }
+              className="form-check-input me-2"
+            />
+            <label htmlFor="IsPurchaseEdit" className="form-check-label">
+              {objTitle.Purchase}
+            </label>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Tax Type Modal */}
+      <Modal
+        id="DeleteTaxType"
+        title={objTitle.Delete}
+        size="lg"
+        onSave={Delete}
+        onHide={reset}
+        saveLabel={objTitle.Delete}
+        cancelLabel={objTitle.Cancel}
+        saveButtonClass="btn btn-danger"
+        cancelButtonClass="btn btn-primary"
+      >
+        <p>
+          {objTitle.DeleteConfirmation} <strong>{objDocType.Name}</strong>{" "}
+          {objTitle.QuestionMark}
+        </p>
+      </Modal>
     </>
   );
 };

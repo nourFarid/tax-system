@@ -6,7 +6,7 @@ import Pagination from "../Components/Layout/Pagination";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
-import { Modal } from "bootstrap";
+import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 
 const Purchase = () => {
   const { t } = useTranslate();
@@ -100,7 +100,7 @@ const Purchase = () => {
     // { label: t("Price"), accessor: "price" },
     // { label: t("Amount"), accessor: "amount" },
     // { label: t("Tax Amount"), accessor: "tax" },
-     { label: t("Valid"), accessor: "isValid" },
+    { label: t("Valid"), accessor: "isValid" },
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },
@@ -141,7 +141,7 @@ const Purchase = () => {
       let Filter = {};
       if (objFilter.invoiceDateFrom) {
         Filter.invoiceDateFrom = objFilter.invoiceDateFrom;
-      } else{
+      } else {
         delete Filter.invoiceDateFrom;
       }
       if (objFilter.invoiceDateTo) {
@@ -197,19 +197,7 @@ const Purchase = () => {
   // Show delete modal
   const HandelDelete = (row) => {
     setObjCurrentPurchase(row);
-    const modalElement = document.getElementById("Delete");
-    let modal = Modal.getInstance(modalElement);
-    if (!modal) modal = new Modal(modalElement);
-    modal.show();
-  };
-
-  const hideModal = (strModalId) => {
-    const modal = Modal.getInstance(document.getElementById(strModalId));
-    if (modal) {
-      modal.hide();
-    }
-    const backdrops = document.querySelectorAll(".modal-backdrop.fade.show");
-    backdrops.forEach(b => b.remove());
+    showModal("Delete");
   };
 
   useEffect(() => {
@@ -227,11 +215,6 @@ const Purchase = () => {
 
   useEffect(() => {
     listFiscalYear();
-
-    // Clean up modal event listeners if needed
-    return () => {
-      hideModal("Delete");
-    };
   }, []);
 
   const Reset = () => {
@@ -344,8 +327,8 @@ const Purchase = () => {
           showActions={true}
           onEdit={(row) => navigate(`/Purchase/UpdatePurchase/${row.id}`)}
           showShow={false}
-          onShow={() => {}}
-          onDelete={HandelDelete} // <-- Add the delete handler here
+          onShow={() => { }}
+          onDelete={HandelDelete}
         />
 
         <Pagination
@@ -355,30 +338,26 @@ const Purchase = () => {
           onPageChange={onPageChange}
         />
       </div>
+
       {/* Delete Confirmation Modal */}
-      <div className="modal fade" id="Delete" tabIndex="-1" aria-hidden="true" >
-        <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column", borderRadius: "10px", border: "1px solid #d3d3d3"}}>
-            <div className="modal-header d-flex justify-content-between align-items-center" style={{ borderBottom: "1px solid #d3d3d3" }}>
-              <h5 className="modal-title">{objTitle.Delete}</h5>
-              <button type="button" className="btn btn-outline-danger btn-sm" data-bs-dismiss="modal"> X </button>
-            </div>
+      <Modal
+        id="Delete"
+        title={objTitle.Delete}
+        size="lg"
+        onSave={Delete}
+        onHide={Reset}
+        saveLabel={objTitle.Delete}
+        cancelLabel={objTitle.Cancel}
+        saveButtonClass="btn btn-danger"
+        cancelButtonClass="btn btn-primary"
+      >
+        <p>
+          {objTitle.DeleteConfirmation}{" "}
+          <strong>{objCurrentPurchase.invoiceNumber || objCurrentPurchase.customerSupplierName || ""}</strong>{" "}
+          {objTitle.QuestionMark}
+        </p>
+      </Modal>
 
-            <div className="modal-body" style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }} >
-              <p>
-                {objTitle.DeleteConfirmation}{" "}
-                <strong>{objCurrentPurchase.invoiceNumber || objCurrentPurchase.customerSupplierName || ""}</strong>{" "}
-                {objTitle.QuestionMark}
-              </p>
-            </div>
-
-            <div className="modal-footer" style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }} >
-              <button type="button" className="btn btn-danger" onClick={Delete}> {objTitle.Delete}</button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> {objTitle.Cancel} </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <SwalComponent />
     </>
   );
