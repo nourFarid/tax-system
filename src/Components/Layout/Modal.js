@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { Modal as BootstrapModal } from "bootstrap";
 
 /**
- * Reusable Modal Component
+ * Reusable Modal Component - Modern Design with Navy Blue Header
  * 
  * @param {string} id - Unique modal ID (required)
  * @param {string} title - Modal header title
@@ -15,8 +15,8 @@ import { Modal as BootstrapModal } from "bootstrap";
  * @param {Function} onHide - Callback when modal is hidden (optional)
  * @param {string} saveLabel - Save button label (default: 'Save')
  * @param {string} cancelLabel - Cancel button label (default: 'Cancel')
- * @param {string} saveButtonClass - Save button CSS class (default: 'btn btn-success')
- * @param {string} cancelButtonClass - Cancel button CSS class (default: 'btn btn-danger')
+ * @param {string} saveButtonClass - Save button CSS class (default: 'btn btn-primary')
+ * @param {string} cancelButtonClass - Cancel button CSS class (default: 'btn btn-outline-secondary')
  * @param {boolean} showFooter - Show/hide footer (default: true)
  * @param {boolean} showSaveButton - Show/hide save button (default: true)
  * @param {boolean} showCancelButton - Show/hide cancel button (default: true)
@@ -34,8 +34,8 @@ const Modal = ({
     onHide,
     saveLabel = "Save",
     cancelLabel = "Cancel",
-    saveButtonClass = "btn btn-success",
-    cancelButtonClass = "btn btn-danger",
+    saveButtonClass = "btn btn-primary",
+    cancelButtonClass = "btn btn-outline-secondary",
     showFooter = true,
     showSaveButton = true,
     showCancelButton = true,
@@ -112,12 +112,79 @@ const Modal = ({
     }, [onShow, onHide]);
 
     const dialogStyle = maxWidth ? { maxWidth } : {};
+
+    // Modern styles
     const contentStyle = {
         maxHeight: "90vh",
         display: "flex",
         flexDirection: "column",
-        borderRadius: "10px",
-        border: "1px solid #d3d3d3",
+        borderRadius: "16px",
+        border: "none",
+        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+        overflow: "hidden",
+    };
+
+    const headerStyle = {
+        background: "linear-gradient(135deg, #1e3a5f 0%, #0a1929 100%)",
+        color: "#ffffff",
+        padding: "1.25rem 1.5rem",
+        borderBottom: "none",
+        borderRadius: "16px 16px 0 0",
+    };
+
+    const titleStyle = {
+        fontWeight: "600",
+        fontSize: "1.25rem",
+        letterSpacing: "0.025em",
+        margin: 0,
+    };
+
+    const closeButtonStyle = {
+        background: "rgba(255, 255, 255, 0.1)",
+        border: "none",
+        borderRadius: "8px",
+        color: "#ffffff",
+        width: "36px",
+        height: "36px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "1.25rem",
+        transition: "all 0.2s ease",
+        cursor: "pointer",
+    };
+
+    const bodyStyle = {
+        padding: "1.5rem",
+        overflowY: "auto",
+        backgroundColor: "#ffffff",
+    };
+
+    const footerStyle = {
+        padding: "1rem 1.5rem",
+        backgroundColor: "#f8fafc",
+        borderTop: "1px solid #e2e8f0",
+        borderRadius: "0 0 16px 16px",
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: "0.75rem",
+    };
+
+    const modernSaveButtonStyle = {
+        padding: "0.625rem 1.5rem",
+        borderRadius: "8px",
+        fontWeight: "500",
+        fontSize: "0.95rem",
+        transition: "all 0.2s ease",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    };
+
+    const modernCancelButtonStyle = {
+        padding: "0.625rem 1.5rem",
+        borderRadius: "8px",
+        fontWeight: "500",
+        fontSize: "0.95rem",
+        transition: "all 0.2s ease",
     };
 
     return (
@@ -133,57 +200,59 @@ const Modal = ({
                 style={dialogStyle}
             >
                 <div className="modal-content" style={contentStyle}>
-                    {/* Header */}
+                    {/* Modern Navy Blue Header */}
                     <div
                         className="modal-header d-flex justify-content-between align-items-center"
-                        style={{ borderBottom: "1px solid #d3d3d3" }}
+                        style={headerStyle}
                     >
-                        <h5 className="modal-title">{title}</h5>
+                        <h5 className="modal-title" style={titleStyle}>{title}</h5>
                         <button
                             type="button"
-                            className="btn btn-outline-danger btn-sm"
+                            style={closeButtonStyle}
                             data-bs-dismiss="modal"
                             onClick={handleCancel}
+                            onMouseEnter={(e) => {
+                                e.target.style.background = "rgba(255, 255, 255, 0.2)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                            }}
                         >
-                            X
+                            ✕
                         </button>
                     </div>
 
                     {/* Body */}
-                    <div
-                        className="modal-body"
-                        style={{ overflowY: "auto", borderBottom: "1px solid #d3d3d3" }}
-                    >
+                    <div className="modal-body" style={bodyStyle}>
                         {children}
                     </div>
 
-                    {/* Footer */}
+                    {/* Modern Footer */}
                     {showFooter && (
-                        <div
-                            className="modal-footer"
-                            style={{ flexShrink: 0, borderTop: "1px solid #d3d3d3" }}
-                        >
+                        <div className="modal-footer" style={footerStyle}>
                             {footer ? (
                                 footer
                             ) : (
                                 <>
-                                    {showSaveButton && (
-                                        <button
-                                            type="button"
-                                            className={saveButtonClass}
-                                            onClick={handleSave}
-                                        >
-                                            {saveLabel}
-                                        </button>
-                                    )}
                                     {showCancelButton && (
                                         <button
                                             type="button"
                                             className={cancelButtonClass}
+                                            style={modernCancelButtonStyle}
                                             data-bs-dismiss="modal"
                                             onClick={handleCancel}
                                         >
                                             {cancelLabel}
+                                        </button>
+                                    )}
+                                    {showSaveButton && (
+                                        <button
+                                            type="button"
+                                            className={saveButtonClass}
+                                            style={modernSaveButtonStyle}
+                                            onClick={handleSave}
+                                        >
+                                            {saveLabel}
                                         </button>
                                     )}
                                 </>
