@@ -61,8 +61,8 @@ const Departments = () => {
 
     const columns = [
         { label: t("ID"), accessor: "id" },
-        { label: t("Name"), accessor: "name" },
-        { label: t("Code"), accessor: "code" },
+        { label: t("Department Name"), accessor: "name" },
+        { label: t("Department Code"), accessor: "code" },
         {
             label: t("Status"),
             accessor: "isActive",

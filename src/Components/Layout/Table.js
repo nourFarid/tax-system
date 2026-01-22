@@ -125,7 +125,7 @@ const Table = ({
                       : getCellValue(row, col.accessor);
                     return (
                       <td className="whitespace-nowrap" key={colIndex}>
-                        {col.render ? col.render(cellValue, row) : cellValue}
+                        {col.render ? col.render(cellValue, row, rowIndex) : cellValue}
                       </td>
                     );
                   })}

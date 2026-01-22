@@ -57,12 +57,19 @@ const Position = () => {
     ];
 
     const columns = [
-        { label: t("ID"), accessor: "id" },
-        { label: t("Name"), accessor: "name" },
+        {
+            label: t("ID"),
+            accessor: "id",
+            render: (value, row, index) => index + 1
+        },
+        { label: t("Position Name"), accessor: "name" },
         {
             label: t("Department"),
-            accessor: "department",
-            render: (row) => row.department?.name || "-"
+            accessor: "departmentId",
+            render: (id) => {
+                const dept = arrDepartments.find(d => d.id === id);
+                return dept ? dept.name : "-";
+            }
         },
     ];
 

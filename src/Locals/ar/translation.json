@@ -9,7 +9,7 @@
   "Logs": "السجلات",
   "Attachments": "المرفقات",
   "Employees": "الموظفين",
-  "Departments": "الأقسام",
+  "Departments": "الإدارات",
   "Users": "المستخدمين",
   "National Id": "الرقم القومي",
   "File": "الملف",
@@ -214,5 +214,7 @@
   "Failed to load positions": "فشل تحميل الوظائف",
   "Failed to add position": "فشل إضافة الوظيفة",
   "Position added successfully": "تم إضافة الوظيفة بنجاح",
-  "Failed to delete position": "فشل مسح الوظيفة"
+  "Failed to delete position": "فشل مسح الوظيفة",
+  "Department Code": "كود الإدارة",
+  "Position Name": "اسم الوظيفة"
 }
