@@ -4,6 +4,7 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Checkbox from "../Components/Layout/Checkbox";
+import Switch from "../Components/Layout/Switch";
 
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
@@ -33,6 +34,8 @@ const User = () => {
             Cancel: t("Cancel"),
             Filter: t("Filter"),
             Reset: t("Reset"),
+            Active: t("Active"),
+            Inactive: t("Inactive"),
         }),
         [t]
     );
@@ -91,9 +94,12 @@ const User = () => {
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
         {
             label: t("Active"), accessor: "isActive", render: (value, row) => {
-                // Check both possible field names
                 const isActive = value ?? row?.available ?? row?.isActive ?? false;
-                return isActive ? "Active" : "Inactive";
+                return (
+                    <span className={`badge ${isActive ? 'bg-success' : 'bg-danger'}`}>
+                        {isActive ? objTitle.Active : objTitle.Inactive}
+                    </span>
+                );
             }
         }
     ];
@@ -243,6 +249,35 @@ const User = () => {
         }
     };
 
+    const handleToggle = async (row) => {
+        try {
+            const currentStatus = row.available ?? row.isActive ?? false;
+            const newStatus = !currentStatus;
+
+            const payload = {
+                userId: row.userId,
+                userName: row.userName,
+                email: row.email,
+                fullName: row.fullName,
+                available: newStatus,
+                isActive: newStatus,
+                newUser: false,
+                userCode: row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : null),
+                roleId: row.roleId
+            };
+
+            const res = await axiosInstance.post("User/Update", payload);
+            if (res.data && res.data.result) {
+                showSuccess(t("Success"), res.data.message || t("User status updated"));
+                fetchUsers();
+            } else {
+                showError(t("Error"), res.data.message);
+            }
+        } catch (error) {
+            showError(t("Error"), t("Failed to toggle user status"));
+        }
+    };
+
     const handleSave = async () => {
         if (!validateForm(false)) return;
         try {
@@ -336,6 +371,13 @@ const User = () => {
                 showShow={false}
                 onShow={handleShow}
                 showDelete={false}
+                customActions={(row) => (
+                    <Switch
+                        id={`switch-${row.userId}`}
+                        checked={row.available ?? row.isActive ?? false}
+                        onChange={() => handleToggle(row)}
+                    />
+                )}
             />
 
 
