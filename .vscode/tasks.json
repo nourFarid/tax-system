@@ -1,0 +1,160 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "npm: start",
+			"detail": "react-scripts start",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Add Migration",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"ef",
+				"migrations",
+				"add",
+				"${input:migrationName}",
+				"--project",
+				"DAL",
+				"--startup-project",
+				"API"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			}
+		},
+		{
+			"label": "Remove Migration",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"ef",
+				"migrations",
+				"remove",
+				"--project",
+				"DAL",
+				"--startup-project",
+				"API"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			}
+		},
+		{
+			"label": "Update Database",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"ef",
+				"database",
+				"update",
+				"--project",
+				"DAL",
+				"--startup-project",
+				"API"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			}
+		},
+		{
+			"label": "Update Database to Specific Migration",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"ef",
+				"database",
+				"update",
+				"${input:targetMigration}",
+				"--project",
+				"DAL",
+				"--startup-project",
+				"API"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			}
+		},
+		{
+			"label": "List Migrations",
+			"command": "dotnet",
+			"type": "shell",
+			"args": [
+				"ef",
+				"migrations",
+				"list",
+				"--project",
+				"DAL",
+				"--startup-project",
+				"API"
+			],
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			}
+		}
+	],
+	"inputs": [
+		{
+			"id": "migrationName",
+			"type": "promptString",
+			"description": "Enter migration name (e.g., AddUserTable)"
+		},
+		{
+			"id": "targetMigration",
+			"type": "promptString",
+			"description": "Enter target migration name to update to"
+		}
+	]
+}

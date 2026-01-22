@@ -12,12 +12,11 @@ const DocumentType = lazy(() => import('./Pages/DocumentType'));
 const Document41 = lazy(() => import('./Pages/Document41'));
 const Purchase = lazy(() => import('./Pages/Purchase'));
 const AddPurchase = lazy(() => import('./Pages/AddPurchase'));
-const UpdatePurchase = lazy(() => import('./Pages/UpdatePurchase'));
+const EditPurchase = lazy(() => import('./Pages/EditPurchase'));
 const AddDocument41 = lazy(() => import('./Pages/AddDocument41'));
-const EditDocument41 = lazy(() => import('./Pages/EditDocument41'));
 const Sales = lazy(() => import('./Pages/Sales'));
 const AddSales = lazy(() => import('./Pages/AddSales'));
-const UpdateSales = lazy(() => import('./Pages/UpdateSales'));
+const EditSales = lazy(() => import('./Pages/EditSales'));
 const TaxType = lazy(() => import('./Pages/TaxType'));
 const StatementType = lazy(() => import('./Pages/StatementType'));
 const ItemType = lazy(() => import('./Pages/ItemType'));
@@ -29,6 +28,7 @@ const Customer = lazy(() => import('./Pages/Customer'));
 const Item = lazy(() => import('./Pages/Item'));
 const User = lazy(() => import('./Pages/User'));
 const Departments = lazy(() => import('./Pages/Departments'));
+const Position = lazy(() => import('./Pages/Position'));
 const Auth = lazy(() => import('./Pages/Auth'));
 
 function App() {
@@ -50,12 +50,11 @@ function App() {
               <Route path="/Purchase/Add" element={<AddPurchase />} />
               <Route path="/Sales" element={<Sales />} />
               <Route path="/Sales/Add" element={<AddSales />} />
-              <Route path="/Sales/UpdateSale/:id" element={<UpdateSales />} />
-              <Route path="/Purchase/UpdatePurchase/:id" element={<UpdatePurchase />} />
+              <Route path="/Sales/UpdateSale/:id" element={<EditSales />} />
+              <Route path="/Purchase/UpdatePurchase/:id" element={<EditPurchase />} />
               <Route path="/Setup" element={<Setup />} />
               <Route path="/Document41" element={<Document41 />} />
               <Route path="/Document41/Add" element={<AddDocument41 />} />
-              <Route path="/Document41/UpdateDocument41/:id" element={<EditDocument41 />} />
               <Route path="/Setup/DocumentType" element={<DocumentType />} />
               <Route path="/ExamplePage" element={<ExamplePage />} />
               <Route path="/Setup/StatementType" element={<StatementType />} />;
@@ -68,6 +67,7 @@ function App() {
               <Route path="/Setup/Item" element={<Item />} />;
               <Route path="/Setup/User" element={<User />} />;
               <Route path="/Setup/Departments" element={<Departments />} />;
+              <Route path="/Setup/Position" element={<Position />} />;
               <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />;
             </Routes>
           </Layout>
