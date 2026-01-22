@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import useTranslate from "../../Hooks/Translation/useTranslate";
 import "remixicon/fonts/remixicon.css";
 
-const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop, isCollapsed, toggleCollapse }) => {
+const Sidebar = ({ isDesktop, isCollapsed, toggleCollapse }) => {
     const [openSubmenu, setOpenSubmenu] = useState(null);
     const { t } = useTranslate();
     const location = useLocation();
@@ -54,18 +54,13 @@ const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop, isCollapsed, toggleCo
     }, []);
 
     // Sidebar width based on collapsed state
-    const sidebarWidth = isCollapsed ? 'w-20' : 'w-72 md:w-56 lg:w-64 xl:w-72';
-    const spacerWidth = isCollapsed ? 'w-20' : 'w-72 md:w-56 lg:w-64 xl:w-72';
+    const sidebarWidth = isCollapsed ? 'w-20' : 'w-72';
 
     return (
         <>
-            {isSidebarOpen && !isDesktop && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={closeSidebar}></div>
-            )}
-
-            <aside className={`fixed top-16 md:top-20 lg:top-24 ltr:left-0 rtl:right-0 h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] ${sidebarWidth} bg-white overflow-y-auto z-40 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 transform transition-all duration-300 ease-in-out shadow-lg
-                ${isDesktop ? 'block' : (isSidebarOpen ? 'block' : 'hidden')} ${isDesktop ? 'translate-x-0' : (isSidebarOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full')}`}>
-
+            <aside
+                className={`fixed top-16 md:top-20 lg:top-24 ltr:left-0 rtl:right-0 h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] lg:h-[calc(100vh-6rem)] ${sidebarWidth} bg-white overflow-y-auto z-40 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 transition-all duration-300 ease-in-out shadow-lg`}
+            >
                 {/* Toggle Button */}
                 <button
                     type="button"
@@ -74,48 +69,83 @@ const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop, isCollapsed, toggleCo
                         e.stopPropagation();
                         handleToggleCollapse();
                     }}
-                    className="absolute top-2 ltr:right-2 rtl:left-2 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 z-50"
+                    className="absolute top-3 ltr:right-3 rtl:left-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 z-50"
                     title={isCollapsed ? t("Expand") : t("Collapse")}
                 >
                     <i className={`bi ${isCollapsed ? 'bi-chevron-right rtl:bi-chevron-left' : 'bi-chevron-left rtl:bi-chevron-right'} text-gray-600`}></i>
                 </button>
 
-                <nav className={`mt-12 ${isCollapsed ? 'px-2' : 'me-4'}`}>
-                    <ul className="space-y-2 whitespace-nowrap">
+                <nav className={`mt-14 ${isCollapsed ? 'ltr:pl-0 ltr:pr-14 rtl:px-3' : 'px-3'}`}>
+                    <ul className="space-y-2">
                         {menuItems.map((item) => (
                             <li key={item.id}>
                                 {!item.subItems ? (
-                                    <Link to={item.path} onClick={closeSidebar}
-                                        className={`no-underline !font-extrabold flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-4'} py-3 rounded-lg text-sm md:text-base font-Cairo font-medium transition-all duration-200 ${isActiveLink(item.path) ? 'bg-primary-500 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'}`}
-                                        title={isCollapsed ? item.title : ''}>
-                                        <i className={`${item.icon} text-lg md:text-xl ${isCollapsed ? '' : 'ltr:mr-3 rtl:ml-3'}`}></i>
-                                        {!isCollapsed && <span>{item.title}</span>}
+                                    <Link
+                                        to={item.path}
+                                        className={`no-underline font-bold rounded-xl text-base font-Cairo transition-all duration-200
+                                            ${isCollapsed
+                                                ? 'flex items-center justify-center w-14 h-14 mx-auto'
+                                                : 'block w-full py-3 px-4'
+                                            }
+                                            ${isActiveLink(item.path)
+                                                ? 'bg-primary-500 text-white shadow-md'
+                                                : 'text-gray-700 hover:bg-gray-100'
+                                            }
+                                        `}
+                                        title={isCollapsed ? item.title : ''}
+                                    >
+                                        <div className={`flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
+                                            <i className={`${item.icon} text-xl ${isCollapsed ? '' : 'ltr:mr-3 rtl:ml-3'}`}></i>
+                                            {!isCollapsed && <span>{item.title}</span>}
+                                        </div>
                                     </Link>
                                 ) : (
                                     <div>
+                                        {/* Parent Menu Item */}
                                         <button
                                             onClick={() => toggleSubmenu(item.id)}
-                                            className={`w-full flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'} py-3 rounded-lg text-sm md:text-base font-Cairo font-medium transition-all duration-200 ${isParentActive(item.subItems) ? 'bg-primary-50 text-primary-500' : 'text-gray-700 hover:bg-gray-100'}`}
-                                            title={isCollapsed ? item.title : ''}>
-                                            <div className={`flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
-                                                <i className={`${item.icon} text-lg md:text-xl ${isCollapsed ? '' : 'ltr:mr-3 rtl:ml-3'}`}></i>
-                                                {!isCollapsed && <span>{item.title}</span>}
+                                            className={`rounded-xl text-base font-Cairo font-medium transition-all duration-200
+                                                ${isCollapsed
+                                                    ? 'flex items-center justify-center w-14 h-14 mx-auto'
+                                                    : 'block w-full py-3 px-4'
+                                                }
+                                                ${isParentActive(item.subItems)
+                                                    ? 'bg-primary-50 text-primary-600'
+                                                    : 'text-gray-700 hover:bg-gray-100'
+                                                }
+                                            `}
+                                            title={isCollapsed ? item.title : ''}
+                                        >
+                                            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+                                                <div className="flex items-center">
+                                                    <i className={`${item.icon} text-xl ${isCollapsed ? '' : 'ltr:mr-3 rtl:ml-3'}`}></i>
+                                                    {!isCollapsed && <span>{item.title}</span>}
+                                                </div>
+                                                {!isCollapsed && (
+                                                    <i className={`ri-arrow-down-s-line text-lg transition-transform duration-200 ${openSubmenu === item.id ? 'rotate-180' : ''}`}></i>
+                                                )}
                                             </div>
-                                            {!isCollapsed && (
-                                                <i className={`ri-arrow-down-s-line text-lg transition-transform duration-200 ${openSubmenu === item.id ? 'rotate-180' : ''}`}></i>
-                                            )}
                                         </button>
 
-                                        {/* Submenu - only show when not collapsed */}
+                                        {/* Submenu - Expanded View */}
                                         {!isCollapsed && (
                                             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openSubmenu === item.id ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
-                                                <ul className="ltr:ml-6 rtl:mr-6 space-y-1">
+                                                <ul className="space-y-1 ltr:pl-4 rtl:pr-4">
                                                     {item.subItems.map((subItem) => (
                                                         <li key={subItem.id}>
-                                                            <Link to={subItem.path} onClick={closeSidebar}
-                                                                className={`no-underline !font-extrabold flex items-center px-4 py-2.5 rounded-lg text-sm font-Cairo transition-all duration-200 ${isActiveLink(subItem.path) ? 'bg-primary-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-primary-500'}`}>
-                                                                <i className={`${subItem.icon} ltr:mr-2 rtl:ml-2`}></i>
-                                                                <span>{subItem.title}</span>
+                                                            <Link
+                                                                to={subItem.path}
+                                                                className={`block w-full no-underline font-semibold py-3 px-4 rounded-xl text-sm font-Cairo transition-all duration-200
+                                                                    ${isActiveLink(subItem.path)
+                                                                        ? 'bg-primary-500 text-white shadow-sm'
+                                                                        : 'text-gray-600 hover:bg-gray-100 hover:text-primary-600'
+                                                                    }
+                                                                `}
+                                                            >
+                                                                <div className="flex items-center">
+                                                                    <i className={`${subItem.icon} text-lg ltr:mr-3 rtl:ml-3`}></i>
+                                                                    <span>{subItem.title}</span>
+                                                                </div>
                                                             </Link>
                                                         </li>
                                                     ))}
@@ -123,17 +153,22 @@ const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop, isCollapsed, toggleCo
                                             </div>
                                         )}
 
-                                        {/* Collapsed submenu - show as icons in a column */}
+                                        {/* Submenu - Collapsed View (icons only) */}
                                         {isCollapsed && (
-                                            <div className="mt-1 space-y-1">
+                                            <div className="mt-2 space-y-1">
                                                 {item.subItems.map((subItem) => (
                                                     <Link
                                                         key={subItem.id}
                                                         to={subItem.path}
-                                                        onClick={closeSidebar}
-                                                        className={`flex items-center justify-center py-2 rounded-lg text-sm transition-all duration-200 ${isActiveLink(subItem.path) ? 'bg-primary-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-primary-500'}`}
-                                                        title={subItem.title}>
-                                                        <i className={`${subItem.icon} text-lg`}></i>
+                                                        className={`flex items-center justify-center w-12 h-12 mx-auto rounded-xl transition-all duration-200
+                                                            ${isActiveLink(subItem.path)
+                                                                ? 'bg-primary-500 text-white shadow-sm'
+                                                                : 'text-gray-600 hover:bg-gray-100 hover:text-primary-600'
+                                                            }
+                                                        `}
+                                                        title={subItem.title}
+                                                    >
+                                                        <i className={`${subItem.icon} text-xl`}></i>
                                                     </Link>
                                                 ))}
                                             </div>
@@ -145,7 +180,9 @@ const Sidebar = ({ isSidebarOpen, closeSidebar, isDesktop, isCollapsed, toggleCo
                     </ul>
                 </nav>
             </aside>
-            <div className={`hidden lg:block ${spacerWidth} flex-shrink-0 transition-all duration-300`}></div>
+
+            {/* Spacer to push content */}
+            <div className={`${sidebarWidth} flex-shrink-0 transition-all duration-300`}></div>
         </>
     );
 };

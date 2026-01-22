@@ -8,7 +8,7 @@ import useTranslate from "../../Hooks/Translation/useTranslate";
 import { SET_LANGUAGE } from "../../Redux/actions/languageActions";
 import { logout } from "../../Redux/actions/authAction";
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = () => {
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
@@ -75,11 +75,8 @@ const Navbar = ({ toggleSidebar }) => {
                 <div className="max-w-screen-3xl mx-auto">
                     <div className="flex items-center justify-between h-16 md:h-20 lg:h-24">
                         <div className="flex items-center ltr:space-x-3 rtl:space-x-reverse">
-                            <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Toggle Sidebar">
-                                <i className="ri-menu-line text-2xl"></i>
-                            </button>
                             <div className="flex items-center cursor-pointer">
-                                <div className="flex justify-center items-center py-4 md:py-5 lg:py-6 border-gray-200">
+                                <div className="flex justify-center items-center py-4 md:py-5 lg:py-6 border-gray-200 ltr:ml-4 rtl:mr-4">
                                     <img src={EgyptAirLogo} alt="Egypt Air Logo" className="h-12 w-auto sm:h-14 md:h-16 lg:h-20 xl:h-24 object-contain" />
                                 </div>
                             </div>

@@ -4,11 +4,14 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
 const Layout = ({ children }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
     const [isCollapsed, setIsCollapsed] = useState(() => {
         // Load from localStorage on initial render
         const saved = localStorage.getItem('sidebarCollapsed');
+        // Default to collapsed on small screens
+        if (saved === null) {
+            return window.innerWidth < 1024;
+        }
         return saved === 'true';
     });
 
@@ -18,18 +21,17 @@ const Layout = ({ children }) => {
             const desktop = window.innerWidth >= 1024;
             setIsDesktop(desktop);
 
-            // Close sidebar when switching to mobile/tablet
-            if (!desktop) {
-                setIsSidebarOpen(false);
+            // Auto-collapse on small screens
+            if (!desktop && !isCollapsed) {
+                setIsCollapsed(true);
+                localStorage.setItem('sidebarCollapsed', 'true');
             }
         };
 
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [isCollapsed]);
 
-    const toggleSidebar = () => setIsSidebarOpen(open => !open);
-    const closeSidebar = () => setIsSidebarOpen(false);
     const toggleCollapse = () => {
         setIsCollapsed(prev => {
             const newValue = !prev;
@@ -40,11 +42,9 @@ const Layout = ({ children }) => {
 
     return (
         <div className="h-screen flex flex-col overflow-hidden">
-            <Navbar toggleSidebar={toggleSidebar} />
+            <Navbar />
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar
-                    isSidebarOpen={isSidebarOpen}
-                    closeSidebar={closeSidebar}
                     isDesktop={isDesktop}
                     isCollapsed={isCollapsed}
                     toggleCollapse={toggleCollapse}
