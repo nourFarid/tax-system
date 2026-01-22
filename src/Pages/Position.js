@@ -4,7 +4,6 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from "../Components/Layout/Pagination";
-import Switch from "../Components/Layout/Switch";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
@@ -14,14 +13,14 @@ const Position = () => {
     const [pageSize] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
     const [arrData, setArrData] = useState([]);
+    const [arrDepartments, setArrDepartments] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { showSuccess, showError, SwalComponent } = useSwal();
+    const { showSuccess, showError, showDeleteAlert, SwalComponent } = useSwal();
 
     const [objPosition, setObjPosition] = useState({
-        id: -1,
+        id: 0,
         name: "",
-        code: "",
-        isActive: true,
+        departmentId: "",
     });
 
     const [errors, setErrors] = useState({});
@@ -32,15 +31,13 @@ const Position = () => {
             AddPosition: t("Add Position"),
             EditPosition: t("Edit Position"),
             Name: t("Name"),
-            Code: t("Code"),
-            IsActive: t("Is Active"),
+            Department: t("Department"),
             Save: t("Save"),
             Cancel: t("Cancel"),
             Delete: t("Delete"),
             DeleteConfirmation: t("Are you sure to delete"),
             QuestionMark: t("?"),
-            Active: t("Active"),
-            Inactive: t("Inactive"),
+            SelectDepartment: t("Select Department"),
         }),
         [t]
     );
@@ -62,37 +59,39 @@ const Position = () => {
     const columns = [
         { label: t("ID"), accessor: "id" },
         { label: t("Name"), accessor: "name" },
-        { label: t("Code"), accessor: "code" },
         {
-            label: t("Status"),
-            accessor: "isActive",
-            render: (value) => (
-                <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
-                    {value ? objTitle.Active : objTitle.Inactive}
-                </span>
-            )
+            label: t("Department"),
+            accessor: "department",
+            render: (row) => row.department?.name || "-"
         },
     ];
+
+    const ListDepartments = async () => {
+        try {
+            const res = await axiosInstance.post("Department/ListAll", {});
+            if (Array.isArray(res.data)) {
+                setArrDepartments(res.data);
+            } else if (res.data.result) {
+                setArrDepartments(res.data.data || []);
+            } else if (res.data.data) {
+                setArrDepartments(res.data.data);
+            }
+        } catch (error) {
+            console.error("ListDepartments error:", error);
+        }
+    };
 
     const ListAll = async () => {
         setLoading(true);
         try {
             const res = await axiosInstance.post("Position/ListAll", {});
-            // Handle different response formats
             if (Array.isArray(res.data)) {
-                // Direct array response
                 setArrData(res.data);
                 setTotalCount(res.data.length);
-            } else if (res.data.result !== undefined) {
-                // Wrapped response with result property
-                if (res.data.result) {
-                    setArrData(res.data.data || []);
-                    setTotalCount(res.data.data?.length || 0);
-                } else {
-                    showError(t("Error"), res.data.message);
-                }
+            } else if (res.data.result) {
+                setArrData(res.data.data || []);
+                setTotalCount(res.data.data?.length || 0);
             } else if (res.data.data) {
-                // Response with data property but no result
                 setArrData(res.data.data);
                 setTotalCount(res.data.data.length);
             } else {
@@ -112,6 +111,9 @@ const Position = () => {
         if (!objPosition.name?.trim()) {
             newErrors.name = t("Name is required");
         }
+        if (!objPosition.departmentId) {
+            newErrors.departmentId = t("Department is required");
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -122,8 +124,7 @@ const Position = () => {
         try {
             const payload = {
                 name: objPosition.name,
-                code: objPosition.code,
-                isActive: objPosition.isActive,
+                departmentId: parseInt(objPosition.departmentId),
             };
             const res = await axiosInstance.post("Position/Add", payload);
             if (res.data.result) {
@@ -139,25 +140,27 @@ const Position = () => {
         }
     };
 
-    const handleToggle = async (row) => {
-        try {
-            const res = await axiosInstance.put(`Position/toggle/${row.id}`);
-            if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Position status updated"));
-                ListAll();
-            } else {
-                showError(t("Error"), res.data.message);
+    const handleDelete = (row) => {
+        showDeleteAlert(t("Are you sure to delete"), async () => {
+            try {
+                const res = await axiosInstance.delete(`Position/Delete/${row.id}`);
+                if (res.data.result) {
+                    showSuccess(t("Success"), res.data.message || t("Deleted Successfully!"));
+                    ListAll();
+                } else {
+                    showError(t("Error"), res.data.message);
+                }
+            } catch (error) {
+                showError(t("Error"), t("Failed to delete position"));
             }
-        } catch (error) {
-            showError(t("Error"), t("Failed to toggle position status"));
-        }
+        });
     };
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
         setObjPosition((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: value,
         }));
         if (errors[name]) {
             setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -166,16 +169,16 @@ const Position = () => {
 
     const reset = () => {
         setObjPosition({
-            id: -1,
+            id: 0,
             name: "",
-            code: "",
-            isActive: true,
+            departmentId: "",
         });
         setErrors({});
     };
 
     useEffect(() => {
         ListAll();
+        ListDepartments();
     }, []);
 
     return (
@@ -189,14 +192,8 @@ const Position = () => {
                     showActions={true}
                     showEdit={false}
                     showShow={false}
-                    showDelete={false}
-                    customActions={(row) => (
-                        <Switch
-                            id={`switch-${row.id}`}
-                            checked={row.isActive}
-                            onChange={() => handleToggle(row)}
-                        />
-                    )}
+                    showDelete={true}
+                    onDelete={handleDelete}
                 />
 
                 <Pagination
@@ -232,33 +229,21 @@ const Position = () => {
                     </div>
 
                     <div className="col-md-6 mb-3">
-                        <label className="form-label">{objTitle.Code}</label>
-                        <input
-                            type="text"
-                            name="code"
-                            value={objPosition.code}
+                        <label className="form-label">{objTitle.Department}</label>
+                        <select
+                            name="departmentId"
+                            value={objPosition.departmentId}
                             onChange={handleChange}
-                            className="form-control"
-                            placeholder={objTitle.Code}
-                        />
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-6 d-flex align-items-center">
-                        <div className="form-check">
-                            <input
-                                type="checkbox"
-                                id="isActive"
-                                name="isActive"
-                                checked={objPosition.isActive}
-                                onChange={handleChange}
-                                className="form-check-input"
-                            />
-                            <label htmlFor="isActive" className="form-check-label">
-                                {objTitle.IsActive}
-                            </label>
-                        </div>
+                            className={`form-select ${errors.departmentId ? "is-invalid" : ""}`}
+                        >
+                            <option value="">{objTitle.SelectDepartment}</option>
+                            {arrDepartments.map((dept) => (
+                                <option key={dept.id} value={dept.id}>
+                                    {dept.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.departmentId && <div className="invalid-feedback">{errors.departmentId}</div>}
                     </div>
                 </div>
             </Modal>

@@ -199,5 +199,20 @@
   "Save Changes": "حفظ التعديلات",
   "choose Prepaid payments option": "اختر خيار الدفعات المسبقة الدفع",
   "Sale": "المبيعات",
-  "Rate Percent": "نسبة الخصم"
+  "Rate Percent": "نسبة الخصم",
+  "Rate": "نسبة الخصم",
+  "Active": "نشط",
+  "Inactive": "غير نشط",
+  "Position": "وظيفة",
+  "department toggled successfully": "تم تبديل القسم بنجاح",
+  "Status": "الحالة",
+  "Positions": "الوظائف",
+  "Add Position": "إضافة وظيفة",
+  "Edit Position": "تعديل وظيفة",
+  "Select Department": "اختر القسم",
+  "Department is required": "القسم مطلوب",
+  "Failed to load positions": "فشل تحميل الوظائف",
+  "Failed to add position": "فشل إضافة الوظيفة",
+  "Position added successfully": "تم إضافة الوظيفة بنجاح",
+  "Failed to delete position": "فشل مسح الوظيفة"
 }
