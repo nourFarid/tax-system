@@ -3,16 +3,14 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
-import Pagination from "../Components/Layout/Pagination";
+
 import Switch from "../Components/Layout/Switch";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
 const Departments = () => {
     const { t } = useTranslate();
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize] = useState(10);
-    const [totalCount, setTotalCount] = useState(0);
+
     const [arrData, setArrData] = useState([]);
     const [loading, setLoading] = useState(false);
     const { showSuccess, showError, SwalComponent } = useSwal();
@@ -82,22 +80,22 @@ const Departments = () => {
             if (Array.isArray(res.data)) {
                 // Direct array response
                 setArrData(res.data);
-                setTotalCount(res.data.length);
+
             } else if (res.data.result !== undefined) {
                 // Wrapped response with result property
                 if (res.data.result) {
                     setArrData(res.data.data || []);
-                    setTotalCount(res.data.data?.length || 0);
+
                 } else {
                     showError(t("Error"), res.data.message);
                 }
             } else if (res.data.data) {
                 // Response with data property but no result
                 setArrData(res.data.data);
-                setTotalCount(res.data.data.length);
+
             } else {
                 setArrData([]);
-                setTotalCount(0);
+
             }
         } catch (error) {
             console.error("ListAll error:", error);
@@ -199,12 +197,7 @@ const Departments = () => {
                     )}
                 />
 
-                <Pagination
-                    pageNumber={pageNumber}
-                    pageSize={pageSize}
-                    totalRows={totalCount}
-                    onPageChange={setPageNumber}
-                />
+
             </div>
 
             {/* Add Department Modal */}

@@ -3,15 +3,13 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
-import Pagination from "../Components/Layout/Pagination";
+
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
 const Position = () => {
     const { t } = useTranslate();
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize] = useState(10);
-    const [totalCount, setTotalCount] = useState(0);
+
     const [arrData, setArrData] = useState([]);
     const [arrDepartments, setArrDepartments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -94,16 +92,16 @@ const Position = () => {
             const res = await axiosInstance.post("Position/ListAll", {});
             if (Array.isArray(res.data)) {
                 setArrData(res.data);
-                setTotalCount(res.data.length);
+
             } else if (res.data.result) {
                 setArrData(res.data.data || []);
-                setTotalCount(res.data.data?.length || 0);
+
             } else if (res.data.data) {
                 setArrData(res.data.data);
-                setTotalCount(res.data.data.length);
+
             } else {
                 setArrData([]);
-                setTotalCount(0);
+
             }
         } catch (error) {
             console.error("ListAll error:", error);
@@ -203,12 +201,7 @@ const Position = () => {
                     onDelete={handleDelete}
                 />
 
-                <Pagination
-                    pageNumber={pageNumber}
-                    pageSize={pageSize}
-                    totalRows={totalCount}
-                    onPageChange={setPageNumber}
-                />
+
             </div>
 
             {/* Add Position Modal */}

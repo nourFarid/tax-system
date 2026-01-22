@@ -4,15 +4,13 @@ import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Checkbox from "../Components/Layout/Checkbox";
-import Pagination from '../Components/Layout/Pagination';
+
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
 const User = () => {
     const { t } = useTranslate();
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize] = useState(5);
-    const [totalCount, setTotalCount] = useState(0);
+
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -166,7 +164,7 @@ const User = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const fetchUsers = async (page = 1) => {
+    const fetchUsers = async () => {
         setLoading(true);
         try {
             const res = await axiosInstance.get("User/ListAll");
@@ -174,8 +172,7 @@ const User = () => {
 
             if (data.result) {
                 setUsers(data.data);
-                setTotalCount(data.data.length);
-                setPageNumber(page);
+
             }
         } catch (e) {
             setError("Failed to fetch users");
@@ -264,7 +261,7 @@ const User = () => {
             resetForm();
 
             hideModal("AddUser");
-            await fetchUsers(pageNumber);
+            await fetchUsers();
             showSuccess("Success", "User added successfully!");
 
         } catch (error) {
@@ -307,7 +304,7 @@ const User = () => {
                 resetForm();
 
                 hideModal("EditUser");
-                await fetchUsers(pageNumber);
+                await fetchUsers();
                 showSuccess("Success", "User updated successfully!");
             } else {
                 showError("Error", response.data?.message || "Failed to update user");
@@ -320,9 +317,9 @@ const User = () => {
     };
 
     useEffect(() => {
-        fetchUsers(pageNumber);
+        fetchUsers();
         fetchRoles();
-    }, [pageNumber]);
+    }, []);
 
     if (loading) return <div>{t("Loading...")}</div>;
     if (error) return <div>{t(error)}</div>;
@@ -340,12 +337,7 @@ const User = () => {
                 onShow={handleShow}
                 showDelete={false}
             />
-            <Pagination
-                pageNumber={pageNumber}
-                pageSize={pageSize}
-                totalRows={totalCount}
-                onPageChange={setPageNumber}
-            />
+
 
             {/* Add User Modal */}
             <Modal
