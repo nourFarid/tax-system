@@ -6,6 +6,7 @@ import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
+import Switch from "../Components/Layout/Switch";
 
 const Position = () => {
     const { t } = useTranslate();
@@ -36,6 +37,8 @@ const Position = () => {
             DeleteConfirmation: t("Are you sure to delete"),
             QuestionMark: t("?"),
             SelectDepartment: t("Select Department"),
+            Active: t("Active"),
+            Inactive: t("Inactive"),
         }),
         [t]
     );
@@ -69,6 +72,15 @@ const Position = () => {
                 return dept ? dept.name : "-";
             }
         },
+        {
+            label: t("Status"),
+            accessor: "isActive",
+            render: (value) => (
+                <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
+                    {value ? objTitle.Active : objTitle.Inactive}
+                </span>
+            )
+        },
     ];
 
     const ListDepartments = async () => {
@@ -101,8 +113,12 @@ const Position = () => {
 
             } else {
                 setArrData([]);
-
             }
+            // Map isDeleted to isActive if needed
+            setArrData(prev => prev.map(item => ({
+                ...item,
+                isActive: item.isActive !== undefined ? item.isActive : !item.isDeleted
+            })));
         } catch (error) {
             console.error("ListAll error:", error);
             showError(t("Error"), t("Failed to load positions"));
@@ -161,6 +177,26 @@ const Position = () => {
         });
     };
 
+    const handleToggle = async (row) => {
+        console.log("Toggle row:", row);
+        const posId = row.id || row.positionId;
+        if (!posId) {
+            showError(t("Error"), t("Invalid position ID"));
+            return;
+        }
+        try {
+            const res = await axiosInstance.put(`Position/Delete/${posId}`);
+            if (res.data.result) {
+                showSuccess(t("Success"), res.data.message || t("Status updated"));
+                ListAll();
+            } else {
+                showError(t("Error"), res.data.message);
+            }
+        } catch (error) {
+            showError(t("Error"), t("Failed to toggle status"));
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setObjPosition((prev) => ({
@@ -197,8 +233,14 @@ const Position = () => {
                     showActions={true}
                     showEdit={false}
                     showShow={false}
-                    showDelete={true}
-                    onDelete={handleDelete}
+                    showDelete={false}
+                    customActions={(row) => (
+                        <Switch
+                            id={`switch-${row.id}`}
+                            checked={row.isActive}
+                            onChange={() => handleToggle(row)}
+                        />
+                    )}
                 />
 
 
