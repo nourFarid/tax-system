@@ -5,7 +5,7 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Checkbox from "../Components/Layout/Checkbox";
 import Switch from "../Components/Layout/Switch";
-
+import { toast, ToastContainer } from "react-toastify";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
@@ -275,13 +275,13 @@ const User = () => {
 
             const res = await axiosInstance.post("User/Update", payload);
             if (res.data && res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("User status updated"));
+                toast.success(res.data.message || t("User status updated"));
                 fetchUsers();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(res.data.message);
             }
         } catch (error) {
-            showError(t("Error"), t("Failed to toggle user status"));
+            toast.error(t("Failed to toggle user status"));
         }
     };
 
@@ -304,11 +304,11 @@ const User = () => {
 
             hideModal("AddUser");
             await fetchUsers();
-            showSuccess("Success", "User added successfully!");
+            toast.success("User added successfully!");
 
         } catch (error) {
             console.error("Failed to add User", error);
-            showError("Error", error.response?.data?.message || "Failed to add User");
+            toast.error(error.response?.data?.message || "Failed to add User");
         }
     };
 
@@ -347,9 +347,9 @@ const User = () => {
 
                 hideModal("EditUser");
                 await fetchUsers();
-                showSuccess("Success", "User updated successfully!");
+                toast.success("User updated successfully!");
             } else {
-                showError("Error", response.data?.message || "Failed to update user");
+                toast.error(response.data?.message || "Failed to update user");
             }
 
         } catch (error) {
@@ -566,8 +566,8 @@ const User = () => {
                     </div>
                 </div>
             </Modal>
-
             <SwalComponent />
+            <ToastContainer />
         </>
     );
 };
