@@ -3,6 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import { toast, ToastContainer } from "react-toastify";
 
 import Switch from "../Components/Layout/Switch";
 import axiosInstance from "../Axios/AxiosInstance";
@@ -87,19 +88,19 @@ const Departments = () => {
                     setArrData(res.data.data || []);
 
                 } else {
-                    showError(t("Error"), res.data.message);
+                    toast.error(t("Failed to load departments"));
                 }
             } else if (res.data.data) {
                 // Response with data property but no result
                 setArrData(res.data.data);
 
             } else {
-                setArrData([]);
+                toast.error(t("Failed to load departments"));
 
             }
         } catch (error) {
             console.error("ListAll error:", error);
-            showError(t("Error"), t("Failed to load departments"));
+            toast.error(t("Failed to load departments"));
         } finally {
             setLoading(false);
         }
@@ -125,15 +126,15 @@ const Departments = () => {
             };
             const res = await axiosInstance.post("Department/Add", payload);
             if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Department added successfully"));
+                toast.success(t("Department added successfully"));
                 hideModal("AddDepartment");
                 reset();
                 ListAll();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(t("Failed to add department"));
             }
         } catch (error) {
-            showError(t("Error"), t("Failed to add department"));
+            toast.error(t("Failed to add department"));
         }
     };
 
@@ -141,13 +142,13 @@ const Departments = () => {
         try {
             const res = await axiosInstance.put(`Department/toggle/${row.id}`);
             if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Department status updated"));
+                toast.success(t("Department status updated"));
                 ListAll();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(t("Failed to toggle department status"));
             }
         } catch (error) {
-            showError(t("Error"), t("Failed to toggle department status"));
+            toast.error(t("Failed to toggle department status"));
         }
     };
 
@@ -255,7 +256,7 @@ const Departments = () => {
                     </div>
                 </div>
             </Modal>
-
+            <ToastContainer />
             <SwalComponent />
         </>
     );
