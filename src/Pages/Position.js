@@ -3,7 +3,7 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
-
+import { toast, ToastContainer } from "react-toastify";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Switch from "../Components/Layout/Switch";
@@ -121,7 +121,7 @@ const Position = () => {
             })));
         } catch (error) {
             console.error("ListAll error:", error);
-            showError(t("Error"), t("Failed to load positions"));
+            toast.error(t("Failed to load positions"));
         } finally {
             setLoading(false);
         }
@@ -149,12 +149,12 @@ const Position = () => {
             };
             const res = await axiosInstance.post("Position/Add", payload);
             if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Position added successfully"));
+                toast.success(res.data.message || t("Position added successfully"));
                 hideModal("AddPosition");
                 reset();
                 ListAll();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(res.data.message);
             }
         } catch (error) {
             showError(t("Error"), t("Failed to add position"));
@@ -166,13 +166,13 @@ const Position = () => {
             try {
                 const res = await axiosInstance.delete(`Position/Delete/${row.id}`);
                 if (res.data.result) {
-                    showSuccess(t("Success"), res.data.message || t("Deleted Successfully!"));
+                    toast.success(res.data.message || t("Deleted Successfully!"));
                     ListAll();
                 } else {
-                    showError(t("Error"), res.data.message);
+                    toast.error(res.data.message);
                 }
             } catch (error) {
-                showError(t("Error"), t("Failed to delete position"));
+                toast.error(t("Failed to delete position"));
             }
         });
     };
@@ -187,13 +187,13 @@ const Position = () => {
         try {
             const res = await axiosInstance.put(`Position/Delete/${posId}`);
             if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Status updated"));
+                toast.success(t("Status updated"));
                 ListAll();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(t("Failed to toggle status"));
             }
         } catch (error) {
-            showError(t("Error"), t("Failed to toggle status"));
+            toast.error(t("Failed to toggle status"));
         }
     };
 
@@ -289,6 +289,7 @@ const Position = () => {
                     </div>
                 </div>
             </Modal>
+            <ToastContainer />
 
             <SwalComponent />
         </>
