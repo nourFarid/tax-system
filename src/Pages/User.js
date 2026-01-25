@@ -90,7 +90,14 @@ const User = () => {
         { label: t("Username"), accessor: "userName" },
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
-        { label: t("User Role"), accessor: "roleName", render: (value) => value || "-" },
+        {
+            label: t("User Role"), accessor: "roles", render: (value) => {
+                if (Array.isArray(value) && value.length > 0) {
+                    return value.map(r => r.roleName).join(", ");
+                }
+                return "-";
+            }
+        },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
         {
             label: t("Active"), accessor: "isActive", render: (value, row) => {
@@ -223,7 +230,7 @@ const User = () => {
             Password: "", // Password is optional when editing
             FullName: row.fullName,
             UserCode: extractedUserCode,
-            RoleId: row.roleId || "",
+            RoleId: (row.roles && row.roles.length > 0) ? row.roles[0].roleId : "",
             IsActive: row.available ?? row.isActive ?? true
         });
 
@@ -524,7 +531,7 @@ const User = () => {
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
                             <option value="">Select Role</option>
                             {roles.map(role => (
-                                <option key={role.id} value={role.id}>{role.name}</option>
+                                <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                             ))}
                         </select>
                     </div>
