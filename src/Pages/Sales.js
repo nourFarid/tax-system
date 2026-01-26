@@ -63,7 +63,7 @@ const Sales = () => {
       ...objFilter,
       exportWithName: true,
     };          const res = await axiosInstance.post(
-            "sales/ExportExcel",
+            "sales/ExportCsv",
             payload,
             { responseType: "blob" }
           );
@@ -80,7 +80,7 @@ const Sales = () => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-a.download = "sales.csv";
+        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
@@ -100,7 +100,7 @@ a.download = "sales.csv";
       exportWithName: false,
     };
           const res = await axiosInstance.post(
-            "sales/ExportExcel",
+            "sales/ExportCsv",
             payload,
             { responseType: "blob" }
           );
@@ -118,7 +118,7 @@ a.download = "sales.csv";
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-a.download = "sales.csv";
+        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
