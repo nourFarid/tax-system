@@ -3,9 +3,10 @@ import Breadcrumb from "../Components/Layout/Breadcrumb";
 import Table from "../Components/Layout/Table";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
-
+import { toast, ToastContainer } from "react-toastify";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
+import Switch from "../Components/Layout/Switch";
 
 const Position = () => {
     const { t } = useTranslate();
@@ -36,6 +37,8 @@ const Position = () => {
             DeleteConfirmation: t("Are you sure to delete"),
             QuestionMark: t("?"),
             SelectDepartment: t("Select Department"),
+            Active: t("Active"),
+            Inactive: t("Inactive"),
         }),
         [t]
     );
@@ -69,6 +72,15 @@ const Position = () => {
                 return dept ? dept.name : "-";
             }
         },
+        {
+            label: t("Status"),
+            accessor: "isActive",
+            render: (value) => (
+                <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
+                    {value ? objTitle.Active : objTitle.Inactive}
+                </span>
+            )
+        },
     ];
 
     const ListDepartments = async () => {
@@ -101,11 +113,15 @@ const Position = () => {
 
             } else {
                 setArrData([]);
-
             }
+            // Map isDeleted to isActive if needed
+            setArrData(prev => prev.map(item => ({
+                ...item,
+                isActive: item.isActive !== undefined ? item.isActive : !item.isDeleted
+            })));
         } catch (error) {
             console.error("ListAll error:", error);
-            showError(t("Error"), t("Failed to load positions"));
+            toast.error(t("Failed to load positions"));
         } finally {
             setLoading(false);
         }
@@ -133,12 +149,12 @@ const Position = () => {
             };
             const res = await axiosInstance.post("Position/Add", payload);
             if (res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("Position added successfully"));
+                toast.success(res.data.message || t("Position added successfully"));
                 hideModal("AddPosition");
                 reset();
                 ListAll();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(res.data.message);
             }
         } catch (error) {
             showError(t("Error"), t("Failed to add position"));
@@ -150,15 +166,35 @@ const Position = () => {
             try {
                 const res = await axiosInstance.delete(`Position/Delete/${row.id}`);
                 if (res.data.result) {
-                    showSuccess(t("Success"), res.data.message || t("Deleted Successfully!"));
+                    toast.success(res.data.message || t("Deleted Successfully!"));
                     ListAll();
                 } else {
-                    showError(t("Error"), res.data.message);
+                    toast.error(res.data.message);
                 }
             } catch (error) {
-                showError(t("Error"), t("Failed to delete position"));
+                toast.error(t("Failed to delete position"));
             }
         });
+    };
+
+    const handleToggle = async (row) => {
+        console.log("Toggle row:", row);
+        const posId = row.id || row.positionId;
+        if (!posId) {
+            showError(t("Error"), t("Invalid position ID"));
+            return;
+        }
+        try {
+            const res = await axiosInstance.put(`Position/Delete/${posId}`);
+            if (res.data.result) {
+                toast.success(t("Status updated"));
+                ListAll();
+            } else {
+                toast.error(t("Failed to toggle status"));
+            }
+        } catch (error) {
+            toast.error(t("Failed to toggle status"));
+        }
     };
 
     const handleChange = (e) => {
@@ -197,8 +233,14 @@ const Position = () => {
                     showActions={true}
                     showEdit={false}
                     showShow={false}
-                    showDelete={true}
-                    onDelete={handleDelete}
+                    showDelete={false}
+                    customActions={(row) => (
+                        <Switch
+                            id={`switch-${row.id}`}
+                            checked={row.isActive}
+                            onChange={() => handleToggle(row)}
+                        />
+                    )}
                 />
 
 
@@ -247,6 +289,7 @@ const Position = () => {
                     </div>
                 </div>
             </Modal>
+            <ToastContainer />
 
             <SwalComponent />
         </>

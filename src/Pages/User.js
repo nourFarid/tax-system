@@ -5,7 +5,7 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Checkbox from "../Components/Layout/Checkbox";
 import Switch from "../Components/Layout/Switch";
-
+import { toast, ToastContainer } from "react-toastify";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 
@@ -90,7 +90,14 @@ const User = () => {
         { label: t("Username"), accessor: "userName" },
         { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
-        { label: t("User Role"), accessor: "roleName", render: (value) => value || "-" },
+        {
+            label: t("User Role"), accessor: "roles", render: (value) => {
+                if (Array.isArray(value) && value.length > 0) {
+                    return value.map(r => r.roleName).join(", ");
+                }
+                return "-";
+            }
+        },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
         {
             label: t("Active"), accessor: "isActive", render: (value, row) => {
@@ -223,7 +230,7 @@ const User = () => {
             Password: "", // Password is optional when editing
             FullName: row.fullName,
             UserCode: extractedUserCode,
-            RoleId: row.roleId || "",
+            RoleId: (row.roles && row.roles.length > 0) ? row.roles[0].roleId : "",
             IsActive: row.available ?? row.isActive ?? true
         });
 
@@ -268,13 +275,13 @@ const User = () => {
 
             const res = await axiosInstance.post("User/Update", payload);
             if (res.data && res.data.result) {
-                showSuccess(t("Success"), res.data.message || t("User status updated"));
+                toast.success(res.data.message || t("User status updated"));
                 fetchUsers();
             } else {
-                showError(t("Error"), res.data.message);
+                toast.error(res.data.message);
             }
         } catch (error) {
-            showError(t("Error"), t("Failed to toggle user status"));
+            toast.error(t("Failed to toggle user status"));
         }
     };
 
@@ -297,11 +304,11 @@ const User = () => {
 
             hideModal("AddUser");
             await fetchUsers();
-            showSuccess("Success", "User added successfully!");
+            toast.success("User added successfully!");
 
         } catch (error) {
             console.error("Failed to add User", error);
-            showError("Error", error.response?.data?.message || "Failed to add User");
+            toast.error(error.response?.data?.message || "Failed to add User");
         }
     };
 
@@ -340,9 +347,9 @@ const User = () => {
 
                 hideModal("EditUser");
                 await fetchUsers();
-                showSuccess("Success", "User updated successfully!");
+                toast.success("User updated successfully!");
             } else {
-                showError("Error", response.data?.message || "Failed to update user");
+                toast.error(response.data?.message || "Failed to update user");
             }
 
         } catch (error) {
@@ -524,7 +531,7 @@ const User = () => {
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
                             <option value="">Select Role</option>
                             {roles.map(role => (
-                                <option key={role.id} value={role.id}>{role.name}</option>
+                                <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                             ))}
                         </select>
                     </div>
@@ -559,8 +566,8 @@ const User = () => {
                     </div>
                 </div>
             </Modal>
-
             <SwalComponent />
+            <ToastContainer />
         </>
     );
 };
