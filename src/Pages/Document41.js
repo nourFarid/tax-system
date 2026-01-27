@@ -107,7 +107,7 @@ const Document41 = () => {
     quarterId: -1,
     transactionDateFrom: "",
     transactionDateTo: "",
-    exportWithName: null,
+    exportWithName: false,
 
   });
 
