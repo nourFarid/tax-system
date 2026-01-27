@@ -147,6 +147,10 @@ const EditSale = () => {
       setObjSale(sale);
       setObjSale(prev => ({
         ...prev,
+        customerId: sale.customerSupplierId,
+      }));
+      setObjSale(prev => ({
+        ...prev,
         documentItems: sale.documentItem.map(di => ({
           ...di,
           id: di.id,
@@ -180,9 +184,7 @@ const EditSale = () => {
   const Edit = async () => {
     const response = await axiosInstance.put("/Sales/Update", objSale);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale Edited successfully"), {
-        onConfirm: () => navigate("/Sales"),
-      });
+      showSuccess(t("Success"), t("Sale Edited successfully"));
     }
   };
 
@@ -225,18 +227,11 @@ const EditSale = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Customer")}</label>
-            <AsyncSelect
-              loadOptions={arrCustomer}
-              value={objCustomer}
-              onChange={(o) => {
-                setObjCustomer(o);
-                setObjSale(prev => ({ ...prev, customerId: o.value }));
-              }}
-            />
+            <label className="form-control">[{objSale.customerSupplierTaxRegistrationNumber ?? objSale.customerSupplierIdentificationNumber}] {objSale.customerSupplierName}</label>
           </div>
 
           <div className="col-md-6">
-            <label>{t("Invoice Date")}</label>
+            <label>{t("Settlement Date")}</label>
             <input
               type="date"
               className="form-control"
@@ -284,17 +279,16 @@ const EditSale = () => {
       <div className="border rounded p-3 bg-white shadow-lg mt-4 p-4">
         {objSale.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
-            <div className="row g-2 align-items-end">
+            <div className="row g-2 align-items-end border rounded p-3">
 
               <div className="col-md-4">
                 <label>{t("Item")}</label>
-                <AsyncSelect
-                  loadOptions={arrItem}
+                {r.itemId > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
+                <AsyncSelect loadOptions={arrItem}
                   onChange={(o) => {
                     updateRow(index, "itemId", o.value);
                     updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
-                  }}
-                />
+                  }} />}
               </div>
 
               <div className="col-md-1">
@@ -386,10 +380,10 @@ const EditSale = () => {
             </div>
             <div className="col-md-3 text-end">
               {r.id ?
-              <button className="btn btn-primary btn-lg" onClick={() => EditDocItem(r)}>
+              <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
                 {t("Save")}
               </button> :
-              <button className="btn btn-primary btn-lg" onClick={() => AddDocItem(r)}>
+              <button className="btn btn-primary" onClick={() => AddDocItem(r)}>
                 {t("Save")}
               </button>
               }

@@ -188,7 +188,7 @@ const AddSale = () => {
           </div>
 
           <div className="col-md-6">
-            <label>{t("Invoice Date")}</label>
+            <label>{t("Settlement Date")}</label>
             <input
               type="date"
               className="form-control"
@@ -230,7 +230,7 @@ const AddSale = () => {
       <div className="border rounded p-3 bg-white shadow-lg mt-4 p-4">
         {objSale.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
-            <div className="row g-2 align-items-end">
+            <div className="row g-2 align-items-end border rounded p-3">
 
               <div className="col-md-4">
                 <label>{t("Item")}</label>

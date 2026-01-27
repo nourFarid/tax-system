@@ -93,7 +93,7 @@ const Purchase = () => {
     { label: t("Tax Registration Number"), accessor: "customerSupplierTaxRegistrationNumber" },
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
-    { label: t("Invoice Date"), accessor: "invoiceDate" },
+    { label: t("Settlement Date"), accessor: "invoiceDate" },
     // { label: t("Item Name"), accessor: "item.name" },
     // { label: t("Statement Type"), accessor: "statementType.name" },
     // { label: t("Item Type"), accessor: "itemType.name" },

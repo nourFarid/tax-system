@@ -194,7 +194,7 @@ const AddPurchase = () => {
           </div>
 
           <div className="col-md-6">
-            <label>{t("Invoice Date")}</label>
+            <label>{t("Settlement Date")}</label>
             <input type="date" className="form-control" value={objPurchase.invoiceDate}
               onChange={e =>
                 setObjPurchase(prev => ({ ...prev, invoiceDate: e.target.value }))
@@ -218,29 +218,29 @@ const AddPurchase = () => {
               } />
           </div>
 
-         <div className="row p-4">
-  <div className="col-md-6">
-    <label className="mb-2 d-block">
-      {t("Prepaid payments")}
-    </label>
+          <div className="row p-4">
+            <div className="col-md-6">
+              <label className="mb-2 d-block">
+                {t("Prepaid payments")}
+              </label>
 
-    <select
-      id="isPrePaid"
-      className="form-control"
-      value={String(objPurchase.isPrePaid)}
-      onChange={(e) =>
-        setObjPurchase(prev => ({
-          ...prev,
-          isPrePaid: e.target.value === "true"
-        }))
-      }
-    >
-      <option value={null}>{t("choose Prepaid payments option")}</option>
-      <option value="true">{t("Prepaid payments")}</option>
-      <option value="false">{t("Not Prepaid payments")}</option>
-    </select>
-  </div>
-</div>
+              <select
+                id="isPrePaid"
+                className="form-control"
+                value={String(objPurchase.isPrePaid)}
+                onChange={(e) =>
+                  setObjPurchase(prev => ({
+                    ...prev,
+                    isPrePaid: e.target.value === "true"
+                  }))
+                }
+              >
+                <option value={null}>{t("choose Prepaid payments option")}</option>
+                <option value="true">{t("Prepaid payments")}</option>
+                <option value="false">{t("Not Prepaid payments")}</option>
+              </select>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -249,7 +249,7 @@ const AddPurchase = () => {
       <div className="border rounded p-3 bg-white shadow-lg mt-4 p-4">
         {objPurchase.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
-            <div className="row g-2 align-items-end">
+            <div className="row g-2 align-items-end border rounded p-3">
 
               <div className="col-md-4">
                 <label>{t("Item")}</label>

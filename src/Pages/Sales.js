@@ -94,7 +94,7 @@ const Sales = () => {
     { label: t("Tax Registration Number"), accessor: "customerSupplierTaxRegistrationNumber" },
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
-    { label: t("Invoice Date"), accessor: "invoiceDate" },
+    { label: t("Settlement Date"), accessor: "invoiceDate" },
     { label: t("Valid"), accessor: "isValid" },
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
@@ -232,7 +232,7 @@ const Sales = () => {
   };
 
   const Edit = (row) => {
-    navigate(`/sales/UpdateSale/${row.id}`);
+    navigate(`/Sales/UpdateSale/${row.id}`);
   };
 
   return (
