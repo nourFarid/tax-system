@@ -6,6 +6,7 @@ import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import Pagination from './../Components/Layout/Pagination';
 import { useSwal } from "../Hooks/Alert/Swal";
 import axiosInstance from "../Axios/AxiosInstance";
+import { toast, ToastContainer } from "react-toastify";
 
 const DocumentType = () => {
   const { t } = useTranslate();
@@ -42,7 +43,7 @@ const DocumentType = () => {
         setPageNumber(page);
       }
     } catch (e) {
-      setError("Failed to fetch document types.");
+      toast.error("Failed to fetch document types.");
     } finally {
       setLoading(false);
     }
@@ -132,10 +133,10 @@ const DocumentType = () => {
       });
       hideModal("DeleteDocumentType");
       await fetchDocType(pageNumber);
-      showSuccess("Deleted", "document type deleted successfully!");
+      toast.success("document type deleted successfully!");
     } catch (error) {
       console.error("Failed to delete document type", error);
-      showError("Error", "Failed to delete document type");
+      toast.error("Failed to delete document type");
     }
   };
 
@@ -155,11 +156,11 @@ const DocumentType = () => {
         });
         hideModal("AddDocumentType");
         fetchDocType(pageNumber)
-        showSuccess("Success", "document type added successfully!");
+        toast.success(t("document type added successfully!"));
       }
     } catch (error) {
       console.error("Failed to add document type", error);
-      showError("Error", "Failed to add document type!");
+      toast.error(t("Failed to add document type!"));
     }
   };
 
@@ -181,10 +182,10 @@ const DocumentType = () => {
       });
       hideModal("EditDocumentType");
       await fetchDocType(pageNumber);
-      showSuccess("Success", "document type updated successfully!");
+      toast.success(t("document type updated successfully!"));
     } catch (error) {
       console.log(error)
-      showError("Error", "Failed to update document type");
+      toast.error(t("Failed to update document type"));
     }
   };
 
@@ -276,6 +277,8 @@ const DocumentType = () => {
       >
         <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
       </Modal>
+      <ToastContainer />
+     
     </>
   );
 };

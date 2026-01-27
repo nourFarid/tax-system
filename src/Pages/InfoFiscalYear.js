@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import axiosInstance from "../Axios/AxiosInstance";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const InfoFiscalYear = () => {
     const { t } = useTranslate();
@@ -70,16 +71,16 @@ const InfoFiscalYear = () => {
 
             // Re-fetch or update local state
             if (response.status === 200 || response.data.result) {
-                showSuccess("Success", "Quarter updated successfully!");
+                toast.success(t("Quarter updated successfully!"));
                 hideModal("EditQuarterLockDate");
                 await fetchFiscalYear(); // Refresh data
             } else {
-                showError("Error", "Failed to update quarter");
+                toast.error(t("Failed to update quarter"));
             }
 
         } catch (error) {
             console.error("Error updating quarter:", error);
-            showError("Error", "An error occurred while updating the quarter.");
+            toast.error(t("An error occurred while updating the quarter."));
         }
     };
 
@@ -200,6 +201,7 @@ const InfoFiscalYear = () => {
                     />
                 </div>
             </Modal>
+            <ToastContainer />
             <SwalComponent />
         </>
     );

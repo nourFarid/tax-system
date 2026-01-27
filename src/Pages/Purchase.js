@@ -25,6 +25,8 @@ const Purchase = () => {
     quarterId: -1,
     invoiceDateFrom: "",
     invoiceDateTo: "",
+    exportWithName: null,
+
   });
 
   // State for delete modal
@@ -43,48 +45,91 @@ const Purchase = () => {
     { label: t("Purchase"), link: "/purchase", active: false },
   ];
 
-  const breadcrumbButtons = [
-    {
-      label: t("Add"),
-      icon: "bi bi-plus-circle",
-      link: "/Purchase/Add",
-      class: "btn btn-sm btn-success ms-2 float-end",
-    },
-    {
-      label: t("Export"),
-      icon: "bi bi-box-arrow-up-right",
-      fun: async () => {
-        try {
-          const res = await axiosInstance.post(
-            "purchase/ExportExcel",
-            objFilter,
-            { responseType: "blob" }
-          );
+const breadcrumbButtons = [
+  {
+    label: t("Add"),
+    icon: "bi bi-plus-circle",
+    link: "/Purchase/Add",
+    class: "btn btn-sm btn-success ms-2 float-end",
+  },
+  {
+    label: t("Export With Names"),
+    icon: "bi bi-box-arrow-up-right",
+    fun: async () => {
+      try {
+        const payload = {
+          ...objFilter,
+          exportWithName: true,
+        };
 
-          if (res.data.type === "application/json") {
-            showError(t("Error"), "No data to export");
-            return;
-          }
+        const res = await axiosInstance.post(
+          "purchase/ExportCsv",
+          payload,
+          { responseType: "blob" }
+        );
 
-          const blob = new Blob([res.data], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "Purchase.xlsx";
-          a.click();
-          window.URL.revokeObjectURL(url);
-        } catch {
-          showError(t("Error"), "Export failed");
-
+        if (res.data.type === "application/json") {
+          showError(t("Error"), "No data to export");
+          return;
         }
-      },
-      class: "btn btn-sm btn-warning ms-2 float-end",
-      disabled: boolDisableExport,
+
+        const blob = new Blob([res.data], {
+          type: "text/csv;charset=utf-8",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch {
+        showError(t("Error"), "Export failed");
+      }
     },
-  ];
+    class: "btn btn-sm btn-warning ms-2 float-end",
+    disabled: boolDisableExport,
+  },
+  {
+    label: t("Export With Codes"),
+    icon: "bi bi-box-arrow-up-right",
+    fun: async () => {
+      try {
+        const payload = {
+          ...objFilter,
+          exportWithName: false,
+        };
+
+        const res = await axiosInstance.post(
+          "purchase/ExportCsv",
+          payload,
+          { responseType: "blob" }
+        );
+
+        if (res.data.type === "application/json") {
+          showError(t("Error"), "No data to export");
+          return;
+        }
+
+        const blob = new Blob([res.data], {
+          type: "text/csv;charset=utf-8",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch {
+        showError(t("Error"), "Export failed");
+      }
+    },
+    class: "btn btn-sm btn-warning ms-2 float-end",
+    disabled: boolDisableExport,
+  },
+];
+
 
   const columns = [
     // { label: t("Document Type"), accessor: "documentType.name" },

@@ -34,28 +34,59 @@ const Document41 = () => {
 
   const breadcrumbButtons = [
     {
-      label: t("Export"),
+      label: t("Export With Names"),
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
-        const res = await axiosInstance.post("Document41/ExportExcel", objFilter, { responseType: "blob" });
+                const payload = {
+          ...objFilter,
+          exportWithName: true,
+        };
+        const res = await axiosInstance.post("Document41/ExportToCsv", payload, { responseType: "blob" });
 
         if (res.data.type === "application/json") {
           return showError("Error", "No data to export");
         }
         const blob = new Blob([res.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          type: "text/csv;charset=utf-8",
         });
 
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "Document41.xlsx";
+        a.download = `Doc41 ${new Date().toISOString().split('T')[0]}.csv`;
         a.click();
         window.URL.revokeObjectURL(url)
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
       disabled: boolDisableExport
-    }
+    },
+    {
+    label: t("Export With Codes"),
+      icon: "bi bi-box-arrow-up-right",
+      fun: async () => {
+                const payload = {
+          ...objFilter,
+          exportWithName: false,
+        };
+        const res = await axiosInstance.post("Document41/ExportToCsv", payload, { responseType: "blob" });
+
+        if (res.data.type === "application/json") {
+          return showError("Error", "No data to export");
+        }
+        const blob = new Blob([res.data], {
+          type: "text/csv;charset=utf-8",
+        });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Doc41 ${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url)
+      },
+      class: "btn btn-sm btn-warning ms-2 float-end",
+      disabled: boolDisableExport
+    },
   ];
 
   const columns = [
@@ -75,7 +106,9 @@ const Document41 = () => {
     fiscalYearId: -1,
     quarterId: -1,
     transactionDateFrom: "",
-    transactionDateTo: ""
+    transactionDateTo: "",
+    exportWithName: false,
+
   });
 
   const List = async (intPageNumber = 1) => {
