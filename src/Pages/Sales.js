@@ -28,7 +28,7 @@ const Sales = () => {
     quarterId: -1,
     invoiceDateFrom: "",
     invoiceDateTo: "",
-    exportWithName:null,
+    exportWithName: null,
   });
 
   // Current sale selected for delete
@@ -59,17 +59,17 @@ const Sales = () => {
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
         try {
-    const payload = {
-      ...objFilter,
-      exportWithName: true,
-    };          const res = await axiosInstance.post(
+          const payload = {
+            ...objFilter,
+            exportWithName: true,
+          }; const res = await axiosInstance.post(
             "sales/ExportCsv",
             payload,
             { responseType: "blob" }
           );
 
           if (res.data.type === "application/json") {
-            alert("No data to export");
+            alert(t("No data to export"));
             return;
           }
 
@@ -80,11 +80,11 @@ const Sales = () => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
+          a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          alert("Export failed");
+          alert(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -95,10 +95,10 @@ const Sales = () => {
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
         try {
-    const payload = {
-      ...objFilter,
-      exportWithName: false,
-    };
+          const payload = {
+            ...objFilter,
+            exportWithName: false,
+          };
           const res = await axiosInstance.post(
             "sales/ExportCsv",
             payload,
@@ -106,23 +106,23 @@ const Sales = () => {
           );
 
           if (res.data.type === "application/json") {
-            alert("No data to export");
+            alert(t("No data to export"));
             return;
           }
 
-       const blob = new Blob([res.data], {
-  type: "text/csv;charset=utf-8",
-});
+          const blob = new Blob([res.data], {
+            type: "text/csv;charset=utf-8",
+          });
 
 
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
+          a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          alert("Export failed");
+          alert(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -154,7 +154,7 @@ const Sales = () => {
       }
       setArrFiscalYear(res.data.data);
     } catch {
-      alert("Failed to load fiscal years");
+      alert(t("Failed to load fiscal years"));
     }
   };
 
@@ -203,10 +203,10 @@ const Sales = () => {
         setTotalCount(res.data.data.totalCount);
         setPageNumber(res.data.data.pageNumber);
       } else {
-        setError(res.data.message || "Failed to fetch data");
+        setError(res.data.message || t("Failed to fetch data"));
       }
     } catch {
-      setError("Failed to fetch data");
+      setError(t("Failed to fetch data"));
     } finally {
       setLoading(false);
     }

@@ -102,8 +102,8 @@ const User = () => {
 
     const columns = [
         { label: t("Username"), accessor: "userName" },
-        { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
+        { label: t("Email"), accessor: "email" },
         {
             label: t("User Role"), accessor: "roles", render: (value) => {
                 if (Array.isArray(value) && value.length > 0) {
@@ -143,31 +143,31 @@ const User = () => {
         const newErrors = {};
 
         if (!objUser.Username || objUser.Username.trim() === "") {
-            newErrors.Username = "Username is required";
+            newErrors.Username = t("Username is required");
         }
 
         if (!objUser.Email || objUser.Email.trim() === "") {
-            newErrors.Email = "Email is required";
+            newErrors.Email = t("Email is required");
         } else {
             // Basic email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(objUser.Email)) {
-                newErrors.Email = "Invalid email format";
+                newErrors.Email = t("Invalid email format");
             }
         }
 
         if (!objUser.FullName || objUser.FullName.trim() === "") {
-            newErrors.FullName = "Full Name is required";
+            newErrors.FullName = t("Full Name is required");
         }
 
         // UserCode validation - required only when adding, optional when editing
         if (!isEdit) {
             if (!objUser.UserCode || objUser.UserCode.trim() === "") {
-                newErrors.UserCode = "User Code is required";
+                newErrors.UserCode = t("User Code is required");
             } else {
                 const userCodeNum = parseInt(objUser.UserCode, 10);
                 if (isNaN(userCodeNum) || userCodeNum <= 0) {
-                    newErrors.UserCode = "User Code must be a positive number";
+                    newErrors.UserCode = t("User Code must be a positive number");
                 }
             }
         } else {
@@ -175,14 +175,14 @@ const User = () => {
             if (objUser.UserCode && objUser.UserCode.trim() !== "") {
                 const userCodeNum = parseInt(objUser.UserCode, 10);
                 if (isNaN(userCodeNum) || userCodeNum <= 0) {
-                    newErrors.UserCode = "User Code must be a positive number";
+                    newErrors.UserCode = t("User Code must be a positive number");
                 }
             }
         }
 
         // Password is required only when adding, optional when editing
         if (!isEdit && (!objUser.Password || objUser.Password.trim() === "")) {
-            newErrors.Password = "Password is required";
+            newErrors.Password = t("Password is required");
         }
 
         // Password strength validation (if password is provided)
@@ -216,8 +216,8 @@ const User = () => {
 
             }
         } catch (e) {
-            setError("Failed to fetch users");
-            showError("Error", "Failed to fetch users");
+            setError(t("Failed to fetch users"));
+            showError(t("Error"), t("Failed to fetch users"));
         } finally {
             setLoading(false);
         }
@@ -382,11 +382,11 @@ const User = () => {
 
             hideModal("AddUser");
             await fetchUsers();
-            toast.success("User added successfully!");
+            toast.success(t("User added successfully!"));
 
         } catch (error) {
             console.error("Failed to add User", error);
-            toast.error(error.response?.data?.message || "Failed to add User");
+            toast.error(error.response?.data?.message || t("Failed to add User"));
         }
     };
 
@@ -427,14 +427,14 @@ const User = () => {
 
                 hideModal("EditUser");
                 await fetchUsers();
-                toast.success("User updated successfully!");
+                toast.success(t("User updated successfully!"));
             } else {
-                toast.error(response.data?.message || "Failed to update user");
+                toast.error(response.data?.message || t("Failed to update user"));
             }
 
         } catch (error) {
             console.log(error);
-            showError("Error", error.response?.data?.message || "Failed to update user");
+            showError(t("Error"), error.response?.data?.message || t("Failed to update user"));
         }
     };
 
@@ -490,7 +490,7 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Username}</label>
                         <input type="text" name="Username" value={objUser.Username} onChange={handleChange} className="form-control" placeholder={objTitle.Username} autoComplete="off" readOnly disabled style={{ backgroundColor: "#e9ecef" }} />
-                        <small className="text-muted">Auto-generated: GS + User Code</small>
+                        <small className="text-muted">{t("Auto-generated: GS + User Code")}</small>
                     </div>
                 </div>
 
@@ -522,7 +522,7 @@ const User = () => {
                             </button>
                         </div>
                         {errors.Password && <div className="text-danger small">{errors.Password}</div>}
-                        <small className="text-muted">Must contain: uppercase, lowercase, and special character (!@#$%^&*)</small>
+                        <small className="text-muted">{t("Must contain: uppercase, lowercase, and special character (!@#$%^&*)")}</small>
                     </div>
                 </div>
 
@@ -536,7 +536,7 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Role}</label>
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                            <option value="">Select Role</option>
+                            <option value="">{t("Select Role")}</option>
                             {roles.map(role => (
                                 <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                             ))}
@@ -625,7 +625,7 @@ const User = () => {
                             disabled
                             style={{ backgroundColor: "#e9ecef" }}
                         />
-                        <small className="text-muted">Auto-generated: GS + User Code</small>
+                        <small className="text-muted">{t("Auto-generated: GS + User Code")}</small>
                     </div>
                 </div>
 
@@ -661,7 +661,7 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Role}</label>
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                            <option value="">Select Role</option>
+                            <option value="">{t("Select Role")}</option>
                             {roles.map(role => (
                                 <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                             ))}
@@ -669,7 +669,7 @@ const User = () => {
                     </div>
 
                     <div className="col-md-6">
-                        <label className="form-label">{objTitle.Password} (Optional)</label>
+                        <label className="form-label">{objTitle.Password} ({t("Optional")})</label>
                         <div className="input-group">
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -677,7 +677,7 @@ const User = () => {
                                 value={objUser.Password}
                                 onChange={handleChange}
                                 className={`form-control ${errors.Password ? "is-invalid" : ""}`}
-                                placeholder="Leave blank to keep current password"
+                                placeholder={t("Leave blank to keep current password")}
                                 autoComplete="new-password"
                             />
                             <button
@@ -690,7 +690,7 @@ const User = () => {
                             </button>
                         </div>
                         {errors.Password && <div className="text-danger small">{errors.Password}</div>}
-                        <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
+                        <small className="text-muted">{t("If changing: Must contain uppercase, lowercase, and special character")}</small>
                     </div>
                 </div>
 

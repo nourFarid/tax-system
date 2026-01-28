@@ -45,90 +45,90 @@ const Purchase = () => {
     { label: t("Purchase"), link: "/purchase", active: false },
   ];
 
-const breadcrumbButtons = [
-  {
-    label: t("Add"),
-    icon: "bi bi-plus-circle",
-    link: "/Purchase/Add",
-    class: "btn btn-sm btn-success ms-2 float-end",
-  },
-  {
-    label: t("Export With Names"),
-    icon: "bi bi-box-arrow-up-right",
-    fun: async () => {
-      try {
-        const payload = {
-          ...objFilter,
-          exportWithName: true,
-        };
-
-        const res = await axiosInstance.post(
-          "purchase/ExportCsv",
-          payload,
-          { responseType: "blob" }
-        );
-
-        if (res.data.type === "application/json") {
-          showError(t("Error"), "No data to export");
-          return;
-        }
-
-        const blob = new Blob([res.data], {
-          type: "text/csv;charset=utf-8",
-        });
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      } catch {
-        showError(t("Error"), "Export failed");
-      }
+  const breadcrumbButtons = [
+    {
+      label: t("Add"),
+      icon: "bi bi-plus-circle",
+      link: "/Purchase/Add",
+      class: "btn btn-sm btn-success ms-2 float-end",
     },
-    class: "btn btn-sm btn-warning ms-2 float-end",
-    disabled: boolDisableExport,
-  },
-  {
-    label: t("Export With Codes"),
-    icon: "bi bi-box-arrow-up-right",
-    fun: async () => {
-      try {
-        const payload = {
-          ...objFilter,
-          exportWithName: false,
-        };
+    {
+      label: t("Export With Names"),
+      icon: "bi bi-box-arrow-up-right",
+      fun: async () => {
+        try {
+          const payload = {
+            ...objFilter,
+            exportWithName: true,
+          };
 
-        const res = await axiosInstance.post(
-          "purchase/ExportCsv",
-          payload,
-          { responseType: "blob" }
-        );
+          const res = await axiosInstance.post(
+            "purchase/ExportCsv",
+            payload,
+            { responseType: "blob" }
+          );
 
-        if (res.data.type === "application/json") {
-          showError(t("Error"), "No data to export");
-          return;
+          if (res.data.type === "application/json") {
+            showError(t("Error"), t("No data to export"));
+            return;
+          }
+
+          const blob = new Blob([res.data], {
+            type: "text/csv;charset=utf-8",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        } catch {
+          showError(t("Error"), t("Export failed"));
         }
-
-        const blob = new Blob([res.data], {
-          type: "text/csv;charset=utf-8",
-        });
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      } catch {
-        showError(t("Error"), "Export failed");
-      }
+      },
+      class: "btn btn-sm btn-warning ms-2 float-end",
+      disabled: boolDisableExport,
     },
-    class: "btn btn-sm btn-warning ms-2 float-end",
-    disabled: boolDisableExport,
-  },
-];
+    {
+      label: t("Export With Codes"),
+      icon: "bi bi-box-arrow-up-right",
+      fun: async () => {
+        try {
+          const payload = {
+            ...objFilter,
+            exportWithName: false,
+          };
+
+          const res = await axiosInstance.post(
+            "purchase/ExportCsv",
+            payload,
+            { responseType: "blob" }
+          );
+
+          if (res.data.type === "application/json") {
+            showError(t("Error"), t("No data to export"));
+            return;
+          }
+
+          const blob = new Blob([res.data], {
+            type: "text/csv;charset=utf-8",
+          });
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `purchase ${new Date().toISOString().split('T')[0]}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        } catch {
+          showError(t("Error"), t("Export failed"));
+        }
+      },
+      class: "btn btn-sm btn-warning ms-2 float-end",
+      disabled: boolDisableExport,
+    },
+  ];
 
 
   const columns = [
@@ -163,7 +163,7 @@ const breadcrumbButtons = [
       }
       setArrFiscalYear(res.data.data);
     } catch {
-      showError(t("Error"), "Failed to load fiscal years");
+      showError(t("Error"), t("Failed to load fiscal years"));
 
     }
   };
@@ -214,10 +214,10 @@ const breadcrumbButtons = [
         setTotalCount(res.data.data.totalCount);
         setPageNumber(res.data.data.pageNumber);
       } else {
-        setError(res.data.message || "Failed to fetch data");
+        setError(res.data.message || t("Failed to fetch data"));
       }
     } catch {
-      setError("Failed to fetch data");
+      setError(t("Failed to fetch data"));
     } finally {
       setLoading(false);
     }

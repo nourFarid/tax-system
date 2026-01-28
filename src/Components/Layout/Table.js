@@ -62,7 +62,7 @@ const Table = ({
         return formatDate(new Date(value));
       }
 
-      if (typeof value === "boolean") return value ? "Yes" : "No";
+      if (typeof value === "boolean") return value ? t("Yes") : t("No");
 
       if (value === null || value === undefined || value === "") return "-";
 
@@ -139,7 +139,7 @@ const Table = ({
                             type="button"
                             onClick={() => onEdit(row)}
                             className="btn btn-sm btn-primary"
-                            title="Edit"
+                            title={t("Edit")}
                           >
                             <i className="bi bi-pencil-square"></i>
                           </button>
@@ -149,7 +149,7 @@ const Table = ({
                             type="button"
                             onClick={() => onShow(row)}
                             className="btn btn-sm btn-warning"
-                            title="Show"
+                            title={t("Show")}
                           >
                             <i className="bi bi-search"></i>
                           </button>
@@ -160,7 +160,7 @@ const Table = ({
                             type="button"
                             onClick={() => onDelete(row)}
                             className="btn btn-sm btn-danger"
-                            title="Delete"
+                            title={t("Delete")}
                           >
                             <i className="bi bi-trash"></i>
                           </button>
@@ -176,7 +176,7 @@ const Table = ({
                   colSpan={columns.length + (showActions ? 1 : 0)}
                   className="text-center text-muted py-4"
                 >
-                  No data available
+                  {t("No data available")}
                 </td>
               </tr>
             )}
