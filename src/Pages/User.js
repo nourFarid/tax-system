@@ -333,8 +333,15 @@ const User = () => {
 
     const handleToggle = async (row) => {
         try {
+            // Get the current status from the row and toggle it
             const currentStatus = row.available ?? row.isActive ?? false;
             const newStatus = !currentStatus;
+
+            // Get roleId from roles array if available
+            const roleId = row.roleId || (row.roles && row.roles.length > 0 ? row.roles[0].roleId : null);
+
+            // Get userCode - extract from userName if not available (GS + number format)
+            const userCode = row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : "");
 
             const payload = {
                 userId: row.userId,
@@ -344,8 +351,10 @@ const User = () => {
                 available: newStatus,
                 isActive: newStatus,
                 newUser: false,
-                userCode: row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : null),
-                roleId: row.roleId
+                userCode: userCode,
+                roleId: roleId,
+                departmentId: row.departmentId || 0,
+                positionId: row.positionId || 0
             };
 
             const res = await axiosInstance.post("User/Update", payload);
