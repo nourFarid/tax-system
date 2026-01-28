@@ -14,6 +14,9 @@ const User = () => {
 
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [positions, setPositions] = useState([]);
+    const [filteredPositions, setFilteredPositions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
@@ -29,6 +32,10 @@ const User = () => {
             FullName: t("Full Name"),
             UserCode: t("User Code"),
             Role: t("Role"),
+            Department: t("Department"),
+            Position: t("Position"),
+            SelectDepartment: t("Select Department"),
+            SelectPosition: t("Select Position"),
             IsActive: t("Active"),
             Save: t("Save"),
             Cancel: t("Cancel"),
@@ -47,6 +54,8 @@ const User = () => {
         FullName: "",
         UserCode: "",
         RoleId: "",
+        DepartmentId: "",
+        PositionId: "",
         IsActive: true
     });
     const { showSuccess, showError, SwalComponent } = useSwal();
@@ -61,8 +70,11 @@ const User = () => {
             FullName: "",
             UserCode: "",
             RoleId: "",
+            DepartmentId: "",
+            PositionId: "",
             IsActive: true
         });
+        setFilteredPositions([]);
         setErrors({});
     };
 
@@ -96,6 +108,20 @@ const User = () => {
                     return value.map(r => r.roleName).join(", ");
                 }
                 return "-";
+            }
+        },
+        {
+            label: t("Department"), accessor: "departmentId", render: (value) => {
+                if (!value || value === 0) return "-";
+                const dept = departments.find(d => d.id === value);
+                return dept ? dept.name : "-";
+            }
+        },
+        {
+            label: t("Position"), accessor: "positionId", render: (value) => {
+                if (!value || value === 0) return "-";
+                const pos = positions.find(p => p.id === value);
+                return pos ? pos.name : "-";
             }
         },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
@@ -207,6 +233,43 @@ const User = () => {
         }
     };
 
+    const fetchDepartments = async () => {
+        try {
+            const res = await axiosInstance.post("Department/ListAll", {});
+            if (res.data.result) {
+                setDepartments(res.data.data || []);
+            } else if (Array.isArray(res.data)) {
+                setDepartments(res.data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch departments", e);
+        }
+    };
+
+    const fetchPositions = async () => {
+        try {
+            const res = await axiosInstance.post("Position/ListAll", {});
+            if (res.data.result) {
+                setPositions(res.data.data || []);
+            } else if (Array.isArray(res.data)) {
+                setPositions(res.data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch positions", e);
+        }
+    };
+
+    // Filter positions based on selected department
+    const handleDepartmentChange = (departmentId) => {
+        setObjUser((prev) => ({ ...prev, DepartmentId: departmentId, PositionId: "" }));
+        if (departmentId) {
+            const filtered = positions.filter(p => p.departmentId === parseInt(departmentId));
+            setFilteredPositions(filtered);
+        } else {
+            setFilteredPositions([]);
+        }
+    };
+
     const mappedUsers = users.map(u => ({
         ...u
     }));
@@ -223,6 +286,14 @@ const User = () => {
         // Extract userCode from userName if not available (remove non-digit characters)
         const extractedUserCode = row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : "");
 
+        // Filter positions based on the user's current department
+        if (row.departmentId && row.departmentId > 0) {
+            const filtered = positions.filter(p => p.departmentId === row.departmentId);
+            setFilteredPositions(filtered);
+        } else {
+            setFilteredPositions([]);
+        }
+
         setObjUser({
             Id: row.userId,
             Username: row.userName,
@@ -231,6 +302,8 @@ const User = () => {
             FullName: row.fullName,
             UserCode: extractedUserCode,
             RoleId: (row.roles && row.roles.length > 0) ? row.roles[0].roleId : "",
+            DepartmentId: row.departmentId && row.departmentId > 0 ? row.departmentId : "",
+            PositionId: row.positionId && row.positionId > 0 ? row.positionId : "",
             IsActive: row.available ?? row.isActive ?? true
         });
 
@@ -289,13 +362,16 @@ const User = () => {
         if (!validateForm(false)) return;
         try {
             const payload = {
-                Username: objUser.Username,
-                Email: objUser.Email,
-                Password: objUser.Password,
-                FullName: objUser.FullName,
-                UserCode: objUser.UserCode,
-                RoleId: objUser.RoleId,
-                IsActive: objUser.IsActive
+                userName: objUser.Username,
+                email: objUser.Email,
+                password: objUser.Password,
+                fullName: objUser.FullName,
+                userCode: objUser.UserCode,
+                roleId: objUser.RoleId,
+                departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
+                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0,
+                isActive: objUser.IsActive,
+                newUser: true
             };
             const response = await axiosInstance.post("User/Add", payload);
             console.log("Add response:", response.data);
@@ -325,7 +401,9 @@ const User = () => {
                 newUser: false,
                 // Send null for empty values instead of empty strings
                 userCode: (objUser.UserCode && objUser.UserCode.toString().trim() !== "") ? objUser.UserCode : null,
-                roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null
+                roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null,
+                departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
+                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0
             };
 
             // Only include password if it has a value (completely exclude from payload otherwise)
@@ -361,6 +439,8 @@ const User = () => {
     useEffect(() => {
         fetchUsers();
         fetchRoles();
+        fetchDepartments();
+        fetchPositions();
     }, []);
 
     if (loading) return <div>{t("Loading...")}</div>;
@@ -439,6 +519,38 @@ const User = () => {
                             <option value="">Select Role</option>
                             {roles.map(role => (
                                 <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Department}</label>
+                        <select
+                            name="DepartmentId"
+                            value={objUser.DepartmentId}
+                            onChange={(e) => handleDepartmentChange(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="">{objTitle.SelectDepartment}</option>
+                            {departments.map(dept => (
+                                <option key={dept.id} value={dept.id}>{dept.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Position}</label>
+                        <select
+                            name="PositionId"
+                            value={objUser.PositionId}
+                            onChange={handleChange}
+                            className="form-control"
+                            disabled={!objUser.DepartmentId}
+                        >
+                            <option value="">{objTitle.SelectPosition}</option>
+                            {filteredPositions.map(pos => (
+                                <option key={pos.id} value={pos.id}>{pos.name}</option>
                             ))}
                         </select>
                     </div>
@@ -549,6 +661,38 @@ const User = () => {
                         />
                         {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
                         <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Department}</label>
+                        <select
+                            name="DepartmentId"
+                            value={objUser.DepartmentId}
+                            onChange={(e) => handleDepartmentChange(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="">{objTitle.SelectDepartment}</option>
+                            {departments.map(dept => (
+                                <option key={dept.id} value={dept.id}>{dept.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Position}</label>
+                        <select
+                            name="PositionId"
+                            value={objUser.PositionId}
+                            onChange={handleChange}
+                            className="form-control"
+                            disabled={!objUser.DepartmentId}
+                        >
+                            <option value="">{objTitle.SelectPosition}</option>
+                            {filteredPositions.map(pos => (
+                                <option key={pos.id} value={pos.id}>{pos.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
