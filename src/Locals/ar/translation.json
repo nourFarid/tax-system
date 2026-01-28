@@ -275,5 +275,7 @@
   "Show": "عرض",
   "Select...": "اختر...",
   "No options": "لا توجد خيارات",
-  "Type to search...": "اكتب للبحث..."
+  "Type to search...": "اكتب للبحث...",
+  "Document type status updated": "تم تحديث حالة نوع المستند",
+  "Failed to toggle document type status": "فشل في تغيير حالة نوع المستند"
 }

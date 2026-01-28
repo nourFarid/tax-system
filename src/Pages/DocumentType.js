@@ -7,6 +7,7 @@ import Pagination from './../Components/Layout/Pagination';
 import { useSwal } from "../Hooks/Alert/Swal";
 import axiosInstance from "../Axios/AxiosInstance";
 import { toast, ToastContainer } from "react-toastify";
+import Switch from "../Components/Layout/Switch";
 
 const DocumentType = () => {
   const { t } = useTranslate();
@@ -61,6 +62,8 @@ const DocumentType = () => {
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
+      Active: t("Active"),
+      Inactive: t("Inactive"),
     }),
     [t]
   );
@@ -85,6 +88,15 @@ const DocumentType = () => {
     { label: t("ID"), accessor: "id" },
     { label: t("Name"), accessor: "name" },
     { label: t("Code"), accessor: "code" },
+    {
+      label: t("Status"),
+      accessor: "isDeleted",
+      render: (value) => (
+        <span className={`badge ${!value ? 'bg-success' : 'bg-danger'}`}>
+          {!value ? objTitle.Active : objTitle.Inactive}
+        </span>
+      )
+    },
   ];
 
 
@@ -97,13 +109,18 @@ const DocumentType = () => {
     showModal("EditDocumentType");
   };
   const handleShow = (row) => { };
-  const handleDelete = (row) => {
-    setObjDocType({
-      Name: row.name || "",
-      Code: row.code || "",
-      Id: row.id || -1
-    });
-    showModal("DeleteDocumentType");
+  const handleToggle = async (row) => {
+    try {
+      const res = await axiosInstance.put(`DocumentType/SoftDelete?id=${row.id}`);
+      if (res.data.result) {
+        toast.success(t("Document type status updated"));
+        fetchDocType(pageNumber);
+      } else {
+        toast.error(t("Failed to toggle document type status"));
+      }
+    } catch (error) {
+      toast.error(t("Failed to toggle document type status"));
+    }
   };
 
   const handleChange = (e) => {
@@ -207,8 +224,15 @@ const DocumentType = () => {
         showActions={true}
         onEdit={handleEdit}
         showShow={false}
-        onShow={handleShow}
-        onDelete={handleDelete}
+        showDelete={false}
+        onShow={() => { }}
+        customActions={(row) => (
+          <Switch
+            id={`switch-${row.id}`}
+            checked={!row.isDeleted}
+            onChange={() => handleToggle(row)}
+          />
+        )}
       />
       <Pagination
         pageNumber={pageNumber}
@@ -278,7 +302,7 @@ const DocumentType = () => {
         <p>{objTitle.DeleteConfirmation} <strong> {objDocType.Name} </strong> {objTitle.QuestionMark}</p>
       </Modal>
       <ToastContainer />
-     
+
     </>
   );
 };
