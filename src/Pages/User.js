@@ -20,6 +20,7 @@ const User = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
 
     const objTitle = useMemo(
         () => ({
@@ -75,6 +76,7 @@ const User = () => {
             IsActive: true
         });
         setFilteredPositions([]);
+        setShowPassword(false);
         setErrors({});
     };
 
@@ -500,8 +502,26 @@ const User = () => {
                     </div>
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Password}</label>
-                        <input type="password" name="Password" value={objUser.Password} onChange={handleChange} className={`form-control ${errors.Password ? "is-invalid" : ""}`} placeholder={objTitle.Password} autoComplete="new-password" />
-                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="Password"
+                                value={objUser.Password}
+                                onChange={handleChange}
+                                className={`form-control ${errors.Password ? "is-invalid" : ""}`}
+                                placeholder={objTitle.Password}
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                            >
+                                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                            </button>
+                        </div>
+                        {errors.Password && <div className="text-danger small">{errors.Password}</div>}
                         <small className="text-muted">Must contain: uppercase, lowercase, and special character (!@#$%^&*)</small>
                     </div>
                 </div>
@@ -650,16 +670,26 @@ const User = () => {
 
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Password} (Optional)</label>
-                        <input
-                            type="password"
-                            name="Password"
-                            value={objUser.Password}
-                            onChange={handleChange}
-                            className={`form-control ${errors.Password ? "is-invalid" : ""}`}
-                            placeholder="Leave blank to keep current password"
-                            autoComplete="new-password"
-                        />
-                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="Password"
+                                value={objUser.Password}
+                                onChange={handleChange}
+                                className={`form-control ${errors.Password ? "is-invalid" : ""}`}
+                                placeholder="Leave blank to keep current password"
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                            >
+                                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                            </button>
+                        </div>
+                        {errors.Password && <div className="text-danger small">{errors.Password}</div>}
                         <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
                     </div>
                 </div>
