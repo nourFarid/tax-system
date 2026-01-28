@@ -92,13 +92,25 @@ const Document41 = () => {
   const columns = [
     { label: t("Supplier Name"), accessor: "supplier.name" },
     { label: t("Transaction Date"), accessor: "transactionDate" },
-    // { label: t("Amount"), accessor: "amount" },
     { label: t("Transaction Nature"), accessor: "transactionNature.name" },
     { label: t("Price"), accessor: "price" },
     { label: t("Tax Percent"), accessor: "transactionNature.ratePercent" },
     { label: t("Deduction Percentage"), accessor: "deductionPercentage" },
     { label: t("Fiscal Year From"), accessor: "quarter.dateFrom" },
-    { label: t("Fiscal Year To"), accessor: "quarter.dateTo" }
+    { label: t("Fiscal Year To"), accessor: "quarter.dateTo" },
+    {
+  label: t("Status"),
+  accessor: "isValid",
+  render: (value) =>
+    value ? (
+      <span className="badge bg-success">{t("Valid")}</span>
+    ) : (
+      <span className="badge bg-danger">{t("Invalid")}</span>
+    )
+}
+
+
+    
   ];
 
   const [arrData, setArrData] = useState([]);
@@ -110,6 +122,18 @@ const Document41 = () => {
     exportWithName: false,
 
   });
+const MarkInvalid = async (row) => {
+  const res = await axiosInstance.put(
+    `Document41/MarkInvalid/${row.id}`
+  );
+
+  if (res.data.result) {
+    showSuccess(t("Success"), t("Document marked as invalid"));
+    List(pageNumber);
+  } else {
+    showError(t("Error"), res.data.message);
+  }
+};
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
@@ -230,15 +254,29 @@ const Document41 = () => {
         </div>
       </div>
       <div className="bg-white p-3 shadow-sm shadow-lg">
-        <Table
-          columns={columns}
-          data={arrData}
-          showActions={true}
-          onEdit={Edit}
-          showShow={false}
-          onShow={() => { }}
-          onDelete={HandelDelete}
-        />
+   <Table
+  columns={columns}
+  data={arrData}
+  showActions={true}
+  onEdit={Edit}
+  showShow={false}
+  onDelete={HandelDelete}
+  customActions={(row) => (
+    <>
+      {!row.isInvalid && (
+        <button
+          type="button"
+          className="btn btn-sm btn-secondary"
+          title={t("Mark Invalid")}
+          onClick={() => MarkInvalid(row)}
+        >
+          <i className="bi bi-x-circle"></i>
+        </button>
+      )}
+    </>
+  )}
+/>
+
         <Pagination
           pageNumber={pageNumber}
           pageSize={pageSize}

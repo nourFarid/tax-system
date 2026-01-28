@@ -7,6 +7,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import { toast, ToastContainer } from "react-toastify";
 
 const Purchase = () => {
   const { t } = useTranslate();
@@ -132,23 +133,26 @@ const Purchase = () => {
 
 
   const columns = [
-    // { label: t("Document Type"), accessor: "documentType.name" },
     { label: t("Invoice Number"), accessor: "invoiceNumber" },
     { label: t("Supplier Name"), accessor: "customerSupplierName" },
     { label: t("Tax Registration Number"), accessor: "customerSupplierTaxRegistrationNumber" },
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Settlement Date"), accessor: "invoiceDate" },
-    // { label: t("Item Name"), accessor: "item.name" },
-    // { label: t("Statement Type"), accessor: "statementType.name" },
-    // { label: t("Item Type"), accessor: "itemType.name" },
-    // { label: t("Price"), accessor: "price" },
-    // { label: t("Amount"), accessor: "amount" },
-    // { label: t("Tax Amount"), accessor: "tax" },
     { label: t("Valid"), accessor: "isValid" },
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },
+        {
+  label: t("Status"),
+  accessor: "isValid",
+  render: (value) =>
+    value ? (
+      <span className="badge bg-success">{t("Valid")}</span>
+    ) : (
+      <span className="badge bg-danger">{t("Invalid")}</span>
+    )
+}
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -167,7 +171,22 @@ const Purchase = () => {
 
     }
   };
+const MarkInvalid = async (row) => {
+  try {
+    const res = await axiosInstance.put(
+      `Document/MarkInvalid/${row.docId}?type=Sale`
+    );
 
+    if (res.data.result) {
+      toast.success(res.data.message);
+      fetchPurchase(pageNumber);
+    } else {
+      showError(t("Error"), res.data.message);
+    }
+  } catch (error) {
+    showError(t("Error"), t("Something went wrong"));
+  }
+};
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
       (fy) => fy.id === Number(fiscalYearId)
