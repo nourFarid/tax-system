@@ -393,6 +393,20 @@ const MarkInvalid = async (row) => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
+                      customActions={(row) => (
+    <>
+      {!row.isInvalid && (
+        <button
+          type="button"
+          className="btn btn-sm btn-secondary"
+          title={t("Mark Invalid")}
+          onClick={() => MarkInvalid(row)}
+        >
+          <i className="bi bi-x-circle"></i>
+        </button>
+      )}
+    </>
+  )}
         />
 
         <Pagination

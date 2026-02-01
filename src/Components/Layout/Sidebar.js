@@ -17,6 +17,7 @@ const Sidebar = ({ isDesktop, isCollapsed, toggleCollapse }) => {
                 { id: 1, title: t("Document 41"), icon: "bi bi-file-earmark-text", path: "/Document41" },
                 { id: 2, title: t("Sales"), icon: "bi bi-cart-check", path: "/Sales" },
                 { id: 3, title: t("Purchase"), icon: "bi bi-bag-check", path: "/Purchase" },
+                { id: 3, title: t("Invalid Documents"), icon: "bi bi-x-lg", path: "/InvalidDocuments" },
                 { id: 4, title: t("Setup"), icon: "bi bi-gear", path: "/Setup" },
             ],
         },

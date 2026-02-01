@@ -2,9 +2,14 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useTranslate from "../Hooks/Translation/useTranslate";
 import Position from "./Position";
+import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Setup = () => {
   const navigate = useNavigate();
+  const role = getUserRoles();
+console.log('====================================');
+console.log(role);
+console.log('====================================');
   const { t } = useTranslate();
 
   useEffect(() => {

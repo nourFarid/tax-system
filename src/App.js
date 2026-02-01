@@ -30,6 +30,7 @@ const User = lazy(() => import('./Pages/User'));
 const Departments = lazy(() => import('./Pages/Departments'));
 const Position = lazy(() => import('./Pages/Position'));
 const Auth = lazy(() => import('./Pages/Auth'));
+const InvalidDocuments = lazy(()=>import ('./Pages/InvalidDocuments')) ;
 
 function App() {
   const lang = useSelector((state) => state.language.lang);
@@ -47,6 +48,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/Purchase" element={<Purchase />} />
+              <Route path="/InvalidDocuments" element={<InvalidDocuments />} />;
               <Route path="/Purchase/Add" element={<AddPurchase />} />
               <Route path="/Sales" element={<Sales />} />
               <Route path="/Sales/Add" element={<AddSales />} />

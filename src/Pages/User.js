@@ -21,7 +21,7 @@ const User = () => {
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
-//f
+    //f
     const objTitle = useMemo(
         () => ({
             AddUser: t("Add User"),
@@ -386,6 +386,10 @@ const User = () => {
             };
             const response = await axiosInstance.post("User/Add", payload);
             console.log("Add response:", response.data);
+            if (!response.data.result) {
+                toast.error(response.data.message);
+                return;
+            }
 
             resetForm();
 
