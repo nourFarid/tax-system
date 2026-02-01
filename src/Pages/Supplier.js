@@ -28,6 +28,7 @@ const Supplier = () => {
       Name: t("Name"),
       AddressLine: t("Address Line 1"),
       TaxNumber: t("Tax Number"),
+      PhoneNumber: t("Phone Number"),
       IsSupplier: t("Supplier"),
       IsCustomer: t("Customer"),
       Save: t("Save"),
@@ -41,7 +42,7 @@ const Supplier = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: true, IsCustomer: false });
+  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", PhoneNumber: "", IsSupplier: true, IsCustomer: false });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -62,6 +63,7 @@ const Supplier = () => {
     { label: t("National ID"), accessor: "identificationNumber" },
     { label: t("Name"), accessor: "Name" },
     { label: t("Tax Number"), accessor: "taxRegistrationNumber" },
+    { label: t("Phone Number"), accessor: "phoneNumber" },
     { label: t("Address"), accessor: "Address" }
   ];
 
@@ -130,6 +132,7 @@ const Supplier = () => {
       NationalID: row.identificationNumber,
       PassportNumber: row.passportNumber,
       TaxNumber: row.taxRegistrationNumber,
+      PhoneNumber: row.phoneNumber || "",
       Address: row.address,
       IsCustomer: row.isCustomer,
       IsSupplier: row.isSupplier
@@ -163,6 +166,7 @@ const Supplier = () => {
         Name: objDocType.Name,
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
+        PhoneNumber: objDocType.PhoneNumber,
         isSupplier: true,
         isCustomer: objDocType.IsCustomer || false
       };
@@ -179,6 +183,7 @@ const Supplier = () => {
           Name: "",
           Address: "",
           TaxNumber: "",
+          PhoneNumber: "",
           AddressLine: "",
           IsSupplier: true,
           IsCustomer: false
@@ -204,6 +209,7 @@ const Supplier = () => {
         Name: objDocType.Name,
         IdentificationNumber: objDocType.NationalID,
         TaxRegistrationNumber: objDocType.TaxNumber,
+        PhoneNumber: objDocType.PhoneNumber,
         Address: objDocType.Address,
         IsCustomer: objDocType.IsCustomer,
         IsSupplier: objDocType.IsSupplier
@@ -229,6 +235,7 @@ const Supplier = () => {
         NationalID: "",
         PassportNumber: "",
         TaxNumber: "",
+        PhoneNumber: "",
         Address: "",
         IsCustomer: false,
         IsSupplier: true
@@ -261,7 +268,7 @@ const Supplier = () => {
   };
 
   const reset = () => {
-    setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: true });
+    setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", PhoneNumber: "", IsCustomer: false, IsSupplier: true });
   };
 
   useEffect(() => {
@@ -319,10 +326,14 @@ const Supplier = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
             <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.PhoneNumber}</label>
+            <input type="text" name="PhoneNumber" value={objDocType.PhoneNumber} onChange={handleChange} className="form-control" placeholder={objTitle.PhoneNumber} />
           </div>
         </div>
         <div className="row mt-3">
@@ -412,7 +423,7 @@ const Supplier = () => {
         </div>
 
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
             <input
               type="text"
@@ -423,6 +434,17 @@ const Supplier = () => {
               placeholder={objTitle.TaxNumber}
             />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.PhoneNumber}</label>
+            <input
+              type="text"
+              name="PhoneNumber"
+              value={objDocType.PhoneNumber}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.PhoneNumber}
+            />
           </div>
         </div>
 

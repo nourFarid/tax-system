@@ -21,7 +21,6 @@ const User = () => {
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
-    //f
     const objTitle = useMemo(
         () => ({
             AddUser: t("Add User"),
