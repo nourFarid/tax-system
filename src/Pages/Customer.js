@@ -64,7 +64,8 @@ const Customer = () => {
     { label: t("National ID"), accessor: "identificationNumber" },
     { label: t("Name"), accessor: "Name" },
     { label: t("Tax Number"), accessor: "taxRegistrationNumber" },
-    { label: t("Address"), accessor: "Address" }
+    { label: t("Address"), accessor: "Address" },
+    { label: t("Phone Number"), accessor: "phoneNumber" },
   ];
 
   const validateForm = () => {
