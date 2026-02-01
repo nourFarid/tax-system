@@ -28,6 +28,7 @@ const Customer = () => {
       Name: t("Name"),
       AddressLine: t("Address Line 1"),
       TaxNumber: t("Tax Number"),
+      PhoneNumber: t("Phone Number"),
       IsSupplier: t("Supplier"),
       IsCustomer: t("Customer"),
       Save: t("Save"),
@@ -41,7 +42,7 @@ const Customer = () => {
     [t]
   );
 
-  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", IsSupplier: false, IsCustomer: true });
+  const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", PhoneNumber: "", IsSupplier: false, IsCustomer: true });
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
   const breadcrumbItems = [
@@ -129,6 +130,7 @@ const Customer = () => {
       Name: row.name,
       NationalID: row.identificationNumber,
       TaxNumber: row.taxRegistrationNumber,
+      PhoneNumber: row.phoneNumber || "",
       Address: row.address,
       IsCustomer: row.isCustomer,
       IsSupplier: row.isSupplier
@@ -163,6 +165,7 @@ const Customer = () => {
         Name: objDocType.Name,
         Address: objDocType.AddressLine,
         TaxRegistrationNumber: objDocType.TaxNumber,
+        PhoneNumber: objDocType.PhoneNumber,
         isSupplier: objDocType.IsSupplier || false,
         isCustomer: true
       };
@@ -177,6 +180,7 @@ const Customer = () => {
         Name: "",
         Address: "",
         TaxNumber: "",
+        PhoneNumber: "",
         AddressLine: "",
         IsSupplier: false,
         IsCustomer: true
@@ -198,6 +202,7 @@ const Customer = () => {
         IdentificationNumber: objDocType.NationalID,
         PassportNumber: objDocType.PassportNumber,
         TaxRegistrationNumber: objDocType.TaxNumber,
+        PhoneNumber: objDocType.PhoneNumber,
         Address: objDocType.Address,
         IsCustomer: objDocType.IsCustomer,
         IsSupplier: objDocType.IsSupplier
@@ -220,6 +225,7 @@ const Customer = () => {
         NationalID: "",
         PassportNumber: "",
         TaxNumber: "",
+        PhoneNumber: "",
         Address: "",
         IsCustomer: true,
         IsSupplier: false
@@ -254,7 +260,7 @@ const Customer = () => {
   };
 
   const reset = () => {
-    setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", IsCustomer: false, IsSupplier: false });
+    setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", PhoneNumber: "", IsCustomer: false, IsSupplier: false });
     setErrors({});
   };
 
@@ -313,10 +319,14 @@ const Customer = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
             <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.PhoneNumber}</label>
+            <input type="text" name="PhoneNumber" value={objDocType.PhoneNumber} onChange={handleChange} className="form-control" placeholder={objTitle.PhoneNumber} />
           </div>
         </div>
 
@@ -407,7 +417,7 @@ const Customer = () => {
         </div>
 
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
             <input
               type="text"
@@ -418,6 +428,17 @@ const Customer = () => {
               placeholder={objTitle.TaxNumber}
             />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">{objTitle.PhoneNumber}</label>
+            <input
+              type="text"
+              name="PhoneNumber"
+              value={objDocType.PhoneNumber}
+              onChange={handleChange}
+              className="form-control"
+              placeholder={objTitle.PhoneNumber}
+            />
           </div>
         </div>
 
