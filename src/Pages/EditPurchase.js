@@ -197,25 +197,33 @@ const EditPurchase = () => {
   };
 
   const AddDocItem = async (obj) => {
-    console.log(obj);
     const response = await axiosInstance.post("/Purchase/AddDocumentItem", obj);
     if (response.data.result) {
       showSuccess(t("Success"), t("Purchase item added successfully"));
+    } else {
+      alert("Error adding item");
     }
   };
 
   const EditDocItem = async (obj) => {
-    console.log(obj);
     obj.isPrePaid = objPurchase.isPrePaid;
     const response = await axiosInstance.put("/Purchase/UpdateDocumentItem", obj);
     if (response.data.result) {
       showSuccess(t("Success"), t("Purchase item edited successfully"));
+    } else {
+      alert("Error adding item");
     }
   };
 
   const Delete = async (index) => {
     const obj = objPurchase.documentItems[index];
     const response = await axiosInstance.delete(`/Purchase/DeleteDocumentItem/${obj.id}`);
+    if (response.data.result) {
+      showSuccess(t("Success"), t("Purchase item deleted successfully"));
+      removeRow(index);
+    } else {
+      alert("Error deleting item");
+    }
   }
 
   // ===================== EFFECT =====================
@@ -299,7 +307,7 @@ const EditPurchase = () => {
             <div className="row g-2 align-items-end border rounded p-3">
               <div className="col-md-4">
                 <label>{t("Item")}</label>
-                {r.itemId > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
+                {r.id > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
                 <AsyncSelect loadOptions={arrItem} onChange={(o) => {
                     updateRow(index, "itemId", o.value);
                     updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);

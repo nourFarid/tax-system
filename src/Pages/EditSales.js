@@ -189,20 +189,32 @@ const EditSale = () => {
   };
 
   const AddDocItem = async (obj) => {
-    console.log(obj);
     const response = await axiosInstance.post("/Sales/AddDocumentItem", obj);
     if (response.data.result) {
       showSuccess(t("Success"), t("Sale item added successfully"));
+    } else {
+      alert("Error adding item");
     }
   };
 
   const EditDocItem = async (obj) => {
-    console.log(obj);
     const response = await axiosInstance.put("/Sales/UpdateDocumentItem", obj);
     if (response.data.result) {
       showSuccess(t("Success"), t("Sale item edited successfully"));
+    } else {
+      alert("Error adding item");
     }
   };
+  const Delete = async (index) => {
+    const obj = objSale.documentItems[index];
+    const response = await axiosInstance.delete(`/Sales/DeleteDocumentItem/${obj.id}`);
+    if (response.data.result) {
+      showSuccess(t("Success"), t("Sale item deleted successfully"));
+      removeRow(index);
+    } else {
+      alert("Error deleting item");
+    }
+  }
   // ===================== EFFECT =====================
   useEffect(() => {
     fetchDocType();
@@ -280,10 +292,9 @@ const EditSale = () => {
         {objSale.documentItems.map((r, index) => (
           <div key={index} className="mt-4">
             <div className="row g-2 align-items-end border rounded p-3">
-
               <div className="col-md-4">
                 <label>{t("Item")}</label>
-                {r.itemId > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
+                {r.id > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
                 <AsyncSelect loadOptions={arrItem}
                   onChange={(o) => {
                     updateRow(index, "itemId", o.value);
@@ -293,12 +304,7 @@ const EditSale = () => {
 
               <div className="col-md-1">
                 <label>{t("Price")}</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={r.unitPrice}
-                  onChange={e => updateRow(index, "unitPrice", +e.target.value)}
-                />
+                <input type="number" className="form-control" value={r.unitPrice} onChange={e => updateRow(index, "unitPrice", +e.target.value)}/>
               </div>
 
               <div className="col-md-1">
@@ -313,24 +319,12 @@ const EditSale = () => {
 
               <div className="col-md-1">
                 <label>{t("Tax")}</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={r.tax}
-                  onChange={e => updateRow(index, "tax", +e.target.value)}
-                />
+                <input type="number" className="form-control" value={r.tax} onChange={e => updateRow(index, "tax", +e.target.value)} />
               </div>
 
               <div className="col-md-2">
                 <label>{t("Document Type")}</label>
-                <select
-                  className="form-control"
-                  value={r.documentTypeId}
-                  onChange={e => {
-                    updateRow(index, "documentTypeId", +e.target.value);
-                    SetStatmentType(+e.target.value);
-                  }}
-                >
+                <select className="form-control" value={r.documentTypeId} onChange={e => { updateRow(index, "documentTypeId", +e.target.value); SetStatmentType(+e.target.value); }}>
                   <option value={-1}>{t("Document Type")}</option>
                   {objDocType.map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -340,13 +334,7 @@ const EditSale = () => {
 
               <div className="col-md-2">
                 <label>{t("Statement Type")}</label>
-                <select
-                  className="form-control"
-                  value={r.statementTypeId}
-                  onChange={e =>
-                    updateRow(index, "statementTypeId", +e.target.value)
-                  }
-                >
+                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value) }>
                   <option value={-1}>{t("Statement Type")}</option>
                   {GetStatmentType(r.documentTypeId).map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -355,13 +343,7 @@ const EditSale = () => {
               </div>
               <div className="col-md-2">
               <label>{t("Item Type")}</label>
-              <select
-                className="form-control"
-                value={r.itemTypeId}
-                onChange={(e) =>
-                  updateRow(index, "itemTypeId", Number(e.target.value))
-                }
-              >
+              <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value)) }>
                 <option value={-1}>{t("Item Type")}</option>
                 {objItemType.map((type) => (
                   <option key={type.id} value={type.id}>
@@ -372,22 +354,26 @@ const EditSale = () => {
             </div>
 
             <div className="col-md-1 text-end">
-              {objSale.documentItems.length > 1 && (
-                <button className="btn btn-danger" onClick={() => removeRow(index)}>
-                  ✕
-                </button>
-              )}
-            </div>
-            <div className="col-md-3 text-end">
-              {r.id ?
-              <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
-                {t("Save")}
-              </button> :
-              <button className="btn btn-primary" onClick={() => AddDocItem(r)}>
-                {t("Save")}
-              </button>
-              }
-            </div>
+                {r.id ?
+                  <button className="btn btn-danger" onClick={() => Delete(index)}>
+                    Delete
+                  </button>
+                  :
+                  <button className="btn btn-danger" onClick={() => removeRow(index)}>
+                    ✕
+                  </button>}
+              </div>
+
+              <div className="col-md-3 text-end">
+                {r.id ?
+                  <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
+                    {t("Save")}
+                  </button> :
+                  <button className="btn btn-primary" onClick={() => AddDocItem(r)}>
+                    {t("Save")}
+                  </button>
+                }
+              </div>
 
             </div>
           </div>
