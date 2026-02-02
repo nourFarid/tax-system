@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const emptyRow = {
   itemId: -1,
@@ -184,7 +185,7 @@ const EditSale = () => {
   const Edit = async () => {
     const response = await axiosInstance.put("/Sales/Update", objSale);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale Edited successfully"));
+      toast.success(t("Sale Edited successfully"));
     }
   };
 
@@ -192,7 +193,7 @@ const EditSale = () => {
     console.log(obj);
     const response = await axiosInstance.post("/Sales/AddDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale item added successfully"));
+      toast.success(t("Sale item added successfully"));
     }
   };
 
@@ -200,7 +201,7 @@ const EditSale = () => {
     console.log(obj);
     const response = await axiosInstance.put("/Sales/UpdateDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale item edited successfully"));
+      toast.success(t("Sale item edited successfully"));
     }
   };
   // ===================== EFFECT =====================
@@ -431,7 +432,7 @@ const EditSale = () => {
           </div>
         </div>
       </div>
-
+      <ToastContainer />
       <SwalComponent />
     </>
   );

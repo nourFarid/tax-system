@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const emptyRow = {
   itemId: -1,
@@ -91,7 +92,7 @@ const EditPurchase = () => {
 
   // ===================== API =====================
   const listTransactionNature = async () => {
-    const res = await axiosInstance.post("TransactionNature/ListAll",{});
+    const res = await axiosInstance.post("TransactionNature/ListAll", {});
     if (res.data.result) {
       setArrTransactionNature(res.data.data);
     }
@@ -192,7 +193,10 @@ const EditPurchase = () => {
   const Edit = async () => {
     const response = await axiosInstance.put("/Purchase/Update", objPurchase);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase Edited successfully"));
+      toast.success(t("Purchase Edited successfully"));
+    }
+    else {
+      toast.error(response.data.message);
     }
   };
 
@@ -200,7 +204,10 @@ const EditPurchase = () => {
     console.log(obj);
     const response = await axiosInstance.post("/Purchase/AddDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase item added successfully"));
+      toast.success(t("Purchase item added successfully"));
+    }
+    else {
+      toast.error(response.data.message);
     }
   };
 
@@ -209,13 +216,22 @@ const EditPurchase = () => {
     obj.isPrePaid = objPurchase.isPrePaid;
     const response = await axiosInstance.put("/Purchase/UpdateDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase item edited successfully"));
+      toast.success(t("Purchase item edited successfully"));
+    }
+    else {
+      toast.error(response.data.message);
     }
   };
 
   const Delete = async (index) => {
     const obj = objPurchase.documentItems[index];
     const response = await axiosInstance.delete(`/Purchase/DeleteDocumentItem/${obj.id}`);
+    if (response.data.result) {
+      toast.success(t("Purchase item deleted successfully"));
+    }
+    else {
+      toast.error(response.data.message);
+    }
   }
 
   // ===================== EFFECT =====================
@@ -262,27 +278,27 @@ const EditPurchase = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Invoice Number")}</label>
-            <input className="form-control" value={objPurchase.invoiceNumber} onChange={e => setObjPurchase(prev => ({ ...prev, invoiceNumber: e.target.value })) } />
+            <input className="form-control" value={objPurchase.invoiceNumber} onChange={e => setObjPurchase(prev => ({ ...prev, invoiceNumber: e.target.value }))} />
           </div>
 
           <div className="col-md-6">
             <label>{t("Issue Date")}</label>
-            <input type="date" className="form-control" value={objPurchase.issueDate} onChange={e => setObjPurchase(prev => ({ ...prev, issueDate: e.target.value })) } />
+            <input type="date" className="form-control" value={objPurchase.issueDate} onChange={e => setObjPurchase(prev => ({ ...prev, issueDate: e.target.value }))} />
           </div>
         </div>
-         <div className="row p-4">
-            <div className="col-md-6">
-              <label className="mb-2 d-block">
-                {t("Prepaid payments")}
-              </label>
+        <div className="row p-4">
+          <div className="col-md-6">
+            <label className="mb-2 d-block">
+              {t("Prepaid payments")}
+            </label>
 
-              <select id="isPrePaid" className="form-control" value={String(objPurchase.isPrePaid)} onChange={(e) => {setObjPurchase(prev => ({ ...prev, isPrePaid: e.target.value === "true" })); setBoolIsChanged(true);}}>
-                <option value={null}>{t("choose Prepaid payments option")}</option>
-                <option value="true">{t("Prepaid payments")}</option>
-                <option value="false">{t("Not Prepaid payments")}</option>
-              </select>
-            </div>
+            <select id="isPrePaid" className="form-control" value={String(objPurchase.isPrePaid)} onChange={(e) => { setObjPurchase(prev => ({ ...prev, isPrePaid: e.target.value === "true" })); setBoolIsChanged(true); }}>
+              <option value={null}>{t("choose Prepaid payments option")}</option>
+              <option value="true">{t("Prepaid payments")}</option>
+              <option value="false">{t("Not Prepaid payments")}</option>
+            </select>
           </div>
+        </div>
 
 
         {!boolIsChanged ? <div className="col-md-3 text-end mt-3">
@@ -300,7 +316,7 @@ const EditPurchase = () => {
               <div className="col-md-4">
                 <label>{t("Item")}</label>
                 {r.itemId > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
-                <AsyncSelect loadOptions={arrItem} onChange={(o) => {
+                  <AsyncSelect loadOptions={arrItem} onChange={(o) => {
                     updateRow(index, "itemId", o.value);
                     updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
                   }} />}
@@ -333,7 +349,7 @@ const EditPurchase = () => {
 
               <div className="col-md-1">
                 <label>{t("Statement Type")}</label>
-                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value) }>
+                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value)}>
                   <option value={-1}>{t("Statement Type")}</option>
                   {GetStatmentType(r.documentTypeId).map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -343,7 +359,7 @@ const EditPurchase = () => {
 
               <div className="col-md-2">
                 <label>{t("Item Type")}</label>
-                <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value)) }>
+                <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value))}>
                   <option value={-1}>{t("Item Type")}</option>
                   {objItemType.map((type) => (
                     <option key={type.id} value={type.id}>
@@ -355,7 +371,7 @@ const EditPurchase = () => {
 
               <div className="col-md-1 form-group">
                 <label>{t("Transaction Nature")}</label>
-                <select className="mt-2 form-control" value={r.transactionNatureId} onChange={(e) => updateRow(index, "transactionNatureId", Number(e.target.value)) }>
+                <select className="mt-2 form-control" value={r.transactionNatureId} onChange={(e) => updateRow(index, "transactionNatureId", Number(e.target.value))}>
                   <option value={-1}>{t("Transaction Nature")}</option>
                   {arrTransactionNature.map((nature) => (
                     <option key={nature.id} value={nature.id}>
@@ -377,7 +393,7 @@ const EditPurchase = () => {
               </div>
 
               <div className="col-md-3 text-end">
-                {!boolIsChanged ? ( r.id ?
+                {!boolIsChanged ? (r.id ?
                   <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
                     {t("Save")}
                   </button> :
@@ -423,16 +439,17 @@ const EditPurchase = () => {
             </div>
           </div>
         </div>
-      {boolIsChanged == true ?
-        <div className="col-md-3 text-end mt-3">
-          <button className="btn btn-primary btn-lg" onClick={Edit}>
-            {t("Save")}
-          </button>
-        </div>
-        :
-        null
-      }
-    </div>
+        {boolIsChanged == true ?
+          <div className="col-md-3 text-end mt-3">
+            <button className="btn btn-primary btn-lg" onClick={Edit}>
+              {t("Save")}
+            </button>
+          </div>
+          :
+          null
+        }
+      </div>
+      <ToastContainer />
 
       <SwalComponent />
     </>

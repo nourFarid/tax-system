@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const emptyRow = {
   itemId: -1,
@@ -156,9 +157,12 @@ const AddPurchase = () => {
   const Add = async () => {
     const response = await axiosInstance.post("/Purchase/Add", objPurchase);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase added successfully"), {
+      toast.success(t("Purchase added successfully"), {
         onConfirm: () => navigate("/Purchase"),
       });
+    }
+    else {
+      toast.error(response.data.message);
     }
   };
 
@@ -405,6 +409,7 @@ const AddPurchase = () => {
           </button>
         </div>
       </div>
+      <ToastContainer />
 
       <SwalComponent />
     </>

@@ -5,7 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
-
+import { toast, ToastContainer } from "react-toastify";
 const emptyRow = {
   itemId: -1,
   unitPrice: 0,
@@ -147,7 +147,7 @@ const AddSale = () => {
   const Add = async () => {
     const response = await axiosInstance.post("/Sales/Add", objSale);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale added successfully"), {
+      toast.success(t("Sale added successfully"), {
         onConfirm: () => navigate("/Sales"),
       });
     }
@@ -388,7 +388,7 @@ const AddSale = () => {
           </button>
         </div>
       </div>
-
+      <ToastContainer />
       <SwalComponent />
     </>
   );
