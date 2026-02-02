@@ -147,9 +147,8 @@ const AddSale = () => {
   const Add = async () => {
     const response = await axiosInstance.post("/Sales/Add", objSale);
     if (response.data.result) {
-      toast.success(t("Sale added successfully"), {
-        onConfirm: () => navigate("/Sales"),
-      });
+      toast.success(t("Sale added successfully"));
+      setTimeout(() => navigate("/Sales"), 1500);
     }
   };
 
