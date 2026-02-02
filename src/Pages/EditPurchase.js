@@ -201,7 +201,6 @@ const EditPurchase = () => {
   };
 
   const AddDocItem = async (obj) => {
-    console.log(obj);
     const response = await axiosInstance.post("/Purchase/AddDocumentItem", obj);
     if (response.data.result) {
       toast.success(t("Purchase item added successfully"));
@@ -212,7 +211,6 @@ const EditPurchase = () => {
   };
 
   const EditDocItem = async (obj) => {
-    console.log(obj);
     obj.isPrePaid = objPurchase.isPrePaid;
     const response = await axiosInstance.put("/Purchase/UpdateDocumentItem", obj);
     if (response.data.result) {

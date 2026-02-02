@@ -100,14 +100,7 @@ const InvalidDocuments = () => {
                                                         <i className="bi bi-pencil-square"></i>
 
                                                     </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-primary"
-                                                        title={t("Edit")} onClick={() => {}}
-                                                    >
-                                                        <i className="bi bi-check2"></i>
-
-                                                    </button>
+                                                   
                                                 </div>
                                             </div>
 
@@ -153,14 +146,7 @@ const InvalidDocuments = () => {
                                                     >
                                                         <i className="bi bi-pencil-square"></i>
 
-                                                    </button>  <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-primary"
-                                                        title={t("Edit")} onClick={() => {}}
-                                                    >
-                                                        <i className="bi bi-check2"></i>
-
-                                                    </button>
+                                                    </button>  
                                                 </div>
                                             </div>
 
@@ -206,15 +192,8 @@ const InvalidDocuments = () => {
                                                         <i className="bi bi-pencil-square"></i>
 
 
-                                                    </button>  <button
-                                                        type="button"
-                                                        className="btn btn-sm btn-primary"
-                                                        title={t("Edit")} onClick={() => {}}
-                                                    >
-                                                        <i className="bi bi-check2"></i>
-
-                                                    </button>
-
+                                                    </button> 
+                                                     
 
                                                 </div>
                                             </div>
