@@ -70,7 +70,7 @@ const Purchase = () => {
           );
 
           if (res.data.type === "application/json") {
-            showError(t("Error"), t("No data to export"));
+            toast.error(t("No data to export"));
             return;
           }
 
@@ -85,7 +85,7 @@ const Purchase = () => {
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          showError(t("Error"), t("Export failed"));
+          toast.error(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -108,7 +108,7 @@ const Purchase = () => {
           );
 
           if (res.data.type === "application/json") {
-            showError(t("Error"), t("No data to export"));
+            toast.error(t("No data to export"));
             return;
           }
 
@@ -123,7 +123,7 @@ const Purchase = () => {
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          showError(t("Error"), t("Export failed"));
+          toast.error(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -143,16 +143,16 @@ const Purchase = () => {
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },
-        {
-  label: t("Status"),
-  accessor: "isValid",
-  render: (value) =>
-    value ? (
-      <span className="badge bg-success">{t("Valid")}</span>
-    ) : (
-      <span className="badge bg-danger">{t("Invalid")}</span>
-    )
-}
+    {
+      label: t("Status"),
+      accessor: "isValid",
+      render: (value) =>
+        value ? (
+          <span className="badge bg-success">{t("Valid")}</span>
+        ) : (
+          <span className="badge bg-danger">{t("Invalid")}</span>
+        )
+    }
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -161,32 +161,32 @@ const Purchase = () => {
     try {
       const res = await axiosInstance.post("FiscalYear/ListAll", {});
       if (!res.data.result) {
-        showError(t("Error"), res.data.message);
+        toast.error(res.data.message);
 
         return;
       }
       setArrFiscalYear(res.data.data);
     } catch {
-      showError(t("Error"), t("Failed to load fiscal years"));
+      toast.error(t("Failed to load fiscal years"));
 
     }
   };
-const MarkInvalid = async (row) => {
-  try {
-    const res = await axiosInstance.put(
-      `Document/MarkInvalid/${row.docId}?type=Sale`
-    );
+  const MarkInvalid = async (row) => {
+    try {
+      const res = await axiosInstance.put(
+        `Document/MarkInvalid/${row.docId}?type=Sale`
+      );
 
-    if (res.data.result) {
-      toast.success(res.data.message);
-      fetchPurchase(pageNumber);
-    } else {
-      showError(t("Error"), res.data.message);
+      if (res.data.result) {
+        toast.success(res.data.message);
+        fetchPurchase(pageNumber);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(t("Something went wrong"));
     }
-  } catch (error) {
-    showError(t("Error"), t("Something went wrong"));
-  }
-};
+  };
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
       (fy) => fy.id === Number(fiscalYearId)
@@ -233,10 +233,10 @@ const MarkInvalid = async (row) => {
         setTotalCount(res.data.data.totalCount);
         setPageNumber(res.data.data.pageNumber);
       } else {
-        setError(res.data.message || t("Failed to fetch data"));
+        toast.error(res.data.message || t("Failed to fetch data"));
       }
     } catch {
-      setError(t("Failed to fetch data"));
+      toast.error(t("Failed to fetch data"));
     } finally {
       setLoading(false);
     }
@@ -247,14 +247,14 @@ const MarkInvalid = async (row) => {
     try {
       const res = await axiosInstance.delete(`Purchase/${objCurrentPurchase.docId}`);
       if (res.data.result) {
-        showSuccess(t("Success"), res.data.message);
+        toast.success(res.data.message);
         hideModal("Delete");
         fetchPurchase(pageNumber);
       } else {
-        showError(t("Error"), res.data.message);
+        toast.error(res.data.message);
       }
     } catch {
-      showError(t("Error"), t("Delete failed"));
+      toast.error(t("Delete failed"));
     }
   };
 
@@ -393,20 +393,20 @@ const MarkInvalid = async (row) => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
-                      customActions={(row) => (
-    <>
-      {!row.isInvalid && (
-        <button
-          type="button"
-          className="btn btn-sm btn-secondary"
-          title={t("Mark Invalid")}
-          onClick={() => MarkInvalid(row)}
-        >
-          <i className="bi bi-x-circle"></i>
-        </button>
-      )}
-    </>
-  )}
+          customActions={(row) => (
+            <>
+              {!row.isInvalid && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  title={t("Mark Invalid")}
+                  onClick={() => MarkInvalid(row)}
+                >
+                  <i className="bi bi-x-circle"></i>
+                </button>
+              )}
+            </>
+          )}
         />
 
         <Pagination
@@ -435,6 +435,7 @@ const MarkInvalid = async (row) => {
           {objTitle.QuestionMark}
         </p>
       </Modal>
+      <ToastContainer />
 
       <SwalComponent />
     </>

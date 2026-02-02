@@ -6,6 +6,7 @@ import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
 import { useParams } from 'react-router-dom';
+import { toast, ToastContainer } from "react-toastify";
 
 const emptyRow = {
   itemId: -1,
@@ -186,25 +187,21 @@ const EditSale = () => {
   const Edit = async () => {
     const response = await axiosInstance.put("/Sales/Update", objSale);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale Edited successfully"));
+      toast.success(t("Sale Edited successfully"));
     }
   };
 
   const AddDocItem = async (obj) => {
     const response = await axiosInstance.post("/Sales/AddDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale item added successfully"));
-    } else {
-      alert("Error adding item");
+      toast.success(t("Sale item added successfully"));
     }
   };
 
   const EditDocItem = async (obj) => {
     const response = await axiosInstance.put("/Sales/UpdateDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Sale item edited successfully"));
-    } else {
-      alert("Error adding item");
+      toast.success(t("Sale item edited successfully"));
     }
   };
   const Delete = async (index) => {
@@ -306,7 +303,7 @@ const EditSale = () => {
 
               <div className="col-md-1">
                 <label>{t("Price")}</label>
-                <input type="number" className="form-control" value={r.unitPrice} onChange={e => updateRow(index, "unitPrice", +e.target.value)}/>
+                <input type="number" className="form-control" value={r.unitPrice} onChange={e => updateRow(index, "unitPrice", +e.target.value)} />
               </div>
 
               <div className="col-md-1">
@@ -336,7 +333,7 @@ const EditSale = () => {
 
               <div className="col-md-2">
                 <label>{t("Statement Type")}</label>
-                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value) }>
+                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value)}>
                   <option value={-1}>{t("Statement Type")}</option>
                   {GetStatmentType(r.documentTypeId).map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -344,18 +341,18 @@ const EditSale = () => {
                 </select>
               </div>
               <div className="col-md-2">
-              <label>{t("Item Type")}</label>
-              <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value)) }>
-                <option value={-1}>{t("Item Type")}</option>
-                {objItemType.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <label>{t("Item Type")}</label>
+                <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value))}>
+                  <option value={-1}>{t("Item Type")}</option>
+                  {objItemType.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="col-md-1 text-end">
+              <div className="col-md-1 text-end">
                 {r.id ?
                   <button className="btn btn-danger" onClick={() => Delete(index)}>
                     Delete
@@ -419,7 +416,7 @@ const EditSale = () => {
           </div>
         </div>
       </div>
-
+      <ToastContainer />
       <SwalComponent />
     </>
   );
