@@ -14,10 +14,13 @@ const User = () => {
 
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [positions, setPositions] = useState([]);
+    const [filteredPositions, setFilteredPositions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
-
+    const [showPassword, setShowPassword] = useState(false);
     const objTitle = useMemo(
         () => ({
             AddUser: t("Add User"),
@@ -29,6 +32,10 @@ const User = () => {
             FullName: t("Full Name"),
             UserCode: t("User Code"),
             Role: t("Role"),
+            Department: t("Department"),
+            Position: t("Position"),
+            SelectDepartment: t("Select Department"),
+            SelectPosition: t("Select Position"),
             IsActive: t("Active"),
             Save: t("Save"),
             Cancel: t("Cancel"),
@@ -47,6 +54,8 @@ const User = () => {
         FullName: "",
         UserCode: "",
         RoleId: "",
+        DepartmentId: "",
+        PositionId: "",
         IsActive: true
     });
     const { showSuccess, showError, SwalComponent } = useSwal();
@@ -61,8 +70,12 @@ const User = () => {
             FullName: "",
             UserCode: "",
             RoleId: "",
+            DepartmentId: "",
+            PositionId: "",
             IsActive: true
         });
+        setFilteredPositions([]);
+        setShowPassword(false);
         setErrors({});
     };
 
@@ -88,14 +101,28 @@ const User = () => {
 
     const columns = [
         { label: t("Username"), accessor: "userName" },
-        { label: t("Email"), accessor: "email" },
         { label: t("Full Name"), accessor: "fullName" },
+        { label: t("Email"), accessor: "email" },
         {
             label: t("User Role"), accessor: "roles", render: (value) => {
                 if (Array.isArray(value) && value.length > 0) {
                     return value.map(r => r.roleName).join(", ");
                 }
                 return "-";
+            }
+        },
+        {
+            label: t("Department"), accessor: "departmentId", render: (value) => {
+                if (!value || value === 0) return "-";
+                const dept = departments.find(d => d.id === value);
+                return dept ? dept.name : "-";
+            }
+        },
+        {
+            label: t("Position"), accessor: "positionId", render: (value) => {
+                if (!value || value === 0) return "-";
+                const pos = positions.find(p => p.id === value);
+                return pos ? pos.name : "-";
             }
         },
         { label: t("User Code"), accessor: "userName", render: (value) => value ? value.replace(/\D/g, "") : "" },
@@ -115,31 +142,31 @@ const User = () => {
         const newErrors = {};
 
         if (!objUser.Username || objUser.Username.trim() === "") {
-            newErrors.Username = "Username is required";
+            newErrors.Username = t("Username is required");
         }
 
         if (!objUser.Email || objUser.Email.trim() === "") {
-            newErrors.Email = "Email is required";
+            newErrors.Email = t("Email is required");
         } else {
             // Basic email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(objUser.Email)) {
-                newErrors.Email = "Invalid email format";
+                newErrors.Email = t("Invalid email format");
             }
         }
 
         if (!objUser.FullName || objUser.FullName.trim() === "") {
-            newErrors.FullName = "Full Name is required";
+            newErrors.FullName = t("Full Name is required");
         }
 
         // UserCode validation - required only when adding, optional when editing
         if (!isEdit) {
             if (!objUser.UserCode || objUser.UserCode.trim() === "") {
-                newErrors.UserCode = "User Code is required";
+                newErrors.UserCode = t("User Code is required");
             } else {
                 const userCodeNum = parseInt(objUser.UserCode, 10);
                 if (isNaN(userCodeNum) || userCodeNum <= 0) {
-                    newErrors.UserCode = "User Code must be a positive number";
+                    newErrors.UserCode = t("User Code must be a positive number");
                 }
             }
         } else {
@@ -147,14 +174,14 @@ const User = () => {
             if (objUser.UserCode && objUser.UserCode.trim() !== "") {
                 const userCodeNum = parseInt(objUser.UserCode, 10);
                 if (isNaN(userCodeNum) || userCodeNum <= 0) {
-                    newErrors.UserCode = "User Code must be a positive number";
+                    newErrors.UserCode = t("User Code must be a positive number");
                 }
             }
         }
 
         // Password is required only when adding, optional when editing
         if (!isEdit && (!objUser.Password || objUser.Password.trim() === "")) {
-            newErrors.Password = "Password is required";
+            newErrors.Password = t("Password is required");
         }
 
         // Password strength validation (if password is provided)
@@ -188,8 +215,8 @@ const User = () => {
 
             }
         } catch (e) {
-            setError("Failed to fetch users");
-            showError("Error", "Failed to fetch users");
+            setError(t("Failed to fetch users"));
+            showError(t("Error"), t("Failed to fetch users"));
         } finally {
             setLoading(false);
         }
@@ -204,6 +231,43 @@ const User = () => {
             }
         } catch (e) {
             console.error("Failed to fetch roles", e);
+        }
+    };
+
+    const fetchDepartments = async () => {
+        try {
+            const res = await axiosInstance.post("Department/ListAll", {});
+            if (res.data.result) {
+                setDepartments(res.data.data || []);
+            } else if (Array.isArray(res.data)) {
+                setDepartments(res.data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch departments", e);
+        }
+    };
+
+    const fetchPositions = async () => {
+        try {
+            const res = await axiosInstance.post("Position/ListAll", {});
+            if (res.data.result) {
+                setPositions(res.data.data || []);
+            } else if (Array.isArray(res.data)) {
+                setPositions(res.data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch positions", e);
+        }
+    };
+
+    // Filter positions based on selected department
+    const handleDepartmentChange = (departmentId) => {
+        setObjUser((prev) => ({ ...prev, DepartmentId: departmentId, PositionId: "" }));
+        if (departmentId) {
+            const filtered = positions.filter(p => p.departmentId === parseInt(departmentId));
+            setFilteredPositions(filtered);
+        } else {
+            setFilteredPositions([]);
         }
     };
 
@@ -223,6 +287,14 @@ const User = () => {
         // Extract userCode from userName if not available (remove non-digit characters)
         const extractedUserCode = row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : "");
 
+        // Filter positions based on the user's current department
+        if (row.departmentId && row.departmentId > 0) {
+            const filtered = positions.filter(p => p.departmentId === row.departmentId);
+            setFilteredPositions(filtered);
+        } else {
+            setFilteredPositions([]);
+        }
+
         setObjUser({
             Id: row.userId,
             Username: row.userName,
@@ -231,6 +303,8 @@ const User = () => {
             FullName: row.fullName,
             UserCode: extractedUserCode,
             RoleId: (row.roles && row.roles.length > 0) ? row.roles[0].roleId : "",
+            DepartmentId: row.departmentId && row.departmentId > 0 ? row.departmentId : "",
+            PositionId: row.positionId && row.positionId > 0 ? row.positionId : "",
             IsActive: row.available ?? row.isActive ?? true
         });
 
@@ -258,8 +332,15 @@ const User = () => {
 
     const handleToggle = async (row) => {
         try {
+            // Get the current status from the row and toggle it
             const currentStatus = row.available ?? row.isActive ?? false;
             const newStatus = !currentStatus;
+
+            // Get roleId from roles array if available
+            const roleId = row.roleId || (row.roles && row.roles.length > 0 ? row.roles[0].roleId : null);
+
+            // Get userCode - extract from userName if not available (GS + number format)
+            const userCode = row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : "");
 
             const payload = {
                 userId: row.userId,
@@ -269,8 +350,10 @@ const User = () => {
                 available: newStatus,
                 isActive: newStatus,
                 newUser: false,
-                userCode: row.userCode || (row.userName ? row.userName.replace(/\D/g, "") : null),
-                roleId: row.roleId
+                userCode: userCode,
+                roleId: roleId,
+                departmentId: row.departmentId || 0,
+                positionId: row.positionId || 0
             };
 
             const res = await axiosInstance.post("User/Update", payload);
@@ -289,26 +372,33 @@ const User = () => {
         if (!validateForm(false)) return;
         try {
             const payload = {
-                Username: objUser.Username,
-                Email: objUser.Email,
-                Password: objUser.Password,
-                FullName: objUser.FullName,
-                UserCode: objUser.UserCode,
-                RoleId: objUser.RoleId,
-                IsActive: objUser.IsActive
+                userName: objUser.Username,
+                email: objUser.Email,
+                password: objUser.Password,
+                fullName: objUser.FullName,
+                userCode: objUser.UserCode,
+                roleId: objUser.RoleId,
+                departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
+                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0,
+                isActive: objUser.IsActive,
+                newUser: true
             };
             const response = await axiosInstance.post("User/Add", payload);
             console.log("Add response:", response.data);
+            if (!response.data.result) {
+                toast.error(response.data.message);
+                return;
+            }
 
             resetForm();
 
             hideModal("AddUser");
             await fetchUsers();
-            toast.success("User added successfully!");
+            toast.success(t("User added successfully!"));
 
         } catch (error) {
             console.error("Failed to add User", error);
-            toast.error(error.response?.data?.message || "Failed to add User");
+            toast.error(error.response?.data?.message || t("Failed to add User"));
         }
     };
 
@@ -325,7 +415,9 @@ const User = () => {
                 newUser: false,
                 // Send null for empty values instead of empty strings
                 userCode: (objUser.UserCode && objUser.UserCode.toString().trim() !== "") ? objUser.UserCode : null,
-                roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null
+                roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null,
+                departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
+                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0
             };
 
             // Only include password if it has a value (completely exclude from payload otherwise)
@@ -347,20 +439,22 @@ const User = () => {
 
                 hideModal("EditUser");
                 await fetchUsers();
-                toast.success("User updated successfully!");
+                toast.success(t("User updated successfully!"));
             } else {
-                toast.error(response.data?.message || "Failed to update user");
+                toast.error(response.data?.message || t("Failed to update user"));
             }
 
         } catch (error) {
             console.log(error);
-            showError("Error", error.response?.data?.message || "Failed to update user");
+            showError(t("Error"), error.response?.data?.message || t("Failed to update user"));
         }
     };
 
     useEffect(() => {
         fetchUsers();
         fetchRoles();
+        fetchDepartments();
+        fetchPositions();
     }, []);
 
     if (loading) return <div>{t("Loading...")}</div>;
@@ -408,7 +502,7 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Username}</label>
                         <input type="text" name="Username" value={objUser.Username} onChange={handleChange} className="form-control" placeholder={objTitle.Username} autoComplete="off" readOnly disabled style={{ backgroundColor: "#e9ecef" }} />
-                        <small className="text-muted">Auto-generated: GS + User Code</small>
+                        <small className="text-muted">{t("Auto-generated: GS + User Code")}</small>
                     </div>
                 </div>
 
@@ -420,9 +514,27 @@ const User = () => {
                     </div>
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Password}</label>
-                        <input type="password" name="Password" value={objUser.Password} onChange={handleChange} className={`form-control ${errors.Password ? "is-invalid" : ""}`} placeholder={objTitle.Password} autoComplete="new-password" />
-                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
-                        <small className="text-muted">Must contain: uppercase, lowercase, and special character (!@#$%^&*)</small>
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="Password"
+                                value={objUser.Password}
+                                onChange={handleChange}
+                                className={`form-control ${errors.Password ? "is-invalid" : ""}`}
+                                placeholder={objTitle.Password}
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                            >
+                                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                            </button>
+                        </div>
+                        {errors.Password && <div className="text-danger small">{errors.Password}</div>}
+                        <small className="text-muted">{t("Must contain: uppercase, lowercase, and special character (!@#$%^&*)")}</small>
                     </div>
                 </div>
 
@@ -436,9 +548,41 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Role}</label>
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                            <option value="">Select Role</option>
+                            <option value="">{t("Select Role")}</option>
                             {roles.map(role => (
                                 <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Department}</label>
+                        <select
+                            name="DepartmentId"
+                            value={objUser.DepartmentId}
+                            onChange={(e) => handleDepartmentChange(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="">{objTitle.SelectDepartment}</option>
+                            {departments.map(dept => (
+                                <option key={dept.id} value={dept.id}>{dept.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Position}</label>
+                        <select
+                            name="PositionId"
+                            value={objUser.PositionId}
+                            onChange={handleChange}
+                            className="form-control"
+                            disabled={!objUser.DepartmentId}
+                        >
+                            <option value="">{objTitle.SelectPosition}</option>
+                            {filteredPositions.map(pos => (
+                                <option key={pos.id} value={pos.id}>{pos.name}</option>
                             ))}
                         </select>
                     </div>
@@ -493,7 +637,7 @@ const User = () => {
                             disabled
                             style={{ backgroundColor: "#e9ecef" }}
                         />
-                        <small className="text-muted">Auto-generated: GS + User Code</small>
+                        <small className="text-muted">{t("Auto-generated: GS + User Code")}</small>
                     </div>
                 </div>
 
@@ -529,7 +673,7 @@ const User = () => {
                     <div className="col-md-6">
                         <label className="form-label">{objTitle.Role}</label>
                         <select name="RoleId" value={objUser.RoleId} onChange={handleChange} className="form-control">
-                            <option value="">Select Role</option>
+                            <option value="">{t("Select Role")}</option>
                             {roles.map(role => (
                                 <option key={role.roleId} value={role.roleId}>{role.roleName}</option>
                             ))}
@@ -537,18 +681,60 @@ const User = () => {
                     </div>
 
                     <div className="col-md-6">
-                        <label className="form-label">{objTitle.Password} (Optional)</label>
-                        <input
-                            type="password"
-                            name="Password"
-                            value={objUser.Password}
+                        <label className="form-label">{objTitle.Password} ({t("Optional")})</label>
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="Password"
+                                value={objUser.Password}
+                                onChange={handleChange}
+                                className={`form-control ${errors.Password ? "is-invalid" : ""}`}
+                                placeholder={t("Leave blank to keep current password")}
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                            >
+                                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                            </button>
+                        </div>
+                        {errors.Password && <div className="text-danger small">{errors.Password}</div>}
+                        <small className="text-muted">{t("If changing: Must contain uppercase, lowercase, and special character")}</small>
+                    </div>
+                </div>
+
+                <div className="row mt-3">
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Department}</label>
+                        <select
+                            name="DepartmentId"
+                            value={objUser.DepartmentId}
+                            onChange={(e) => handleDepartmentChange(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="">{objTitle.SelectDepartment}</option>
+                            {departments.map(dept => (
+                                <option key={dept.id} value={dept.id}>{dept.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-6">
+                        <label className="form-label">{objTitle.Position}</label>
+                        <select
+                            name="PositionId"
+                            value={objUser.PositionId}
                             onChange={handleChange}
-                            className={`form-control ${errors.Password ? "is-invalid" : ""}`}
-                            placeholder="Leave blank to keep current password"
-                            autoComplete="new-password"
-                        />
-                        {errors.Password && <div className="invalid-feedback">{errors.Password}</div>}
-                        <small className="text-muted">If changing: Must contain uppercase, lowercase, and special character</small>
+                            className="form-control"
+                            disabled={!objUser.DepartmentId}
+                        >
+                            <option value="">{objTitle.SelectPosition}</option>
+                            {filteredPositions.map(pos => (
+                                <option key={pos.id} value={pos.id}>{pos.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 

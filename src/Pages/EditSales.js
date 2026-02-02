@@ -8,7 +8,7 @@ import { useSwal } from "../Hooks/Alert/Swal";
 
 const emptyRow = {
   itemId: -1,
-  documentId:-1,
+  documentId: -1,
   unitPrice: 0,
   amount: 1,
   statementTypeId: -1,
@@ -115,7 +115,7 @@ const EditSale = () => {
     setObjDocType(res.data.data);
   };
 
-    const fetchItemType = async () => {
+  const fetchItemType = async () => {
     const res = await axiosInstance.get("/ItemType/ListAll");
     setObjItemType(res.data.data);
   };
@@ -133,37 +133,37 @@ const EditSale = () => {
 
   const loadSale = async () => {
     const body = {
-        filter: {id: window.location.pathname.split("/").pop() },
-        pageNumber: 1,
-        pageSize: 1,
-        sortBy: "invoiceDate",
-        isDescending: true,
-        loadOption: [LOAD_OPTION_DOCUMENT_ITEMS],
-      };
+      filter: { id: window.location.pathname.split("/").pop() },
+      pageNumber: 1,
+      pageSize: 1,
+      sortBy: "invoiceDate",
+      isDescending: true,
+      loadOption: [LOAD_OPTION_DOCUMENT_ITEMS],
+    };
 
-      const res = await axiosInstance.post("Sales/List", body);
-      const sale = res.data.data.items[0];
+    const res = await axiosInstance.post("Sales/List", body);
+    const sale = res.data.data.items[0];
 
-      setObjSale(sale);
-      setObjSale(prev => ({
-        ...prev,
-        customerId: sale.customerSupplierId,
-      }));
-      setObjSale(prev => ({
-        ...prev,
-        documentItems: sale.documentItem.map(di => ({
-          ...di,
-          id: di.id,
-          itemId: di.itemId,
-          totalPrice: di.totalPrice,
-          amount: di.amount,
-          unitPrice: di.unitPrice,
-          statementTypeId: di.statementTypeId,
-          itemTypeId: di.itemTypeId,
-          documentTypeId: di.documentTypeId,
-          tax: di.tax,
-        })),
-      }));
+    setObjSale(sale);
+    setObjSale(prev => ({
+      ...prev,
+      customerId: sale.customerSupplierId,
+    }));
+    setObjSale(prev => ({
+      ...prev,
+      documentItems: sale.documentItem.map(di => ({
+        ...di,
+        id: di.id,
+        itemId: di.itemId,
+        totalPrice: di.totalPrice,
+        amount: di.amount,
+        unitPrice: di.unitPrice,
+        statementTypeId: di.statementTypeId,
+        itemTypeId: di.itemTypeId,
+        documentTypeId: di.documentTypeId,
+        tax: di.tax,
+      })),
+    }));
   };
 
   const SetStatmentType = (docTypeId) => {
@@ -294,12 +294,12 @@ const EditSale = () => {
             <div className="row g-2 align-items-end border rounded p-3">
               <div className="col-md-4">
                 <label>{t("Item")}</label>
-                {r.id > 0 ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
-                <AsyncSelect loadOptions={arrItem}
-                  onChange={(o) => {
-                    updateRow(index, "itemId", o.value);
-                    updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
-                  }} />}
+                {r.itemId > 0 && r.item ? <label className="form-control">[{r.item.code}] {r.item.name}</label> :
+                  <AsyncSelect loadOptions={arrItem}
+                    onChange={(o) => {
+                      updateRow(index, "itemId", o.value);
+                      updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
+                    }} />}
               </div>
 
               <div className="col-md-1">

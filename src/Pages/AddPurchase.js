@@ -89,7 +89,7 @@ const AddPurchase = () => {
 
   // ===================== API =====================
   const listTransactionNature = async () => {
-    const res = await axiosInstance.post("TransactionNature/ListAll",{});
+    const res = await axiosInstance.post("TransactionNature/ListAll", {});
     if (res.data.result) {
       setArrTransactionNature(res.data.data);
     }
@@ -147,8 +147,8 @@ const AddPurchase = () => {
   };
   const GetStatmentType = (docTypeId) => {
     return docTypeId === 2 || docTypeId === 3
-        ? arrSettlementStatment
-        : arrDocumentTypeStatment;
+      ? arrSettlementStatment
+      : arrDocumentTypeStatment;
   };
 
 
@@ -186,11 +186,17 @@ const AddPurchase = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Supplier")}</label>
-            <AsyncSelect loadOptions={arrSupplier} value={objSupplier}
+            <AsyncSelect
+              loadOptions={arrSupplier}
+              value={objSupplier}
+              placeholder={t("Type to search...")}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
               onChange={(o) => {
                 setObjSupplier(o);
                 setObjPurchase(prev => ({ ...prev, supplierId: o.value }));
-              }} />
+              }}
+            />
           </div>
 
           <div className="col-md-6">
@@ -253,11 +259,16 @@ const AddPurchase = () => {
 
               <div className="col-md-4">
                 <label>{t("Item")}</label>
-                <AsyncSelect loadOptions={arrItem}
+                <AsyncSelect
+                  loadOptions={arrItem}
+                  placeholder={t("Type to search...")}
+                  noOptionsMessage={() => t("No options")}
+                  loadingMessage={() => t("Loading...")}
                   onChange={(o) => {
                     updateRow(index, "itemId", o.value);
                     updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
-                  }} />
+                  }}
+                />
               </div>
 
               <div className="col-md-1">
@@ -304,23 +315,23 @@ const AddPurchase = () => {
                   ))}
                 </select>
               </div>
-       <div className="col-md-2">
-  <label>{t("Item Type")}</label>
-  <select
-    className="form-control"
-    value={r.itemTypeId}
-    onChange={(e) =>
-      updateRow(index, "itemTypeId", Number(e.target.value))
-    }
-  >
-    <option value={-1}>{t("Item Type")}</option>
-    {objItemType.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.name}
-      </option>
-    ))}
-  </select>
-</div>
+              <div className="col-md-2">
+                <label>{t("Item Type")}</label>
+                <select
+                  className="form-control"
+                  value={r.itemTypeId}
+                  onChange={(e) =>
+                    updateRow(index, "itemTypeId", Number(e.target.value))
+                  }
+                >
+                  <option value={-1}>{t("Item Type")}</option>
+                  {objItemType.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="col-md-1 form-group">
                 <label>{t("Transaction Nature")}</label>

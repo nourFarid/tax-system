@@ -113,7 +113,7 @@ const AddSale = () => {
     setObjDocType(res.data.data);
   };
 
-    const fetchItemType = async () => {
+  const fetchItemType = async () => {
     const res = await axiosInstance.get("/ItemType/ListAll");
     setObjItemType(res.data.data);
   };
@@ -157,7 +157,7 @@ const AddSale = () => {
   useEffect(() => {
     fetchDocType();
     fetchStatmentType();
-        fetchItemType();
+    fetchItemType();
 
   }, []);
 
@@ -180,6 +180,9 @@ const AddSale = () => {
             <AsyncSelect
               loadOptions={arrCustomer}
               value={objCustomer}
+              placeholder={t("Type to search...")}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
               onChange={(o) => {
                 setObjCustomer(o);
                 setObjSale(prev => ({ ...prev, customerId: o.value }));
@@ -236,6 +239,9 @@ const AddSale = () => {
                 <label>{t("Item")}</label>
                 <AsyncSelect
                   loadOptions={arrItem}
+                  placeholder={t("Type to search...")}
+                  noOptionsMessage={() => t("No options")}
+                  loadingMessage={() => t("Loading...")}
                   onChange={(o) => {
                     updateRow(index, "itemId", o.value);
                     updateRow(index, "unitPrice", o.objItem?.unitPrice || 0);
@@ -305,23 +311,23 @@ const AddSale = () => {
                   ))}
                 </select>
               </div>
-                   <div className="col-md-2">
-  <label>{t("Item Type")}</label>
-  <select
-    className="form-control"
-    value={r.itemTypeId}
-    onChange={(e) =>
-      updateRow(index, "itemTypeId", Number(e.target.value))
-    }
-  >
-    <option value={-1}>{t("Item Type")}</option>
-    {objItemType.map((type) => (
-      <option key={type.id} value={type.id}>
-        {type.name}
-      </option>
-    ))}
-  </select>
-</div>
+              <div className="col-md-2">
+                <label>{t("Item Type")}</label>
+                <select
+                  className="form-control"
+                  value={r.itemTypeId}
+                  onChange={(e) =>
+                    updateRow(index, "itemTypeId", Number(e.target.value))
+                  }
+                >
+                  <option value={-1}>{t("Item Type")}</option>
+                  {objItemType.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="col-md-1 text-end">
                 {objSale.documentItems.length > 1 && (

@@ -7,6 +7,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { toast, ToastContainer } from "react-toastify";
 
 const Sales = () => {
   const { t } = useTranslate();
@@ -28,7 +29,7 @@ const Sales = () => {
     quarterId: -1,
     invoiceDateFrom: "",
     invoiceDateTo: "",
-    exportWithName:null,
+    exportWithName: null,
   });
 
   // Current sale selected for delete
@@ -59,17 +60,17 @@ const Sales = () => {
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
         try {
-    const payload = {
-      ...objFilter,
-      exportWithName: true,
-    };          const res = await axiosInstance.post(
+          const payload = {
+            ...objFilter,
+            exportWithName: true,
+          }; const res = await axiosInstance.post(
             "sales/ExportCsv",
             payload,
             { responseType: "blob" }
           );
 
           if (res.data.type === "application/json") {
-            alert("No data to export");
+            alert(t("No data to export"));
             return;
           }
 
@@ -80,11 +81,11 @@ const Sales = () => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
+          a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          alert("Export failed");
+          alert(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -95,10 +96,10 @@ const Sales = () => {
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
         try {
-    const payload = {
-      ...objFilter,
-      exportWithName: false,
-    };
+          const payload = {
+            ...objFilter,
+            exportWithName: false,
+          };
           const res = await axiosInstance.post(
             "sales/ExportCsv",
             payload,
@@ -106,23 +107,23 @@ const Sales = () => {
           );
 
           if (res.data.type === "application/json") {
-            alert("No data to export");
+            alert(t("No data to export"));
             return;
           }
 
-       const blob = new Blob([res.data], {
-  type: "text/csv;charset=utf-8",
-});
+          const blob = new Blob([res.data], {
+            type: "text/csv;charset=utf-8",
+          });
 
 
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-        a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
+          a.download = `sales ${new Date().toISOString().split('T')[0]}.csv`;
           a.click();
           window.URL.revokeObjectURL(url);
         } catch {
-          alert("Export failed");
+          alert(t("Export failed"));
         }
       },
       class: "btn btn-sm btn-warning ms-2 float-end",
@@ -141,6 +142,16 @@ const Sales = () => {
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },
+     {
+  label: t("Status"),
+  accessor: "isValid",
+  render: (value) =>
+    value ? (
+      <span className="badge bg-success">{t("Valid")}</span>
+    ) : (
+      <span className="badge bg-danger">{t("Invalid")}</span>
+    )
+}
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -154,9 +165,25 @@ const Sales = () => {
       }
       setArrFiscalYear(res.data.data);
     } catch {
-      alert("Failed to load fiscal years");
+      alert(t("Failed to load fiscal years"));
     }
   };
+const MarkInvalid = async (row) => {
+  try {
+    const res = await axiosInstance.put(
+      `Document/MarkInvalid/${row.docId}?type=Sale`
+    );
+
+    if (res.data.result) {
+      toast.success(res.data.message);
+      fetchsales(pageNumber);
+    } else {
+      showError(t("Error"), res.data.message);
+    }
+  } catch (error) {
+    showError(t("Error"), t("Something went wrong"));
+  }
+};
 
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
@@ -203,10 +230,10 @@ const Sales = () => {
         setTotalCount(res.data.data.totalCount);
         setPageNumber(res.data.data.pageNumber);
       } else {
-        setError(res.data.message || "Failed to fetch data");
+        setError(res.data.message || t("Failed to fetch data"));
       }
     } catch {
-      setError("Failed to fetch data");
+      setError(t("Failed to fetch data"));
     } finally {
       setLoading(false);
     }
@@ -365,6 +392,20 @@ const Sales = () => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
+            customActions={(row) => (
+    <>
+      {!row.isInvalid && (
+        <button
+          type="button"
+          className="btn btn-sm btn-secondary"
+          title={t("Mark Invalid")}
+          onClick={() => MarkInvalid(row)}
+        >
+          <i className="bi bi-x-circle"></i>
+        </button>
+      )}
+    </>
+  )}
         />
 
         <Pagination
@@ -393,6 +434,7 @@ const Sales = () => {
           {objTitle.QuestionMark}
         </p>
       </Modal>
+      <ToastContainer />
 
       <SwalComponent />
     </>
