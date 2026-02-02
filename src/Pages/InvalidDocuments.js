@@ -22,17 +22,17 @@ const InvalidDocuments = () => {
             try {
                 const [salesRes, purchaseRes, doc41Res] = await Promise.all([
                     axiosInstance.post("Sales/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
                     axiosInstance.post("Purchase/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
                     axiosInstance.post("Document41/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
