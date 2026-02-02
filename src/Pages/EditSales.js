@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { useParams } from 'react-router-dom';
 
 const emptyRow = {
   itemId: -1,
@@ -19,6 +20,7 @@ const emptyRow = {
 
 const EditSale = () => {
   const { t } = useTranslate();
+  const { id } = useParams();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
   const { showSuccess, SwalComponent } = useSwal();
@@ -133,7 +135,7 @@ const EditSale = () => {
 
   const loadSale = async () => {
     const body = {
-      filter: { id: window.location.pathname.split("/").pop() },
+      filter: { id },
       pageNumber: 1,
       pageSize: 1,
       sortBy: "invoiceDate",

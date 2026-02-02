@@ -5,6 +5,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 import AsyncSelect from "react-select/async";
 import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
+import { useParams } from 'react-router-dom';
 
 const emptyRow = {
   itemId: -1,
@@ -18,6 +19,8 @@ const emptyRow = {
 };
 
 const EditPurchase = () => {
+  const { id } = useParams();
+  const { docItemId } = useParams();
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
@@ -140,8 +143,11 @@ const EditPurchase = () => {
   };
 
   const loadPurchase = async () => {
+    console.log("==========================================");
+    console.log(docItemId);
+    console.log("");
     const body = {
-      filter: { id: window.location.pathname.split("/").pop() },
+      filter: { id },
       pageNumber: 1,
       pageSize: 1,
       sortBy: "invoiceDate",
@@ -263,6 +269,7 @@ const EditPurchase = () => {
               onChange={e =>
                 setObjPurchase(prev => ({ ...prev, invoiceDate: e.target.value }))
               }
+              disabled={docItemId != undefined || docItemId != null}
             />
           </div>
         </div>
@@ -270,12 +277,12 @@ const EditPurchase = () => {
         <div className="row p-4">
           <div className="col-md-6">
             <label>{t("Invoice Number")}</label>
-            <input className="form-control" value={objPurchase.invoiceNumber} onChange={e => setObjPurchase(prev => ({ ...prev, invoiceNumber: e.target.value })) } />
+            <input className="form-control" value={objPurchase.invoiceNumber} onChange={e => setObjPurchase(prev => ({ ...prev, invoiceNumber: e.target.value })) } disabled={docItemId != undefined || docItemId != null} />
           </div>
 
           <div className="col-md-6">
             <label>{t("Issue Date")}</label>
-            <input type="date" className="form-control" value={objPurchase.issueDate} onChange={e => setObjPurchase(prev => ({ ...prev, issueDate: e.target.value })) } />
+            <input type="date" className="form-control" value={objPurchase.issueDate} onChange={e => setObjPurchase(prev => ({ ...prev, issueDate: e.target.value })) } disabled={docItemId != undefined || docItemId != null} />
           </div>
         </div>
          <div className="row p-4">
@@ -284,7 +291,7 @@ const EditPurchase = () => {
                 {t("Prepaid payments")}
               </label>
 
-              <select id="isPrePaid" className="form-control" value={String(objPurchase.isPrePaid)} onChange={(e) => {setObjPurchase(prev => ({ ...prev, isPrePaid: e.target.value === "true" })); setBoolIsChanged(true);}}>
+              <select id="isPrePaid" className="form-control" value={String(objPurchase.isPrePaid)} onChange={(e) => {setObjPurchase(prev => ({ ...prev, isPrePaid: e.target.value === "true" })); setBoolIsChanged(true); }} disabled={docItemId != undefined || docItemId != null}>
                 <option value={null}>{t("choose Prepaid payments option")}</option>
                 <option value="true">{t("Prepaid payments")}</option>
                 <option value="false">{t("Not Prepaid payments")}</option>
@@ -316,22 +323,22 @@ const EditPurchase = () => {
 
               <div className="col-md-1">
                 <label>{t("Price")}</label>
-                <input type="number" className="form-control" value={r.unitPrice} onChange={e => updateRow(index, "unitPrice", +e.target.value)} />
+                <input type="number" className="form-control" value={r.unitPrice} onChange={e => updateRow(index, "unitPrice", +e.target.value)} disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId} />
               </div>
 
               <div className="col-md-1">
                 <label>{t("Amount")}</label>
-                <input type="number" className="form-control" value={r.amount} onChange={e => updateRow(index, "amount", +e.target.value)} />
+                <input type="number" className="form-control" value={r.amount} onChange={e => updateRow(index, "amount", +e.target.value)} disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId} />
               </div>
 
               <div className="col-md-1">
                 <label>{t("Tax")}</label>
-                <input type="number" className="form-control" value={r.tax} onChange={e => updateRow(index, "tax", +e.target.value)} />
+                <input type="number" className="form-control" value={r.tax} onChange={e => updateRow(index, "tax", +e.target.value)} disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId} />
               </div>
 
               <div className="col-md-2">
                 <label>{t("Document Type")}</label>
-                <select className="form-control" value={r.documentTypeId} onChange={e => { updateRow(index, "documentTypeId", +e.target.value); SetStatmentType(+e.target.value); }}>
+                <select className="form-control" value={r.documentTypeId} onChange={e => { updateRow(index, "documentTypeId", +e.target.value); SetStatmentType(+e.target.value); }} disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId}>
                   <option value={-1}>{t("Document Type")}</option>
                   {objDocType.map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -341,7 +348,7 @@ const EditPurchase = () => {
 
               <div className="col-md-1">
                 <label>{t("Statement Type")}</label>
-                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value) }>
+                <select className="form-control" value={r.statementTypeId} onChange={e => updateRow(index, "statementTypeId", +e.target.value) } disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId}>
                   <option value={-1}>{t("Statement Type")}</option>
                   {GetStatmentType(r.documentTypeId).map(x => (
                     <option key={x.id} value={x.id}>{x.name}</option>
@@ -351,7 +358,7 @@ const EditPurchase = () => {
 
               <div className="col-md-2">
                 <label>{t("Item Type")}</label>
-                <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value)) }>
+                <select className="form-control" value={r.itemTypeId} onChange={(e) => updateRow(index, "itemTypeId", Number(e.target.value)) } disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId}>
                   <option value={-1}>{t("Item Type")}</option>
                   {objItemType.map((type) => (
                     <option key={type.id} value={type.id}>
@@ -363,7 +370,7 @@ const EditPurchase = () => {
 
               <div className="col-md-1 form-group">
                 <label>{t("Transaction Nature")}</label>
-                <select className="mt-2 form-control" value={r.transactionNatureId} onChange={(e) => updateRow(index, "transactionNatureId", Number(e.target.value)) }>
+                <select className="mt-2 form-control" value={r.transactionNatureId} onChange={(e) => updateRow(index, "transactionNatureId", Number(e.target.value)) } disabled={(docItemId != undefined || docItemId != null) && r.id != docItemId}>
                   <option value={-1}>{t("Transaction Nature")}</option>
                   {arrTransactionNature.map((nature) => (
                     <option key={nature.id} value={nature.id}>
