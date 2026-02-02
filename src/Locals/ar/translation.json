@@ -277,5 +277,13 @@
   "No options": "لا توجد خيارات",
   "Type to search...": "اكتب للبحث...",
   "Document type status updated": "تم تحديث حالة نوع المستند",
-  "Failed to toggle document type status": "فشل في تغيير حالة نوع المستند"
+  "Failed to toggle document type status": "فشل في تغيير حالة نوع المستند",
+  "Invalid Documents": "المستندات غير الصالحة",
+  "Documents that need attention or correction": "المستندات التي تحتاج إلى مراجعة أو تصحيح",
+  "Invalid Sales": "مبيعات غير صالحة",
+  "Invalid Purchases": "مشتريات غير صالحة",
+  "Invalid Document 41": "نموذج 41 غير صالح",
+  "All documents are valid": "جميع المستندات صالحة",
+  "Invalid": "غير صالح",
+  "Mark Invalid": "تحديد كغير صالح"
 }

@@ -7,9 +7,9 @@ import { getUserRoles } from "../Hooks/Services/Storage.js"
 const Setup = () => {
   const navigate = useNavigate();
   const role = getUserRoles();
-console.log('====================================');
-console.log(role);
-console.log('====================================');
+  console.log('====================================');
+  console.log(role);
+  console.log('====================================');
   const { t } = useTranslate();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ console.log('====================================');
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/Item")} className={`bg-gradient-to-br from-blue-500 to-sky-600 ${cardClass}`}>
+      <div onClick={() => navigate("/Setup/Item")} className={`bg-gradient-to-br from-cyan-500 to-teal-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-stack-overflow opacity-25 text-7xl"></i>
@@ -160,7 +160,7 @@ console.log('====================================');
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/User")} className={`bg-gradient-to-br from-cyan-500 to-blue-600 ${cardClass}`}>
+      <div onClick={() => navigate("/Setup/User")} className={`bg-gradient-to-br from-stone-500 to-stone-700 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-people-fill opacity-25 text-7xl"></i>
@@ -184,7 +184,7 @@ console.log('====================================');
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/Position")} className={`bg-gradient-to-br from-cyan-500 to-blue-600 ${cardClass}`}>
+      <div onClick={() => navigate("/Setup/Position")} className={`bg-gradient-to-br from-teal-500 to-emerald-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-people-fill opacity-25 text-7xl"></i>
