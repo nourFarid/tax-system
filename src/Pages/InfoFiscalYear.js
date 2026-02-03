@@ -98,7 +98,7 @@ const InfoFiscalYear = () => {
             <div className="container-fluid mt-4">
                 {/* Details Panel */}
                 <div className="card mb-4">
-                    <div className="card-header bg-primary text-white">
+                    <div className="card-header  text-white" style={{backgroundColor:"#00235e"}}>
                         <h5 className="mb-0">{t("Fiscal Year Details")}</h5>
                     </div>
                     <div className="card-body">
@@ -125,7 +125,7 @@ const InfoFiscalYear = () => {
 
                 {/* Quarters Panel */}
                 <div className="card">
-                    <div className="card-header bg-info text-white">
+                    <div className="card-header text-white" style={{backgroundColor:"#ac0000"}}>
                         <h5 className="mb-0">{t("Quarters")}</h5>
                     </div>
                     <div className="card-body">

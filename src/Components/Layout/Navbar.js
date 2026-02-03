@@ -7,6 +7,9 @@ import "remixicon/fonts/remixicon.css";
 import useTranslate from "../../Hooks/Translation/useTranslate";
 import { SET_LANGUAGE } from "../../Redux/actions/languageActions";
 import { logout } from "../../Redux/actions/authAction";
+import { getUserName,getUserEmail } from "../../Hooks/Services/Storage.js";
+const username = getUserName();
+const email = getUserEmail();
 
 const Navbar = () => {
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
@@ -134,26 +137,26 @@ const Navbar = () => {
                                     <div className="absolute ltr:right-0 rtl:left-0 mt-2 w-52 bg-white rounded-lg border border-gray-200 z-50">
                                         <div className="px-4 py-3 border-b border-gray-200">
                                             <p className="text-sm font-medium text-gray-900">
-                                                {t("John Doe")}
+                                                {username || 'User'}
                                             </p>
                                             <p className="text-xs text-gray-500 truncate">
-                                                user@example.com
+                                                {email || 'user@example.com'}
                                             </p>
                                         </div>
-                                        <ul className="py-2">
-                                            <li>
+                                        {/* <ul className="py-2"> */}
+                                            {/* <li>
                                                 <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left" onClick={() => setIsProfileDropdownOpen(false)}>
                                                     <i className="ri-user-line ltr:mr-3 rtl:ml-3"></i>
                                                     {t("My Profile")}
                                                 </button>
-                                            </li>
-                                            <li>
+                                            </li> */}
+                                            {/* <li>
                                                 <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left" onClick={() => setIsProfileDropdownOpen(false)}>
                                                     <i className="ri-settings-3-line ltr:mr-3 rtl:ml-3"></i>
                                                     {t("Settings")}
                                                 </button>
-                                            </li>
-                                        </ul>
+                                            </li> */}
+                                        {/* </ul> */}
                                         <div className="py-2 border-t border-gray-200">
                                             <button onClick={handleLogout} className="w-full flex items-center px-4 py-2.5 text-sm text-danger hover:bg-gray-100 transition-colors text-left">
                                                 <i className="ri-logout-box-line ltr:mr-3 rtl:ml-3"></i>

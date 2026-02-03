@@ -6,9 +6,9 @@ import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Setup = () => {
   const navigate = useNavigate();
-  const role = getUserRoles();
+  const roles = getUserRoles();
   console.log('====================================');
-  console.log(role);
+  console.log(roles);
   console.log('====================================');
   const { t } = useTranslate();
 
@@ -40,7 +40,8 @@ const Setup = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <div
+     {roles.includes("Admin") &&
+     <div
         onClick={() => navigate("/Setup/DocumentType")}
         className={`bg-gradient-to-br from-indigo-500 to-purple-600 ${cardClass}`}
       >
@@ -54,23 +55,13 @@ const Setup = () => {
           </div>
         </div>
       </div>
+     
+     }
+      
+{
 
-      {/* <div
-        onClick={() => navigate("/Setup/TaxType")}
-        className={`bg-gradient-to-br from-emerald-500 to-teal-600 ${cardClass}`}
-      >
-        <div className="flex items-center justify-between w-full">
-          <div className="visual">
-            <i className="bi bi-cash-stack opacity-25 text-7xl"></i>
-          </div>
-          <div className={textClass}>
-            <h1 className="text-2xl font-bold leading-tight">{objTitle.TaxType}</h1>
-            <h4 className="mt-1 text-gray-200 text-sm">{objTitle.Preview}</h4>
-          </div>
-        </div>
-      </div> */}
-
-      <div
+roles.includes("Admin") &&
+   <div
         onClick={() => navigate("/Setup/StatementType")}
         className={`bg-gradient-to-br from-rose-500 to-pink-600 ${cardClass}`}
       >
@@ -84,6 +75,8 @@ const Setup = () => {
           </div>
         </div>
       </div>
+}
+   
 
       <div onClick={() => navigate("/Setup/Item")} className={`bg-gradient-to-br from-cyan-500 to-teal-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
@@ -96,6 +89,9 @@ const Setup = () => {
           </div>
         </div>
       </div>
+
+{roles.includes("Admin") &&
+
 
       <div
         onClick={() => navigate("/Setup/ItemType")}
@@ -112,7 +108,10 @@ const Setup = () => {
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/TransactionNature")} className={`bg-gradient-to-br from-fuchsia-500 to-purple-700 ${cardClass}`} >
+}
+
+{roles.includes("Admin") &&
+<div onClick={() => navigate("/Setup/TransactionNature")} className={`bg-gradient-to-br from-fuchsia-500 to-purple-700 ${cardClass}`} >
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-calculator-fill opacity-25 text-7xl"></i>
@@ -123,6 +122,8 @@ const Setup = () => {
           </div>
         </div>
       </div>
+}
+      
 
       <div onClick={() => navigate("/Setup/Customer")} className={`bg-gradient-to-br from-green-500 to-lime-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
@@ -148,7 +149,9 @@ const Setup = () => {
         </div>
       </div>
 
-      <div onClick={() => navigate("/Setup/FiscalYear")} className={`bg-gradient-to-br from-red-600 to-red-400 ${cardClass}`}>
+{
+roles.includes("Admin") &&
+ <div onClick={() => navigate("/Setup/FiscalYear")} className={`bg-gradient-to-br from-red-600 to-red-400 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-bank2 opacity-25 text-7xl"></i>
@@ -159,8 +162,11 @@ const Setup = () => {
           </div>
         </div>
       </div>
+}
+     
 
-      <div onClick={() => navigate("/Setup/User")} className={`bg-gradient-to-br from-stone-500 to-stone-700 ${cardClass}`}>
+{
+roles.includes("Admin") && <div onClick={() => navigate("/Setup/User")} className={`bg-gradient-to-br from-stone-500 to-stone-700 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-people-fill opacity-25 text-7xl"></i>
@@ -171,8 +177,11 @@ const Setup = () => {
           </div>
         </div>
       </div>
+}
+     
 
-      <div onClick={() => navigate("/Setup/Departments")} className={`bg-gradient-to-br from-violet-500 to-indigo-600 ${cardClass}`}>
+{
+roles.includes("Admin") &&  <div onClick={() => navigate("/Setup/Departments")} className={`bg-gradient-to-br from-violet-500 to-indigo-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-diagram-3-fill opacity-25 text-7xl"></i>
@@ -183,8 +192,10 @@ const Setup = () => {
           </div>
         </div>
       </div>
+}
+    {
 
-      <div onClick={() => navigate("/Setup/Position")} className={`bg-gradient-to-br from-teal-500 to-emerald-600 ${cardClass}`}>
+      roles.includes("Admin") && <div onClick={() => navigate("/Setup/Position")} className={`bg-gradient-to-br from-teal-500 to-emerald-600 ${cardClass}`}>
         <div className="flex items-center justify-between w-full">
           <div className="visual">
             <i className="bi bi-people-fill opacity-25 text-7xl"></i>
@@ -195,6 +206,9 @@ const Setup = () => {
           </div>
         </div>
       </div>
+    }
+
+     
     </div>
   );
 };
