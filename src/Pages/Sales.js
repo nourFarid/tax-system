@@ -8,9 +8,13 @@ import { useNavigate } from "react-router-dom";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
 import { toast, ToastContainer } from "react-toastify";
+import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Sales = () => {
   const { t } = useTranslate();
+
+  const roles = getUserRoles();
+
   const navigate = useNavigate();
   const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
 
@@ -152,15 +156,15 @@ const Sales = () => {
         )
     },
     {
-  label: t("Update Status"),
-  accessor: "IsUpdated",
-  render: (value) =>
-    value ? (
-      <span className="badge bg-success">{t("Updated")}</span>
-    ) : (
-      <span className="badge bg-danger">{t("Not Updated")}</span>
-    )
-},
+      label: t("Update Status"),
+      accessor: "IsUpdated",
+      render: (value) =>
+        value ? (
+          <span className="badge bg-success">{t("Updated")}</span>
+        ) : (
+          <span className="badge bg-danger">{t("Not Updated")}</span>
+        )
+    },
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -401,20 +405,27 @@ const Sales = () => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
-          customActions={(row) => (
-            <>
-              {!row.isInvalid && (
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  title={t("Mark Invalid")}
-                  onClick={() => MarkInvalid(row)}
-                >
-                  <i className="bi bi-x-circle"></i>
-                </button>
-              )}
-            </>
-          )}
+
+ customActions={
+    roles.includes("Admin")
+      ? (row) => (
+          <>
+            {!row.isInvalid && (
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                title={t("Mark Invalid")}
+                onClick={() => MarkInvalid(row)}
+              >
+                <i className="bi bi-x-circle"></i>
+              </button>
+            )}
+          </>
+        )
+      : undefined
+  }
+
+        
         />
 
         <Pagination

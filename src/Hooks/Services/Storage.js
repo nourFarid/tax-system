@@ -18,7 +18,7 @@ export const setAuthUser = (data, expiresInMinutes = 30) => {
 export const removeAuthUser = () => {
   if (localStorage.getItem("user")) {
     localStorage.removeItem("user");
-    window.location.href = "/";
+    // window.location.href = "/";
   }
 };
 

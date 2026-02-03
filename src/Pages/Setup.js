@@ -7,9 +7,6 @@ import { getUserRoles } from "../Hooks/Services/Storage.js"
 const Setup = () => {
   const navigate = useNavigate();
   const roles = getUserRoles();
-  console.log('====================================');
-  console.log(roles);
-  console.log('====================================');
   const { t } = useTranslate();
 
   useEffect(() => {

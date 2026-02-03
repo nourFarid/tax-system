@@ -43,7 +43,7 @@ const Navbar = () => {
     const handleLogout = () => {
         dispatch(logout());
         setIsProfileDropdownOpen(false);
-        navigate('/');
+  navigate("/", { replace: true });
     };
 
     // Minimal country flag SVGs (replace with flag icons or your own component if you like)

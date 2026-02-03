@@ -5,6 +5,8 @@ import i18n from "./i18n";
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HandleAuth from './HandleAuth';
+
+import ProtectedRoute from './Hooks/Services/ProtectedRoute.js';
 const Layout = lazy(() => import('./Components/Layout/Layout'));
 const ExamplePage = lazy(() => import('./Pages/ExamplePage'));
 const Setup = lazy(() => import('./Pages/Setup'));
@@ -44,6 +46,8 @@ function App() {
         <Route path="/" element={<Auth />} />
         {/* Routes with Sidebar */}
         <Route path="/*" element={
+              <ProtectedRoute>
+
           <Layout>
             <Routes>
               <Route path="/Purchase" element={<Purchase />} />
@@ -72,6 +76,8 @@ function App() {
               <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />;
             </Routes>
           </Layout>
+              </ProtectedRoute>
+
         } />
       </Routes>
     </Router>

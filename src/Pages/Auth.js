@@ -9,7 +9,7 @@ import useTranslate from "../../src/Hooks/Translation/useTranslate";
 import { SET_LANGUAGE } from "../Redux/actions/languageActions.js";
 import axiosInstance from './../Axios/AxiosInstance';
 import { useNavigate } from "react-router-dom";
-import { setAuthUser } from "../Hooks/Services/Storage.js"
+import { setAuthUser, getAuthUser} from "../Hooks/Services/Storage.js"
 import Spinner from "../Components/Layout/Spinner.js";
 
 const Auth = () => {
@@ -38,7 +38,8 @@ const Auth = () => {
             const response = await axiosInstance.post("Auth/Login", payload);
             setAuthUser(response.data.token);
             setLoading(false);
-            navigate("/Setup");
+            if(getAuthUser())
+                navigate("/Setup");
         } catch (error) {
             setLoading(false);
             console.error("Failed to login", error);
