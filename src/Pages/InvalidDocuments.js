@@ -22,17 +22,17 @@ const InvalidDocuments = () => {
             try {
                 const [salesRes, purchaseRes, doc41Res] = await Promise.all([
                     axiosInstance.post("Sales/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
                     axiosInstance.post("Purchase/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
                     axiosInstance.post("Document41/List", {
-                        filter: { isValid: false },
+                        filter: { isValid: false , isUpdated: false},
                         pageNumber,
                         pageSize,
                     }),
@@ -225,7 +225,7 @@ const InvalidDocuments = () => {
                     items={doc41}
                     colorClass="danger"
                     iconClass="bi bi-file-earmark-x"
-                    onEdit={(item) => navigate(`/Purchase/UpdatePurchase/${item.purchaseId}`)}
+                    onEdit={(item) => navigate(`/Purchase/UpdatePurchase/${item.purchaseId}/${item.documentItemId}`)}
                     getLabel={(item) => item.purchase?.document?.invoiceNumber || `#${item.id}`}
                     getSubLabel={(item) => item.supplier?.name || "-"}
                     getDate={(item) => item.transactionDate?.split("T")[0] || "-"}

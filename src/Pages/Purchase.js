@@ -152,7 +152,17 @@ const Purchase = () => {
         ) : (
           <span className="badge bg-danger">{t("Invalid")}</span>
         )
-    }
+    },
+    {
+  label: t("Update Status"),
+  accessor: "IsUpdated",
+  render: (value) =>
+    value ? (
+      <span className="badge bg-success">{t("Updated")}</span>
+    ) : (
+      <span className="badge bg-danger">{t("Not Updated")}</span>
+    )
+},
   ];
 
   const strDocDir = document.documentElement.dir;

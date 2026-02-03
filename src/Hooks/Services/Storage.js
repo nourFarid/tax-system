@@ -26,11 +26,11 @@ const ROLE_CLAIM =
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
 export const getUserRoles = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("user");
   if (!token) return [];
 
   try {
-    const decoded = jwtDecode(token);
+    const decoded = jwtDecode(JSON.parse(token).data);
     const roles = decoded[ROLE_CLAIM];
 
     // normalize → always return array
