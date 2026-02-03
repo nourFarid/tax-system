@@ -139,7 +139,6 @@ const Purchase = () => {
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Settlement Date"), accessor: "invoiceDate" },
-    { label: t("Valid"), accessor: "isValid" },
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },

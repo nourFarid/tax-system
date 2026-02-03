@@ -172,7 +172,7 @@
   "Edit Item": "تعديل المنتج",
   "Code Type": "كود",
   "Unit": "وحدة",
-  "Updated At": "تعديلا في",
+  "Updated At": "أخر تعديل",
   "Created At": "إنشاء في",
   "Updated By": "تعديلا بواسطة",
   "Type of Deduction": "نوع الخصم",
@@ -285,5 +285,9 @@
   "Invalid Document 41": "نموذج 41 غير صالح",
   "All documents are valid": "جميع المستندات صالحة",
   "Invalid": "غير صالح",
-  "Mark Invalid": "تحديد كغير صالح"
+  "Mark Invalid": "تحديد كغير صالح",
+  "Update Status":"تحديث الحالة",
+  "Updated": "تم التحديث",
+  "Not Updated": "لم يتم التحديث"
+
 }
