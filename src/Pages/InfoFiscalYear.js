@@ -89,81 +89,342 @@ const InfoFiscalYear = () => {
         setEditLockDate("");
     };
 
-    if (loading) return <div>{t("Loading...")}</div>;
-    if (!fiscalYear) return <div>{t("Fiscal Year not found")}</div>;
+    // Info Item Component
+    const InfoItem = ({ label, value, icon }) => (
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "16px 20px",
+            background: "rgba(255,255,255,0.7)",
+            borderRadius: "12px",
+            border: "1px solid rgba(0,0,0,0.05)"
+        }}>
+            <div style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #3b4ebeff 0%, #0e1f69ff 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                fontSize: "16px"
+            }}>
+                <i className={icon}></i>
+            </div>
+            <div>
+                <div style={{ fontSize: "12px", color: "#718096", marginBottom: "2px" }}>{label}</div>
+                <div style={{ fontWeight: 600, color: "#2d3748" }}>{value || "-"}</div>
+            </div>
+        </div>
+    );
+
+    // Quarter Card Component
+    const QuarterCard = ({ quarter, index }) => (
+        <div style={{
+            background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
+            borderRadius: "14px",
+            padding: "20px",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+            border: "1px solid rgba(0,0,0,0.05)",
+            transition: "transform 0.2s, box-shadow 0.2s"
+        }}
+            onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
+            }}
+            onMouseOut={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)";
+            }}
+        >
+            {/* Quarter Header */}
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "16px"
+            }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "10px",
+                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontWeight: 700,
+                        fontSize: "14px"
+                    }}>
+                        Q{index + 1}
+                    </div>
+                    <span style={{ fontWeight: 600, color: "#2d3748" }}>{t("Quarter")} {index + 1}</span>
+                </div>
+                <button
+                    onClick={() => handleEditLockDate(quarter)}
+                    style={{
+                        width: "34px",
+                        height: "34px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: "linear-gradient(135deg, #3b4ebeff 0%, #0e1f69ff 100%)",
+                        color: "white",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "opacity 0.2s"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.opacity = "0.85"}
+                    onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
+                    title={t("Edit Lock Date")}
+                >
+                    <i className="bi bi-pencil" style={{ fontSize: "14px" }}></i>
+                </button>
+            </div>
+
+            {/* Quarter Details */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 14px",
+                    background: "rgba(59, 78, 190, 0.06)",
+                    borderRadius: "8px"
+                }}>
+                    <span style={{ fontSize: "13px", color: "#718096" }}>
+                        <i className="bi bi-calendar-event me-2"></i>{t("Date From")}
+                    </span>
+                    <span style={{ fontWeight: 500, color: "#2d3748" }}>
+                        {quarter.dateFrom ? quarter.dateFrom.split('T')[0] : "-"}
+                    </span>
+                </div>
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 14px",
+                    background: "rgba(59, 78, 190, 0.06)",
+                    borderRadius: "8px"
+                }}>
+                    <span style={{ fontSize: "13px", color: "#718096" }}>
+                        <i className="bi bi-calendar-check me-2"></i>{t("Date To")}
+                    </span>
+                    <span style={{ fontWeight: 500, color: "#2d3748" }}>
+                        {quarter.dateTo ? quarter.dateTo.split('T')[0] : "-"}
+                    </span>
+                </div>
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 14px",
+                    background: "rgba(245, 158, 11, 0.1)",
+                    borderRadius: "8px"
+                }}>
+                    <span style={{ fontSize: "13px", color: "#718096" }}>
+                        <i className="bi bi-lock me-2"></i>{t("Lock Date")}
+                    </span>
+                    <span style={{ fontWeight: 500, color: quarter.lockDate ? "#d97706" : "#a0aec0" }}>
+                        {quarter.lockDate ? quarter.lockDate.split('T')[0] : t("Not Set")}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+
+    if (loading) {
+        return (
+            <>
+                <Breadcrumb items={breadcrumbItems} />
+                <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "80px 0",
+                    color: "#a0aec0"
+                }}>
+                    <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                    {t("Loading...")}
+                </div>
+            </>
+        );
+    }
+
+    if (!fiscalYear) {
+        return (
+            <>
+                <Breadcrumb items={breadcrumbItems} />
+                <div style={{
+                    textAlign: "center",
+                    padding: "80px 0",
+                    color: "#a0aec0"
+                }}>
+                    <i className="bi bi-exclamation-circle" style={{ fontSize: "48px", display: "block", marginBottom: "16px" }}></i>
+                    {t("Fiscal Year not found")}
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
             <Breadcrumb items={breadcrumbItems} />
-            <div className="container-fluid mt-4">
-                {/* Details Panel */}
-                <div className="card mb-4">
-                    <div className="card-header bg-primary text-white">
-                        <h5 className="mb-0">{t("Fiscal Year Details")}</h5>
+
+            {/* Summary Header */}
+            <div style={{
+                background: "linear-gradient(135deg, #0e1f69ff 0%, #3b4ebeff 100%)",
+                borderRadius: "16px",
+                padding: "24px 32px",
+                marginBottom: "24px",
+                color: "white",
+                boxShadow: "0 4px 20px rgba(102, 126, 234, 0.3)"
+            }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div>
+                        <h4 style={{ margin: 0, fontWeight: 600 }}>{t("Fiscal Year Details")}</h4>
+                        <p style={{ margin: "8px 0 0 0", opacity: 0.9, fontSize: "14px" }}>
+                            {t("Year")} {fiscalYear.yearFromDate} - {fiscalYear.yearToDate}
+                        </p>
                     </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <div className="col-md-6 mb-3">
-                                <label className="fw-bold text-muted">{t("Year From")}</label>
-                                <div className="form-control-plaintext">{fiscalYear.yearFromDate}</div>
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="fw-bold text-muted">{t("Year To")}</label>
-                                <div className="form-control-plaintext">{fiscalYear.yearToDate}</div>
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="fw-bold text-muted">{t("From Date")}</label>
-                                <div className="form-control-plaintext">{fiscalYear.fromDate ? fiscalYear.fromDate.split('T')[0] : "-"}</div>
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="fw-bold text-muted">{t("To Date")}</label>
-                                <div className="form-control-plaintext">{fiscalYear.toDate ? fiscalYear.toDate.split('T')[0] : "-"}</div>
-                            </div>
+                    <div style={{
+                        background: "rgba(255,255,255,0.2)",
+                        borderRadius: "12px",
+                        padding: "12px 20px",
+                        textAlign: "center"
+                    }}>
+                        <div style={{ fontSize: "28px", fontWeight: 700 }}>
+                            {fiscalYear.quarters?.length || 0}
+                        </div>
+                        <div style={{ fontSize: "12px", opacity: 0.9 }}>{t("Quarters")}</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Fiscal Year Info Card */}
+            <div style={{
+                background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
+                borderRadius: "16px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                overflow: "hidden",
+                border: "1px solid rgba(0,0,0,0.05)",
+                marginBottom: "24px"
+            }}>
+                <div style={{
+                    padding: "20px 24px",
+                    borderBottom: "1px solid rgba(0,0,0,0.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px"
+                }}>
+                    <div style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "12px",
+                        background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontSize: "18px"
+                    }}>
+                        <i className="bi bi-calendar-range"></i>
+                    </div>
+                    <h6 style={{ margin: 0, fontWeight: 600, color: "#2d3748" }}>{t("Date Range")}</h6>
+                </div>
+                <div style={{ padding: "20px 24px" }}>
+                    <div className="row g-3">
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <InfoItem
+                                label={t("Year From")}
+                                value={fiscalYear.yearFromDate}
+                                icon="bi bi-calendar-date"
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <InfoItem
+                                label={t("Year To")}
+                                value={fiscalYear.yearToDate}
+                                icon="bi bi-calendar-date"
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <InfoItem
+                                label={t("From Date")}
+                                value={fiscalYear.fromDate ? fiscalYear.fromDate.split('T')[0] : "-"}
+                                icon="bi bi-calendar-event"
+                            />
+                        </div>
+                        <div className="col-12 col-md-6 col-lg-3">
+                            <InfoItem
+                                label={t("To Date")}
+                                value={fiscalYear.toDate ? fiscalYear.toDate.split('T')[0] : "-"}
+                                icon="bi bi-calendar-check"
+                            />
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Quarters Panel */}
-                <div className="card">
-                    <div className="card-header bg-info text-white">
-                        <h5 className="mb-0">{t("Quarters")}</h5>
-                    </div>
-                    <div className="card-body">
-                        <div className="table-responsive">
-                            <table className="table table-bordered table-hover">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th>{t("Date From")}</th>
-                                        <th>{t("Date To")}</th>
-                                        <th>{t("Lock Date")}</th>
-                                        <th>{t("Actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {fiscalYear.quarters && fiscalYear.quarters.map((quarter, index) => (
-                                        <tr key={quarter.id || index}>
-                                            <td>{quarter.dateFrom ? quarter.dateFrom.split('T')[0] : "-"}</td>
-                                            <td>{quarter.dateTo ? quarter.dateTo.split('T')[0] : "-"}</td>
-                                            <td>{quarter.lockDate ? quarter.lockDate.split('T')[0] : "-"}</td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={() => handleEditLockDate(quarter)}
-                                                >
-                                                    <i className="bi bi-pencil-square me-1"></i> {t("Edit Lock Date")}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!fiscalYear.quarters || fiscalYear.quarters.length === 0) && (
-                                        <tr>
-                                            <td colSpan="4" className="text-center">{t("No Quarters Found")}</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+            {/* Quarters Section */}
+            <div style={{
+                background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
+                borderRadius: "16px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                overflow: "hidden",
+                border: "1px solid rgba(0,0,0,0.05)"
+            }}>
+                <div style={{
+                    padding: "20px 24px",
+                    borderBottom: "1px solid rgba(0,0,0,0.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "12px",
+                            background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "white",
+                            fontSize: "18px"
+                        }}>
+                            <i className="bi bi-grid-3x3"></i>
                         </div>
+                        <h6 style={{ margin: 0, fontWeight: 600, color: "#2d3748" }}>{t("Quarters")}</h6>
                     </div>
+                    <span style={{
+                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                        color: "white",
+                        padding: "4px 12px",
+                        borderRadius: "20px",
+                        fontSize: "13px",
+                        fontWeight: 600
+                    }}>{fiscalYear.quarters?.length || 0}</span>
+                </div>
+                <div style={{ padding: "20px 24px" }}>
+                    {fiscalYear.quarters && fiscalYear.quarters.length > 0 ? (
+                        <div className="row g-4">
+                            {fiscalYear.quarters.map((quarter, index) => (
+                                <div className="col-12 col-md-6 col-xl-3" key={quarter.id || index}>
+                                    <QuarterCard quarter={quarter} index={index} />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{ textAlign: "center", padding: "40px 0", color: "#a0aec0" }}>
+                            <i className="bi bi-inbox" style={{ fontSize: "32px", display: "block", marginBottom: "8px" }}></i>
+                            {t("No Quarters Found")}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -181,23 +442,39 @@ const InfoFiscalYear = () => {
             >
                 <div className="mb-3">
                     {selectedQuarter && (
-                        <div className="alert alert-info py-2 mb-3">
+                        <div style={{
+                            background: "linear-gradient(135deg, rgba(59, 78, 190, 0.08) 0%, rgba(14, 31, 105, 0.08) 100%)",
+                            borderRadius: "12px",
+                            padding: "16px",
+                            marginBottom: "20px"
+                        }}>
                             <div className="row">
                                 <div className="col-6">
-                                    <strong>{t("Date From")}:</strong> {selectedQuarter.dateFrom ? selectedQuarter.dateFrom.split('T')[0] : "-"}
+                                    <div style={{ fontSize: "12px", color: "#718096", marginBottom: "4px" }}>{t("Date From")}</div>
+                                    <div style={{ fontWeight: 500, color: "#2d3748" }}>
+                                        {selectedQuarter.dateFrom ? selectedQuarter.dateFrom.split('T')[0] : "-"}
+                                    </div>
                                 </div>
                                 <div className="col-6">
-                                    <strong>{t("Date To")}:</strong> {selectedQuarter.dateTo ? selectedQuarter.dateTo.split('T')[0] : "-"}
+                                    <div style={{ fontSize: "12px", color: "#718096", marginBottom: "4px" }}>{t("Date To")}</div>
+                                    <div style={{ fontWeight: 500, color: "#2d3748" }}>
+                                        {selectedQuarter.dateTo ? selectedQuarter.dateTo.split('T')[0] : "-"}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     )}
-                    <label className="form-label">{t("Lock Date")}</label>
+                    <label className="form-label" style={{ fontWeight: 500, color: "#2d3748" }}>{t("Lock Date")}</label>
                     <input
                         type="date"
                         className="form-control"
                         value={editLockDate}
                         onChange={(e) => setEditLockDate(e.target.value)}
+                        style={{
+                            borderRadius: "10px",
+                            padding: "12px 16px",
+                            border: "1px solid rgba(0,0,0,0.1)"
+                        }}
                     />
                 </div>
             </Modal>

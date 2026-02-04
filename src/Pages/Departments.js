@@ -32,7 +32,7 @@ const Departments = () => {
             EditDepartment: t("Edit Department"),
             Name: t("Name"),
             Code: t("Code"),
-            IsActive: t("Is Active"),
+            IsActive: t("Active"),
             Save: t("Save"),
             Cancel: t("Cancel"),
             Delete: t("Delete"),

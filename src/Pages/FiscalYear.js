@@ -137,14 +137,15 @@ const FiscalYear = () => {
         quarters: []
       };
       const response = await axiosInstance.post("FiscalYear/Add", payload);
-      if (response.status === 200) {
+      if (response.data.result) {
         await getFiscalYears();
         hideModal("AddFiscalYear");
         setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-        toast.success("Fiscal Year added successfully!");
-
+        toast.success(response.data.message || t("Fiscal Year added successfully!"));
       }
-
+      else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error("Add Fiscal Year Error:", error);
       toast.error(t("An error occurred while adding the Fiscal Year."));
@@ -164,34 +165,40 @@ const FiscalYear = () => {
     };
 
     try {
-      await axiosInstance.put(
+      const response = await axiosInstance.put(
         `/FiscalYear`,
         payload
       );
-      await getFiscalYears();
-      hideModal("EditFiscalYear");
-      setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-      toast.success("Fiscal Year updated successfully!");
-
+      if (response.data.result) {
+        await getFiscalYears();
+        hideModal("EditFiscalYear");
+        setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+        toast.success(response.data.message || t("Fiscal Year updated successfully!"));
+      }
+      else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error("Update Fiscal Year Error:", error);
       toast.error(t("An error occurred while updating the Fiscal Year."));
     }
   };
 
-  const Delete = () => {
-    axiosInstance
-      .delete(`/FiscalYear/${objDocType.Id}`)
-      .then(() => {
-        getFiscalYears();
+  const Delete = async () => {
+    try {
+      const response = await axiosInstance.delete(`/FiscalYear/${objDocType.Id}`);
+      if (response.data.result) {
+        await getFiscalYears();
         hideModal("DeleteFiscalYear");
-        toast.success("Fiscal Year deleted successfully!");
-      })
-      .catch((error) => {
-        console.error("Delete Fiscal Year Error:", error);
-        toast.error(t("An error occurred while deleting the Fiscal Year."));
-      });
-
+        toast.success(response.data.message || t("Fiscal Year deleted successfully!"));
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Delete Fiscal Year Error:", error);
+      toast.error(t("An error occurred while deleting the Fiscal Year."));
+    }
   };
 
   const reset = () => {

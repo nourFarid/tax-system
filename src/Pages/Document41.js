@@ -6,8 +6,11 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
+import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Document41 = () => {
+    const roles = getUserRoles();
+
   const [boolDisableExport, setBoolDisableExport] = useState(false);
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
@@ -271,20 +274,24 @@ const MarkInvalid = async (row) => {
   onEdit={Edit}
   showShow={false}
   onDelete={HandelDelete}
-  customActions={(row) => (
-    <>
-      {!row.isInvalid && (
-        <button
-          type="button"
-          className="btn btn-sm btn-secondary"
-          title={t("Mark Invalid")}
-          onClick={() => MarkInvalid(row)}
-        >
-          <i className="bi bi-x-circle"></i>
-        </button>
-      )}
-    </>
-  )}
+customActions={
+    roles.includes("Admin")
+      ? (row) => (
+          <>
+            {!row.isInvalid && (
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                title={t("Mark Invalid")}
+                onClick={() => MarkInvalid(row)}
+              >
+                <i className="bi bi-x-circle"></i>
+              </button>
+            )}
+          </>
+        )
+      : undefined
+  }
 />
 
         <Pagination

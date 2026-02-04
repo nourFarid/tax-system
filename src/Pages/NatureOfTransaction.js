@@ -338,7 +338,7 @@ const NatureOfTransaction = () => {
             {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
           </div>
           <div className="col-md-4 mb-3">
-            <label className="form-label">{t("RatePercent")}</label>
+            <label className="form-label">{t("Rate Percent")}</label>
             <input type="number" name="Price" value={objItem.Price} onChange={handleChange} className={`form-control ${errors.Price ? "is-invalid" : ""}`} placeholder={t("Price")}
               step="0.01"
               min="0" />
@@ -383,7 +383,7 @@ const NatureOfTransaction = () => {
           </div>
 
           <div className="col-md-4 mb-3">
-            <label className="form-label">{t("RatePercent")}</label>
+            <label className="form-label">{t("Rate Percent")}</label>
             <input
               type="number"
               name="Price"

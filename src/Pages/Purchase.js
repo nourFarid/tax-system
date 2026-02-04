@@ -8,9 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { toast, ToastContainer } from "react-toastify";
+import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Purchase = () => {
   const { t } = useTranslate();
+    const roles = getUserRoles();
+
   const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
@@ -139,7 +142,6 @@ const Purchase = () => {
     { label: t("Address"), accessor: "customerSupplierAddress" },
     { label: t("National ID / Passport Number"), accessor: "CustomerSupplierIdentificationNumber" },
     { label: t("Settlement Date"), accessor: "invoiceDate" },
-    { label: t("Valid"), accessor: "isValid" },
     { label: t("Updated By User"), accessor: "updatedByUser.userName" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated At"), accessor: "updateAt" },
@@ -403,20 +405,24 @@ const Purchase = () => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
-          customActions={(row) => (
-            <>
-              {!row.isInvalid && (
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary"
-                  title={t("Mark Invalid")}
-                  onClick={() => MarkInvalid(row)}
-                >
-                  <i className="bi bi-x-circle"></i>
-                </button>
-              )}
-            </>
-          )}
+         customActions={
+    roles.includes("Admin")
+      ? (row) => (
+          <>
+            {!row.isInvalid && (
+              <button
+                type="button"
+                className="btn btn-sm btn-secondary"
+                title={t("Mark Invalid")}
+                onClick={() => MarkInvalid(row)}
+              >
+                <i className="bi bi-x-circle"></i>
+              </button>
+            )}
+          </>
+        )
+      : undefined
+  }
         />
 
         <Pagination

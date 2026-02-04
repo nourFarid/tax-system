@@ -167,7 +167,7 @@ const InvalidDocuments = () => {
 
             {/* Summary Header */}
             <div style={{
-                background: "linear-gradient(135deg, #0e1f69ff 0%, #2d43c8ff 100%)",
+                background: "linear-gradient(135deg, #0e1f69ff 0%, #3b4ebeff 100%)",
                 borderRadius: "16px",
                 padding: "24px 32px",
                 marginBottom: "24px",
@@ -225,7 +225,7 @@ const InvalidDocuments = () => {
                     items={doc41}
                     colorClass="danger"
                     iconClass="bi bi-file-earmark-x"
-                    onEdit={(item) => navigate(`/Purchase/UpdatePurchase/${item.purchaseId}`)}
+                    onEdit={(item) => navigate(`/Purchase/UpdatePurchase/${item.purchaseId}/${item.documentItemId}`)}
                     getLabel={(item) => item.purchase?.document?.invoiceNumber || `#${item.id}`}
                     getSubLabel={(item) => item.supplier?.name || "-"}
                     getDate={(item) => item.transactionDate?.split("T")[0] || "-"}
