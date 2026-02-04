@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import "remixicon/fonts/remixicon.css";
-import MainLogo from "../Assets/Images/logo.png";
+import MainLogo from "../Assets/Images/logo2-dev.jpeg";
 import EgyptAirLogo from "../Assets/Images/EgyptAir.png"
 import { useSelector, useDispatch } from "react-redux";
 import useTranslate from "../../src/Hooks/Translation/useTranslate";
@@ -60,9 +60,9 @@ const Auth = () => {
 
     return (
         <>
-        <div className="min-h-screen bg-primary-500 flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto">
+        <div className="min-h-screen flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto" style={{background: "#ffffff"}}>
             {/* Main Container */}
-            <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] bg-white rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative">
+            <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative" style={{background: "#02000e"}}>
                 {/* Language Toggle Button - Inside Container */}
                 <button onClick={toggleLanguage} className="absolute top-4 md:top-6 lg:top-8 ltr:right-4 rtl:left-4 md:ltr:right-6 md:rtl:left-6 lg:ltr:right-8 lg:rtl:left-8 z-50 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white" aria-label="Toggle Language" title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}>
                     <span className="font-Cairo font-bold text-sm md:text-base">
@@ -75,13 +75,9 @@ const Auth = () => {
                     {/* Right Side - Form Section (shows first on mobile) */}
                     <div className="order-2 lg:order-1 w-full max-w-md lg:max-w-full flex flex-col justify-center items-center gap-4 md:gap-4 lg:gap-4 xl:gap-6 py-4">
                         {/* Title */}
-                        <h1 className="font-Cairo font-bold text-primary-500 text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 3xl:text-6xl text-center mb-2 md:mb-3 lg:mb-2">
+                        <h1 className="font-Cairo font-bold text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 3xl:text-6xl text-center mb-2 md:mb-3 lg:mb-2" style={{color: "#ffffff"}}>
                             {t("Tax Management")}
                         </h1>
-                        {/* Logo Image */}
-                        <div className="w-full flex justify-center mb-2 md:mb-3 lg:mb-2">
-                            <img src={EgyptAirLogo} alt="Logo" className="w-[200px] sm:w-[280px] md:w-[350px] lg:w-[320px] xl:w-[400px] 3xl:w-[490px] h-auto object-contain" />
-                        </div>
 
                         {/* Email Input with Icon */}
                         <div className="relative w-full sm:w-[350px] md:w-[400px] lg:w-[300px] xl:w-[350px] 3xl:w-[400px]">
@@ -111,8 +107,8 @@ const Auth = () => {
 
                         {/* Login Button */}
                         <div className="flex justify-center mt-2 md:mt-3 lg:mt-3 w-full">
-                            <button className=" bg-primary-500 hover:bg-danger active:bg-primary-700 text-white font-Cairo font-bold rounded-[15px] md:rounded-[18px] lg:rounded-[20px] w-[140px] md:w-[200px] lg:w-[200px] xl:w-[150px] 3xl:w-[250px] h-[55px] md:h-[65px] lg:h-[70px] xl:h-[80px] 3xl:h-[80px] text-xl md:text-2xl lg:text-3xl 3xl:text-5xl transition-all duration-200 shadow-lg hover:shadow-xl  "onClick={loginFun}>
-                                {t("Login")}
+                            <button className=" hover:bg-danger active:bg-primary-700 text-white font-Cairo font-bold rounded-[15px] md:rounded-[18px] lg:rounded-[20px] w-[140px] md:w-[200px] lg:w-[200px] xl:w-[150px] 3xl:w-[250px] h-[55px] md:h-[65px] lg:h-[70px] xl:h-[80px] 3xl:h-[80px] text-xl md:text-2xl lg:text-3xl 3xl:text-5xl transition-all duration-200 shadow-lg hover:shadow-xl" onClick={loginFun} style={{background: "#c5cbd0"}}>
+                                <span style={{color: "#02000e"}}>{t("Login")}</span>
                             </button>
                         </div>
                     </div>
