@@ -199,16 +199,16 @@ const EditPurchase = () => {
   const Edit = async () => {
     const response = await axiosInstance.put("/Purchase/Update", objPurchase);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase Edited successfully"));
+      toast.success(t("Purchase Edited successfully"));
     }
   };
 
   const AddDocItem = async (obj) => {
     const response = await axiosInstance.post("/Purchase/AddDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase item added successfully"));
+      toast.success(t("Purchase item added successfully"));
     } else {
-      alert("Error adding item");
+      toast.error(t("Error adding item"));
     }
   };
 
@@ -216,9 +216,9 @@ const EditPurchase = () => {
     obj.isPrePaid = objPurchase.isPrePaid;
     const response = await axiosInstance.put("/Purchase/UpdateDocumentItem", obj);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase item edited successfully"));
+      toast.success(t("Purchase item edited successfully"));
     } else {
-      alert("Error adding item");
+      toast.error(t("Error editing item"));
     }
   };
 
@@ -226,10 +226,10 @@ const EditPurchase = () => {
     const obj = objPurchase.documentItems[index];
     const response = await axiosInstance.delete(`/Purchase/DeleteDocumentItem/${obj.id}`);
     if (response.data.result) {
-      showSuccess(t("Success"), t("Purchase item deleted successfully"));
+      toast.success(t("Purchase item deleted successfully"));
       removeRow(index);
     } else {
-      alert("Error deleting item");
+      toast.error(t("Error deleting item"));
     }
   }
 
@@ -449,7 +449,7 @@ const EditPurchase = () => {
         null
       }
     </div>
-
+      <ToastContainer />
       <SwalComponent />
     </>
   );
