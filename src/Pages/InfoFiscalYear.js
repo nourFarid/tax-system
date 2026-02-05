@@ -291,17 +291,6 @@ const InfoFiscalYear = () => {
                             {t("Year")} {fiscalYear.yearFromDate} - {fiscalYear.yearToDate}
                         </p>
                     </div>
-                    <div style={{
-                        background: "rgba(255,255,255,0.2)",
-                        borderRadius: "12px",
-                        padding: "12px 20px",
-                        textAlign: "center"
-                    }}>
-                        <div style={{ fontSize: "28px", fontWeight: 700 }}>
-                            {fiscalYear.quarters?.length || 0}
-                        </div>
-                        <div style={{ fontSize: "12px", opacity: 0.9 }}>{t("Quarters")}</div>
-                    </div>
                 </div>
             </div>
 
