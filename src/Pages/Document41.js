@@ -6,10 +6,11 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
-import { getUserRoles } from "../Hooks/Services/Storage.js"
+import { getUserRoles } from "../Hooks/Services/Storage.js";
+import AsyncSelect from "react-select/async";
 
 const Document41 = () => {
-    const roles = getUserRoles();
+  const roles = getUserRoles();
 
   const [boolDisableExport, setBoolDisableExport] = useState(false);
   const { t } = useTranslate();
@@ -40,7 +41,7 @@ const Document41 = () => {
       label: t("Export With Names"),
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
-                const payload = {
+        const payload = {
           ...objFilter,
           exportWithName: true,
         };
@@ -64,10 +65,10 @@ const Document41 = () => {
       disabled: boolDisableExport
     },
     {
-    label: t("Export With Codes"),
+      label: t("Export With Codes"),
       icon: "bi bi-box-arrow-up-right",
       fun: async () => {
-                const payload = {
+        const payload = {
           ...objFilter,
           exportWithName: false,
         };
@@ -102,51 +103,64 @@ const Document41 = () => {
     { label: t("Fiscal Year From"), accessor: "quarter.dateFrom" },
     { label: t("Fiscal Year To"), accessor: "quarter.dateTo" },
     {
-  label: t("Status"),
-  accessor: "isValid",
-  render: (value) =>
-    value ? (
-      <span className="badge bg-success">{t("Valid")}</span>
-    ) : (
-      <span className="badge bg-danger">{t("Invalid")}</span>
-    )
-},
+      label: t("Status"),
+      accessor: "isValid",
+      render: (value) =>
+        value ? (
+          <span className="badge bg-success">{t("Valid")}</span>
+        ) : (
+          <span className="badge bg-danger">{t("Invalid")}</span>
+        )
+    },
     {
-  label: t("Update Status"),
-  accessor: "IsUpdated",
-  render: (value) =>
-    value ? (
-      <span className="badge bg-success">{t("Updated")}</span>
-    ) : (
-      <span className="badge bg-danger">{t("Not Updated")}</span>
-    )
-},
+      label: t("Update Status"),
+      accessor: "IsUpdated",
+      render: (value) =>
+        value ? (
+          <span className="badge bg-success">{t("Updated")}</span>
+        ) : (
+          <span className="badge bg-danger">{t("Not Updated")}</span>
+        )
+    },
 
 
-    
+
   ];
 
   const [arrData, setArrData] = useState([]);
+  const [objSupplier, setObjSupplier] = useState(null);
   const [objFilter, setObjFilter] = useState({
     fiscalYearId: -1,
     quarterId: -1,
     transactionDateFrom: "",
     transactionDateTo: "",
     exportWithName: false,
-
+    supplierId: null,
   });
-const MarkInvalid = async (row) => {
-  const res = await axiosInstance.put(
-    `Document41/MarkInvalid/${row.id}`
-  );
 
-  if (res.data.result) {
-    showSuccess(t("Success"), t("Document marked as invalid"));
-    List(pageNumber);
-  } else {
-    showError(t("Error"), res.data.message);
-  }
-};
+  const arrSupplier = async (input) => {
+    if (input.length < 2) return [];
+    const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
+      NameIdentity: input,
+      IsSupplier: true,
+    });
+    return res.data.data.map(x => ({
+      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name}`,
+      value: x.id,
+    }));
+  };
+  const MarkInvalid = async (row) => {
+    const res = await axiosInstance.put(
+      `Document41/MarkInvalid/${row.id}`
+    );
+
+    if (res.data.result) {
+      showSuccess(t("Success"), t("Document marked as invalid"));
+      List(pageNumber);
+    } else {
+      showError(t("Error"), res.data.message);
+    }
+  };
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
@@ -168,8 +182,10 @@ const MarkInvalid = async (row) => {
       fiscalYearId: -1,
       quarterId: -1,
       transactionDateFrom: "",
-      transactionDateTo: ""
+      transactionDateTo: "",
+      supplierId: null,
     });
+    setObjSupplier(null);
     List();
   }
 
@@ -225,6 +241,21 @@ const MarkInvalid = async (row) => {
         <h4 className="font-semibold" style={{ color: "blue" }}>{t("Filter")}</h4>
         <div className="row">
           <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Supplier")}</label>
+            <AsyncSelect
+              loadOptions={arrSupplier}
+              value={objSupplier}
+              placeholder={t("Type to search...")}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
+              isClearable={true}
+              onChange={(o) => {
+                setObjSupplier(o);
+                setObjFilter(prev => ({ ...prev, supplierId: o ? o.value : null }));
+              }}
+            />
+          </div>
+          <div className="col-md-3 mb-3">
             <label className="form-label">{t("Transaction Date Form")}</label>
             <input type="date" className="form-control" value={objFilter.transactionDateFrom} onChange={(e) => setObjFilter({ ...objFilter, transactionDateFrom: e.target.value })} />
           </div>
@@ -267,32 +298,32 @@ const MarkInvalid = async (row) => {
         </div>
       </div>
       <div className="bg-white p-3 shadow-sm shadow-lg">
-   <Table
-  columns={columns}
-  data={arrData}
-  showActions={true}
-  onEdit={Edit}
-  showShow={false}
-  onDelete={HandelDelete}
-customActions={
-    roles.includes("Admin")
-      ? (row) => (
-          <>
-            {!row.isInvalid && (
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary"
-                title={t("Mark Invalid")}
-                onClick={() => MarkInvalid(row)}
-              >
-                <i className="bi bi-x-circle"></i>
-              </button>
-            )}
-          </>
-        )
-      : undefined
-  }
-/>
+        <Table
+          columns={columns}
+          data={arrData}
+          showActions={true}
+          onEdit={Edit}
+          showShow={false}
+          onDelete={HandelDelete}
+          customActions={
+            roles.includes("Admin")
+              ? (row) => (
+                <>
+                  {!row.isInvalid && (
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-secondary"
+                      title={t("Mark Invalid")}
+                      onClick={() => MarkInvalid(row)}
+                    >
+                      <i className="bi bi-x-circle"></i>
+                    </button>
+                  )}
+                </>
+              )
+              : undefined
+          }
+        />
 
         <Pagination
           pageNumber={pageNumber}
