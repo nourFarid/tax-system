@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
 import { toast, ToastContainer } from "react-toastify";
-import { getUserRoles } from "../Hooks/Services/Storage.js"
+import { getUserRoles } from "../Hooks/Services/Storage.js";
+import AsyncSelect from "react-select/async";
 
 const Sales = () => {
   const { t } = useTranslate();
@@ -34,7 +35,9 @@ const Sales = () => {
     invoiceDateFrom: "",
     invoiceDateTo: "",
     exportWithName: null,
+    customerId: null,
   });
+  const [objCustomer, setObjCustomer] = useState(null);
 
   // Current sale selected for delete
   const [objCurrentSale, setObjCurrentSale] = useState({});
@@ -198,6 +201,18 @@ const Sales = () => {
     }
   };
 
+  const arrCustomer = async (input) => {
+    if (input.length < 2) return [];
+    const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
+      NameIdentity: input,
+      IsSupplier: false,
+    });
+    return res.data.data.map(x => ({
+      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name}`,
+      value: x.id,
+    }));
+  };
+
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
       (fy) => fy.id === Number(fiscalYearId)
@@ -211,7 +226,8 @@ const Sales = () => {
       const isFilterEmpty =
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
-        objFilter.invoiceDateTo === "";
+        objFilter.invoiceDateTo === "" &&
+        !objFilter.customerId;
 
       let Filter = {};
       if (objFilter.invoiceDateFrom) {
@@ -228,6 +244,11 @@ const Sales = () => {
         Filter.quarterId = Number.parseInt(objFilter.quarterId);
       } else {
         delete Filter.quarterId;
+      }
+      if (objFilter.customerId) {
+        Filter.customerId = objFilter.customerId;
+      } else {
+        delete Filter.customerId;
       }
       const body = {
         filter: isFilterEmpty ? {} : Filter,
@@ -299,7 +320,9 @@ const Sales = () => {
       quarterId: -1,
       invoiceDateFrom: "",
       invoiceDateTo: "",
+      customerId: null,
     });
+    setObjCustomer(null);
     setPageNumber(1);
   };
 
@@ -324,6 +347,22 @@ const Sales = () => {
       <div className="bg-white p-3 mb-3 shadow-sm shadow-lg">
         <h4 className="font-semibold" style={{ color: "blue" }}> {t("Filter")} </h4>
         <div className="row">
+          <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Customer")}</label>
+            <AsyncSelect
+              loadOptions={arrCustomer}
+              value={objCustomer}
+              placeholder={t("Type to search...")}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
+              isClearable={true}
+              onChange={(o) => {
+                setObjCustomer(o);
+                setObjFilter(prev => ({ ...prev, customerId: o ? o.value : null }));
+              }}
+            />
+          </div>
+
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Invoice Date From")}</label>
             <input type="date" className="form-control" value={objFilter.invoiceDateFrom}
@@ -406,26 +445,26 @@ const Sales = () => {
           onShow={() => { }}
           onDelete={HandelDelete}
 
- customActions={
-    roles.includes("Admin")
-      ? (row) => (
-          <>
-            {!row.isInvalid && (
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary"
-                title={t("Mark Invalid")}
-                onClick={() => MarkInvalid(row)}
-              >
-                <i className="bi bi-x-circle"></i>
-              </button>
-            )}
-          </>
-        )
-      : undefined
-  }
+          customActions={
+            roles.includes("Admin")
+              ? (row) => (
+                <>
+                  {!row.isInvalid && (
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-secondary"
+                      title={t("Mark Invalid")}
+                      onClick={() => MarkInvalid(row)}
+                    >
+                      <i className="bi bi-x-circle"></i>
+                    </button>
+                  )}
+                </>
+              )
+              : undefined
+          }
 
-        
+
         />
 
         <Pagination
