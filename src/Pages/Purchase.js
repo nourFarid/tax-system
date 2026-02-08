@@ -8,11 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { toast, ToastContainer } from "react-toastify";
-import { getUserRoles } from "../Hooks/Services/Storage.js"
+import { getUserRoles } from "../Hooks/Services/Storage.js";
+import AsyncSelect from "react-select/async";
 
 const Purchase = () => {
   const { t } = useTranslate();
-    const roles = getUserRoles();
+  const roles = getUserRoles();
 
   const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(1);
@@ -30,8 +31,9 @@ const Purchase = () => {
     invoiceDateFrom: "",
     invoiceDateTo: "",
     exportWithName: null,
-
+    supplierId: null,
   });
+  const [objSupplier, setObjSupplier] = useState(null);
 
   // State for delete modal
   const [objCurrentPurchase, setObjCurrentPurchase] = useState({});
@@ -156,15 +158,15 @@ const Purchase = () => {
         )
     },
     {
-  label: t("Update Status"),
-  accessor: "IsUpdated",
-  render: (value) =>
-    value ? (
-      <span className="badge bg-success">{t("Updated")}</span>
-    ) : (
-      <span className="badge bg-danger">{t("Not Updated")}</span>
-    )
-},
+      label: t("Update Status"),
+      accessor: "IsUpdated",
+      render: (value) =>
+        value ? (
+          <span className="badge bg-success">{t("Updated")}</span>
+        ) : (
+          <span className="badge bg-danger">{t("Not Updated")}</span>
+        )
+    },
   ];
 
   const strDocDir = document.documentElement.dir;
@@ -199,6 +201,18 @@ const Purchase = () => {
       toast.error(t("Something went wrong"));
     }
   };
+  const arrSupplier = async (input) => {
+    if (input.length < 2) return [];
+    const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
+      NameIdentity: input,
+      IsSupplier: true,
+    });
+    return res.data.data.map(x => ({
+      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name}`,
+      value: x.id,
+    }));
+  };
+
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
       (fy) => fy.id === Number(fiscalYearId)
@@ -212,7 +226,8 @@ const Purchase = () => {
       const isFilterEmpty =
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
-        objFilter.invoiceDateTo === "";
+        objFilter.invoiceDateTo === "" &&
+        !objFilter.supplierId;
 
       let Filter = {};
       if (objFilter.invoiceDateFrom) {
@@ -229,6 +244,11 @@ const Purchase = () => {
         Filter.quarterId = Number.parseInt(objFilter.quarterId);
       } else {
         delete Filter.quarterId;
+      }
+      if (objFilter.supplierId) {
+        Filter.supplierId = objFilter.supplierId;
+      } else {
+        delete Filter.supplierId;
       }
       const body = {
         filter: isFilterEmpty ? {} : Filter,
@@ -299,7 +319,9 @@ const Purchase = () => {
       quarterId: -1,
       invoiceDateFrom: "",
       invoiceDateTo: "",
+      supplierId: null,
     });
+    setObjSupplier(null);
     setPageNumber(1);
   };
 
@@ -323,6 +345,22 @@ const Purchase = () => {
         </h4>
 
         <div className="row">
+          <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Supplier")}</label>
+            <AsyncSelect
+              loadOptions={arrSupplier}
+              value={objSupplier}
+              placeholder={t("Type to search...")}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
+              isClearable={true}
+              onChange={(o) => {
+                setObjSupplier(o);
+                setObjFilter(prev => ({ ...prev, supplierId: o ? o.value : null }));
+              }}
+            />
+          </div>
+
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Invoice Date From")}</label>
             <input
@@ -405,24 +443,24 @@ const Purchase = () => {
           showShow={false}
           onShow={() => { }}
           onDelete={HandelDelete}
-         customActions={
-    roles.includes("Admin")
-      ? (row) => (
-          <>
-            {!row.isInvalid && (
-              <button
-                type="button"
-                className="btn btn-sm btn-secondary"
-                title={t("Mark Invalid")}
-                onClick={() => MarkInvalid(row)}
-              >
-                <i className="bi bi-x-circle"></i>
-              </button>
-            )}
-          </>
-        )
-      : undefined
-  }
+          customActions={
+            roles.includes("Admin")
+              ? (row) => (
+                <>
+                  {!row.isInvalid && (
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-secondary"
+                      title={t("Mark Invalid")}
+                      onClick={() => MarkInvalid(row)}
+                    >
+                      <i className="bi bi-x-circle"></i>
+                    </button>
+                  )}
+                </>
+              )
+              : undefined
+          }
         />
 
         <Pagination
