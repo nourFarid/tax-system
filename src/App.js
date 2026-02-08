@@ -31,7 +31,8 @@ const User = lazy(() => import('./Pages/User'));
 const Departments = lazy(() => import('./Pages/Departments'));
 const Position = lazy(() => import('./Pages/Position'));
 const Auth = lazy(() => import('./Pages/Auth'));
-const InvalidDocuments = lazy(()=>import ('./Pages/InvalidDocuments')) ;
+const InvalidDocuments = lazy(() => import('./Pages/InvalidDocuments'));
+const ResetPassword = lazy(() => import('./Pages/ResetPassword'));
 
 function App() {
   const lang = useSelector((state) => state.language.lang);
@@ -44,39 +45,40 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Auth />} />
+        <Route path="/ResetPassword" element={<ResetPassword />} />;
+
         {/* Routes with Sidebar */}
         <Route path="/*" element={
-              <ProtectedRoute>
-
-          <Layout>
-            <Routes>
-              <Route path="/Purchase" element={<Purchase />} />
-              <Route path="/InvalidDocuments" element={<InvalidDocuments />} />;
-              <Route path="/Purchase/Add" element={<AddPurchase />} />
-              <Route path="/Sales" element={<Sales />} />
-              <Route path="/Sales/Add" element={<AddSales />} />
-              <Route path="/Sales/UpdateSale/:id" element={<EditSales />} />
-              <Route path="/Purchase/UpdatePurchase/:id/:docItemId" element={<EditPurchase />} />
-              <Route path="/Purchase/UpdatePurchase/:id" element={<EditPurchase />} />
-              <Route path="/Setup" element={<Setup />} />
-              <Route path="/Document41" element={<Document41 />} />
-              <Route path="/Setup/DocumentType" element={<DocumentType />} />
-              <Route path="/ExamplePage" element={<ExamplePage />} />
-              <Route path="/Setup/StatementType" element={<StatementType />} />;
-              <Route path="/Setup/TaxType" element={<TaxType />} />;
-              <Route path="/Setup/ItemType" element={<ItemType />} />;
-              <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />;
-              <Route path="/Setup/FiscalYear" element={<FiscalYear />} />;
-              <Route path="/Setup/Supplier" element={<Supplier />} />;
-              <Route path="/Setup/Customer" element={<Customer />} />;
-              <Route path="/Setup/Item" element={<Item />} />;
-              <Route path="/Setup/User" element={<User />} />;
-              <Route path="/Setup/Departments" element={<Departments />} />;
-              <Route path="/Setup/Position" element={<Position />} />;
-              <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />;
-            </Routes>
-          </Layout>
-              </ProtectedRoute>
+          <ProtectedRoute>
+            <Layout>
+              <Routes>
+                <Route path="/Purchase" element={<Purchase />} />
+                <Route path="/InvalidDocuments" element={<InvalidDocuments />} />;
+                <Route path="/Purchase/Add" element={<AddPurchase />} />
+                <Route path="/Sales" element={<Sales />} />
+                <Route path="/Sales/Add" element={<AddSales />} />
+                <Route path="/Sales/UpdateSale/:id" element={<EditSales />} />
+                <Route path="/Purchase/UpdatePurchase/:id/:docItemId" element={<EditPurchase />} />
+                <Route path="/Purchase/UpdatePurchase/:id" element={<EditPurchase />} />
+                <Route path="/Setup" element={<Setup />} />
+                <Route path="/Document41" element={<Document41 />} />
+                <Route path="/Setup/DocumentType" element={<DocumentType />} />
+                <Route path="/ExamplePage" element={<ExamplePage />} />
+                <Route path="/Setup/StatementType" element={<StatementType />} />;
+                <Route path="/Setup/TaxType" element={<TaxType />} />;
+                <Route path="/Setup/ItemType" element={<ItemType />} />;
+                <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />;
+                <Route path="/Setup/FiscalYear" element={<FiscalYear />} />;
+                <Route path="/Setup/Supplier" element={<Supplier />} />;
+                <Route path="/Setup/Customer" element={<Customer />} />;
+                <Route path="/Setup/Item" element={<Item />} />;
+                <Route path="/Setup/User" element={<User />} />;
+                <Route path="/Setup/Departments" element={<Departments />} />;
+                <Route path="/Setup/Position" element={<Position />} />
+                <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />
+              </Routes>
+            </Layout>
+          </ProtectedRoute>
 
         } />
       </Routes>

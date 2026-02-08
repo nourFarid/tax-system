@@ -64,10 +64,17 @@ const Auth = () => {
                 rememberMe: true
             };
             const response = await axiosInstance.post("Auth/Login", payload);
-            setAuthUser(response.data.token);
+            setAuthUser(response.data.token || response.data.Token);
             setLoading(false);
-            if (getAuthUser())
-                navigate("/Setup");
+            if (getAuthUser()) {
+                // Check if API returns DefaultPage indicating user needs to change password
+                const defaultPage = response.data.defaultPage || response.data.DefaultPage;
+                if (defaultPage === "Auth/ChangePassword") {
+                    navigate("/ResetPassword");
+                } else {
+                    navigate("/Setup");
+                }
+            }
         } catch (error) {
             setLoading(false);
             console.error("Failed to login", error);
