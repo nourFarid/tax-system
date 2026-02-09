@@ -48,7 +48,7 @@ const AddDocument41 = () => {
   });
 
   const arrSupplier = async (strInput) => {
-    if (strInput.length < 2) {
+    if (strInput.length < 2 || strInput.length > 50) {
       return [];
     }
     let objFilter = {
