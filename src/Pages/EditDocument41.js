@@ -4,7 +4,7 @@ import useTranslate from "../Hooks/Translation/useTranslate";
 import AsyncSelect from "react-select/async";
 import axiosInstance from "../Axios/AxiosInstance";
 import { useParams } from "react-router-dom";
-
+import { toast, ToastContainer } from "react-toastify";
 const AddDocument41 = () => {
   const { t } = useTranslate();
   const { id } = useParams();
@@ -77,12 +77,12 @@ const AddDocument41 = () => {
     const res = await axiosInstance.post("FiscalYear/ListAll", objFilter);
 
     if (!res.data.result) {
-      alert(res.data.message);
+      toast.error(res.data.message);
       return;
     }
 
     if (res.data.data.length === 0) {
-      alert(t("There is no fiscal year for this date."));
+      toast.error(t("There is no fiscal year for this date."));
       return;
     }
 
@@ -98,7 +98,7 @@ const AddDocument41 = () => {
       if (condition) {
         setStrFiscalYear(res.data.data[0].yearFromDate + " - " + res.data.data[0].yearToDate + " / " + t("Quarter") + " " + quarter.dateFrom + " - " + quarter.dateTo);
         if (currentDate > lockDate) {
-          alert(t("The quarter is locked. You cannot add transactions in this quarter."));
+          toast.error(t("The quarter is locked. You cannot add transactions in this quarter."));
           return;
         }
         setObjDocument41(prev => ({ ...prev, quarterId: quarter.id || -1 }));
@@ -110,7 +110,7 @@ const AddDocument41 = () => {
   const Update = async () => {
     let response = await axiosInstance.put("Document41/Update", objDocument41)
     if (response.data.result) {
-      alert(response.data.message);
+      toast.success(response.data.message);
       reset();
       window.location.href = `/Document41`;
     }
@@ -144,7 +144,7 @@ const AddDocument41 = () => {
     const res = await axiosInstance.post("Document41/List", { pageNumber: 1, pageSize: 1, filter: { id: id } });
     const result = res.data;
     if (!result.result) {
-      alert(result.message);
+      toast.error(result.message);
       return;
     }
     setObjDocument41({
@@ -242,6 +242,7 @@ const AddDocument41 = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };
