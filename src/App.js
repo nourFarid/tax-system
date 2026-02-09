@@ -5,7 +5,7 @@ import i18n from "./i18n";
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HandleAuth from './HandleAuth';
-
+import { getUserRoles } from "./Hooks/Services/Storage.js"
 import ProtectedRoute from './Hooks/Services/ProtectedRoute.js';
 const Layout = lazy(() => import('./Components/Layout/Layout'));
 const ExamplePage = lazy(() => import('./Pages/ExamplePage'));
@@ -36,6 +36,7 @@ const ResetPassword = lazy(() => import('./Pages/ResetPassword'));
 
 function App() {
   const lang = useSelector((state) => state.language.lang);
+  const roles = getUserRoles();
 
   useEffect(() => {
     i18n.changeLanguage(lang);
@@ -53,7 +54,7 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/Purchase" element={<Purchase />} />
-                <Route path="/InvalidDocuments" element={<InvalidDocuments />} />;
+                <Route path="/InvalidDocuments" element={<InvalidDocuments />} />
                 <Route path="/Purchase/Add" element={<AddPurchase />} />
                 <Route path="/Sales" element={<Sales />} />
                 <Route path="/Sales/Add" element={<AddSales />} />
@@ -64,18 +65,27 @@ function App() {
                 <Route path="/Document41" element={<Document41 />} />
                 <Route path="/Setup/DocumentType" element={<DocumentType />} />
                 <Route path="/ExamplePage" element={<ExamplePage />} />
-                <Route path="/Setup/StatementType" element={<StatementType />} />;
-                <Route path="/Setup/TaxType" element={<TaxType />} />;
-                <Route path="/Setup/ItemType" element={<ItemType />} />;
-                <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />;
-                <Route path="/Setup/FiscalYear" element={<FiscalYear />} />;
-                <Route path="/Setup/Supplier" element={<Supplier />} />;
-                <Route path="/Setup/Customer" element={<Customer />} />;
-                <Route path="/Setup/Item" element={<Item />} />;
-                <Route path="/Setup/User" element={<User />} />;
-                <Route path="/Setup/Departments" element={<Departments />} />;
-                <Route path="/Setup/Position" element={<Position />} />
-                <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />
+                <Route path="/Setup/Item" element={<Item />} />
+                <Route path="/Setup/Supplier" element={<Supplier />} />
+                <Route path="/Setup/Customer" element={<Customer />} />
+                {true && 
+                <Route path="/Setup/StatementType" element={<StatementType />} />}
+                {true && 
+                <Route path="/Setup/TaxType" element={<TaxType />} />}
+                {true && 
+                <Route path="/Setup/ItemType" element={<ItemType />} />}
+                {true && 
+                <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />}
+                {true && 
+                <Route path="/Setup/FiscalYear" element={<FiscalYear />} />}
+                {true &&
+                <Route path="/Setup/User" element={<User />} />}
+                {true &&
+                <Route path="/Setup/Departments" element={<Departments />} />}
+                {true &&
+                <Route path="/Setup/Position" element={<Position />} />}
+                {true &&
+                <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />}
               </Routes>
             </Layout>
           </ProtectedRoute>
