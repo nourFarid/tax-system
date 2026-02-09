@@ -9,6 +9,7 @@ import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { useSwal } from "../Hooks/Alert/Swal";
 import { toast, ToastContainer } from "react-toastify";
 import { getUserRoles } from "../Hooks/Services/Storage.js";
+import AsyncSelect from "react-select/async";
 
 const Sales = () => {
   const { t } = useTranslate();
@@ -34,9 +35,9 @@ const Sales = () => {
     invoiceDateFrom: "",
     invoiceDateTo: "",
     exportWithName: null,
-    searchText: "",
-    searchColumn: "customerName", // customerName, taxRegistrationNumber, invoiceNumber
+    customerId: null,
   });
+  const [objCustomer, setObjCustomer] = useState(null);
 
   // Current sale selected for delete
   const [objCurrentSale, setObjCurrentSale] = useState({});
@@ -200,6 +201,18 @@ const Sales = () => {
     }
   };
 
+  const arrCustomer = async (input) => {
+    if (input.length < 2 || input.length > 50) return [];
+    const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
+      NameIdentity: input,
+      IsSupplier: false,
+    });
+    return res.data.data.map(x => ({
+      label: `[${x.taxRegistrationNumber ?? x.identificationNumber}] ${x.name}`,
+      value: x.id,
+    }));
+  };
+
   const GetQuarters = (fiscalYearId) => {
     const fiscalYear = arrFiscalYear.find(
       (fy) => fy.id === Number(fiscalYearId)
@@ -214,27 +227,28 @@ const Sales = () => {
         objFilter.quarterId === -1 &&
         objFilter.invoiceDateFrom === "" &&
         objFilter.invoiceDateTo === "" &&
-        objFilter.searchText === "";
+        !objFilter.customerId;
 
       let Filter = {};
       if (objFilter.invoiceDateFrom) {
         Filter.invoiceDateFrom = objFilter.invoiceDateFrom;
+      } else {
+        delete Filter.invoiceDateFrom;
       }
       if (objFilter.invoiceDateTo) {
         Filter.invoiceDateTo = objFilter.invoiceDateTo;
+      } else {
+        delete Filter.invoiceDateTo;
       }
       if (objFilter.quarterId !== -1) {
         Filter.quarterId = Number.parseInt(objFilter.quarterId);
+      } else {
+        delete Filter.quarterId;
       }
-      // Apply search filter based on selected column
-      if (objFilter.searchText) {
-        if (objFilter.searchColumn === "customerName") {
-          Filter.customerName = objFilter.searchText;
-        } else if (objFilter.searchColumn === "taxRegistrationNumber") {
-          Filter.customerTaxRegistrationNumber = objFilter.searchText;
-        } else if (objFilter.searchColumn === "invoiceNumber") {
-          Filter.invoiceNumber = objFilter.searchText;
-        }
+      if (objFilter.customerId) {
+        Filter.customerId = objFilter.customerId;
+      } else {
+        delete Filter.customerId;
       }
       const body = {
         filter: isFilterEmpty ? {} : Filter,
@@ -306,9 +320,9 @@ const Sales = () => {
       quarterId: -1,
       invoiceDateFrom: "",
       invoiceDateTo: "",
-      searchText: "",
-      searchColumn: "customerName",
+      customerId: null,
     });
+    setObjCustomer(null);
     setPageNumber(1);
   };
 
@@ -333,27 +347,19 @@ const Sales = () => {
       <div className="bg-white p-3 mb-3 shadow-sm shadow-lg">
         <h4 className="font-semibold" style={{ color: "blue" }}> {t("Filter")} </h4>
         <div className="row">
-          <div className="col-md-2 mb-3">
-            <label className="form-label">{t("Search By")}</label>
-            <select
-              className="form-select"
-              value={objFilter.searchColumn}
-              onChange={(e) => setObjFilter({ ...objFilter, searchColumn: e.target.value })}
-            >
-              <option value="customerName">{t("Customer Name")}</option>
-              <option value="taxRegistrationNumber">{t("Tax Registration Number")}</option>
-              <option value="invoiceNumber">{t("Invoice Number")}</option>
-            </select>
-          </div>
-          <div className="col-md-4 mb-3">
-            <label className="form-label">{t("Search")}</label>
-            <input
-              type="text"
-              className="form-control"
+          <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Customer")}</label>
+            <AsyncSelect
+              loadOptions={arrCustomer}
+              value={objCustomer}
               placeholder={t("Type to search...")}
-              value={objFilter.searchText}
-              maxLength={50}
-              onChange={(e) => setObjFilter({ ...objFilter, searchText: e.target.value })}
+              noOptionsMessage={() => t("No options")}
+              loadingMessage={() => t("Loading...")}
+              isClearable={true}
+              onChange={(o) => {
+                setObjCustomer(o);
+                setObjFilter(prev => ({ ...prev, customerId: o ? o.value : null }));
+              }}
             />
           </div>
 

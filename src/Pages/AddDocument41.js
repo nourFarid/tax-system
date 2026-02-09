@@ -6,7 +6,7 @@ import axiosInstance from "../Axios/AxiosInstance";
 
 const AddDocument41 = () => {
   const { t } = useTranslate();
-  
+
   const objTitle = useMemo(
     () => ({
       AddDocumentType: t("Add Document Type"),
@@ -47,7 +47,7 @@ const AddDocument41 = () => {
   });
 
   const arrSupplier = async (strInput) => {
-    if (strInput.length < 2) {
+    if (strInput.length < 2 || strInput.length > 50) {
       return [];
     }
     let objFilter = {
@@ -57,7 +57,7 @@ const AddDocument41 = () => {
     const res = await axiosInstance.post("CustomerSupplier/ListAll", objFilter);
 
     let arr = res.data.data.map(x => ({
-      label: "[x.taxRegistrationNumber] x.name".replace("x.name", x.name).replace("x.taxRegistrationNumber", x.taxRegistrationNumber??"-"),
+      label: "[x.taxRegistrationNumber] x.name".replace("x.name", x.name).replace("x.taxRegistrationNumber", x.taxRegistrationNumber ?? "-"),
       value: x.id,
       objSupplier: x
     }));
@@ -82,7 +82,7 @@ const AddDocument41 = () => {
       alert(t("There is no fiscal year for this date."));
       return;
     }
-    setObjDocument41(prev => ({...prev, fiscalYearId: res.data.data[0].id || -1}));
+    setObjDocument41(prev => ({ ...prev, fiscalYearId: res.data.data[0].id || -1 }));
     let date = new Date(strDate).setHours(0, 0, 0, 0);
     for (let i = 0; i < res.data.data[0].quarters.length; i++) {
       let quarter = res.data.data[0].quarters[i];
@@ -92,12 +92,12 @@ const AddDocument41 = () => {
       let currentDate = new Date().setHours(0, 0, 0, 0);
       let condition = date >= quarterStartDate && date <= quarterEndDate;
       if (condition) {
-        setStrFiscalYear(res.data.data[0].yearFromDate + " - " + res.data.data[0].yearToDate + " / " + t("Quarter") + " " + quarter.dateFrom + " - " + quarter.dateTo );
+        setStrFiscalYear(res.data.data[0].yearFromDate + " - " + res.data.data[0].yearToDate + " / " + t("Quarter") + " " + quarter.dateFrom + " - " + quarter.dateTo);
         if (currentDate > lockDate) {
           alert(t("The quarter is locked. You cannot add transactions in this quarter."));
           return;
         }
-        setObjDocument41(prev => ({...prev, quarterId: quarter.id || -1}));
+        setObjDocument41(prev => ({ ...prev, quarterId: quarter.id || -1 }));
         return;
       }
     }
@@ -108,13 +108,13 @@ const AddDocument41 = () => {
     if (response.data.result) {
       alert(response.data.message);
       reset();
-    } else{
+    } else {
       alert(response.data.message);
     }
   }
 
   const listTransactionNature = async () => {
-    const res = await axiosInstance.post("TransactionNature/ListAll",{});
+    const res = await axiosInstance.post("TransactionNature/ListAll", {});
     if (res.data.result) {
       setArrTransactionNature(res.data.data);
     }
@@ -156,15 +156,15 @@ const AddDocument41 = () => {
             <label className="mb-2">{t("Supplier")}</label>
             <AsyncSelect cacheOptions defaultOptions={false} loadOptions={arrSupplier} value={objSupplier}
               onChange={(option) => {
-                  setObjSupplier(option);
-                  setObjDocument41(prev => ({ ...prev, supplierId: option.value }));
-                }
+                setObjSupplier(option);
+                setObjDocument41(prev => ({ ...prev, supplierId: option.value }));
+              }
               }
             />
           </div>
           <div className="col-md-6 form-group">
             <label>{t("Transaction Date")}</label>
-            <input type="date" className="mt-2 form-control" value={objDocument41.transactionDate} onChange={(e) => { setObjDocument41((prev) => ({...prev, transactionDate: e.target.value})); UpdateFiscalYear(e.target.value);}} />
+            <input type="date" className="mt-2 form-control" value={objDocument41.transactionDate} onChange={(e) => { setObjDocument41((prev) => ({ ...prev, transactionDate: e.target.value })); UpdateFiscalYear(e.target.value); }} />
           </div>
         </div>
 
@@ -175,7 +175,7 @@ const AddDocument41 = () => {
           </div>
           <div className="col-md-4 form-group">
             <label>{t("Transaction Nature")}</label>
-            <select className="mt-2 form-control" value={objDocument41.transactionNatureId} onChange={(e) => setObjDocument41((prev) => ({...prev, transactionNatureId: Number(e.target.value)}))}>
+            <select className="mt-2 form-control" value={objDocument41.transactionNatureId} onChange={(e) => setObjDocument41((prev) => ({ ...prev, transactionNatureId: Number(e.target.value) }))}>
               <option value="-1">{t("Transaction Nature")}</option>
               {arrTransactionNature.map((nature) => (
                 <option key={nature.id} value={nature.id}>{nature.name}</option>
@@ -188,7 +188,7 @@ const AddDocument41 = () => {
         <div className="row p-4">
           <div className="col-md-2 form-group">
             <label>{t("Price")}</label>
-            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objDocument41.price} onChange={(e) => {setObjDocument41(prev => ({...prev, price: Number(e.target.value)}))}} />
+            <input type="number" className="mt-2 form-control" placeholder="0.0" value={objDocument41.price} onChange={(e) => { setObjDocument41(prev => ({ ...prev, price: Number(e.target.value) })) }} />
           </div>
           <div className="col-md-2 form-group">
             <label>{t("Tax")}</label>

@@ -97,7 +97,7 @@ const AddPurchase = () => {
   }
 
   const arrItem = async (input) => {
-    if (input.length < 2) return [];
+    if (input.length < 2 || input.length > 50) return [];
     const res = await axiosInstance.post("Item/ListAll", { NameCode: input });
     return res.data.data.map(x => ({
       label: `[${x.code}] ${x.name}`,
@@ -107,7 +107,7 @@ const AddPurchase = () => {
   };
 
   const arrSupplier = async (input) => {
-    if (input.length < 2) return [];
+    if (input.length < 2 || input.length > 50) return [];
     const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
       NameIdentity: input,
       IsSupplier: true,
