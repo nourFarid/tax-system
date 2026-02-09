@@ -135,7 +135,7 @@ const Document41 = () => {
     transactionDateFrom: "",
     transactionDateTo: "",
     exportWithName: false,
-    supplierId: null,
+    supplierId: -1,
   });
 
   const arrSupplier = async (input) => {
@@ -183,7 +183,7 @@ const Document41 = () => {
       quarterId: -1,
       transactionDateFrom: "",
       transactionDateTo: "",
-      supplierId: null,
+      supplierId: -1,
     });
     setObjSupplier(null);
     List();
@@ -251,7 +251,7 @@ const Document41 = () => {
               isClearable={true}
               onChange={(o) => {
                 setObjSupplier(o);
-                setObjFilter(prev => ({ ...prev, supplierId: o ? o.value : null }));
+                setObjFilter(prev => ({ ...prev, supplierId: o ? o.value : -1 }));
               }}
             />
           </div>
