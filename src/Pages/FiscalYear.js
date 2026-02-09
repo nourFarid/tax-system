@@ -125,7 +125,29 @@ const FiscalYear = () => {
     setObjDocType((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!objDocType.From) {
+      newErrors.From = t("From Date is required");
+    }
+    if (!objDocType.To) {
+      newErrors.To = t("To Date is required");
+    }
+    if (!objDocType.YrFrom) {
+      newErrors.YrFrom = t("Year From is required");
+    }
+    if (!objDocType.YrTo) {
+      newErrors.YrTo = t("Year To is required");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = async () => {
+    if (!validateForm()) return;
+
     try {
       const payload = {
         id: 0,
@@ -141,6 +163,7 @@ const FiscalYear = () => {
         await getFiscalYears();
         hideModal("AddFiscalYear");
         setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+        setErrors({});
         toast.success(response.data.message || t("Fiscal Year added successfully!"));
       }
       else {
@@ -203,6 +226,7 @@ const FiscalYear = () => {
 
   const reset = () => {
     setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
+    setErrors({});
   };
 
   useEffect(() => {
@@ -254,23 +278,27 @@ const FiscalYear = () => {
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.From}</label>
-            <input type="date" name="From" value={objDocType.From} onChange={handleChange} className="form-control" placeholder={objTitle.From} />
+            <input type="date" name="From" value={objDocType.From} onChange={handleChange} className={`form-control ${errors.From ? "is-invalid" : ""}`} placeholder={objTitle.From} />
+            {errors.From && <div className="invalid-feedback">{errors.From}</div>}
           </div>
 
           <div className="col-md-6">
             <label className="form-label">{objTitle.To}</label>
-            <input type="date" name="To" value={objDocType.To} onChange={handleChange} className="form-control" placeholder={objTitle.To} />
+            <input type="date" name="To" value={objDocType.To} onChange={handleChange} className={`form-control ${errors.To ? "is-invalid" : ""}`} placeholder={objTitle.To} />
+            {errors.To && <div className="invalid-feedback">{errors.To}</div>}
           </div>
         </div>
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.YrFrom}</label>
-            <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className="form-control" placeholder={objTitle.YrFrom} />
+            <input type="text" name="YrFrom" value={objDocType.YrFrom} onChange={handleChange} className={`form-control ${errors.YrFrom ? "is-invalid" : ""}`} placeholder={objTitle.YrFrom} />
+            {errors.YrFrom && <div className="invalid-feedback">{errors.YrFrom}</div>}
           </div>
 
           <div className="col-md-6">
             <label className="form-label">{objTitle.YrTo}</label>
-            <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className="form-control" placeholder={objTitle.YrTo} />
+            <input type="text" name="YrTo" value={objDocType.YrTo} onChange={handleChange} className={`form-control ${errors.YrTo ? "is-invalid" : ""}`} placeholder={objTitle.YrTo} />
+            {errors.YrTo && <div className="invalid-feedback">{errors.YrTo}</div>}
           </div>
         </div>
       </Modal>
