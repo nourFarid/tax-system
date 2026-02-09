@@ -17,6 +17,7 @@ const ItemType = () => {
   const [objItemType, setObjItemType] = useState({ Name: "", Code: "" });
   const { showSuccess, showError } = useSwal();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const objTitle = useMemo(
     () => ({
@@ -58,9 +59,8 @@ const ItemType = () => {
   ];
 
   const columns = [
-    { label: t("ID"), accessor: "id" },
     { label: t("Name"), accessor: "name" },
-    { label: t("Code"), accessor: "code" },
+    { label: t("Code"), accessor: "code" }
   ];
 
 
@@ -110,7 +110,20 @@ const ItemType = () => {
     setObjItemType((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!objItemType.Name || objItemType.Name.trim() === "") {
+      newErrors.Name = "Name is required";
+    }
+    if (!objItemType.Code || objItemType.Code.trim() === "") {
+      newErrors.Code = "Code is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const save = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
         name: objItemType.Name,
@@ -175,6 +188,7 @@ const ItemType = () => {
 
   const reset = () => {
     setObjItemType({ Name: "", Code: "" });
+    setErrors({});
   };
 
   useEffect(() => {
@@ -220,12 +234,14 @@ const ItemType = () => {
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.Name}</label>
-            <input type="text" name="Name" value={objItemType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+            <input type="text" name="Name" value={objItemType.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
+            {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
           </div>
 
           <div className="col-md-6">
             <label className="form-label">{objTitle.Code}</label>
-            <input type="text" name="Code" value={objItemType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+            <input type="text" name="Code" value={objItemType.Code} onChange={handleChange} className={`form-control ${errors.Code ? "is-invalid" : ""}`} placeholder={objTitle.Code} />
+            {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
           </div>
         </div>
       </Modal>
