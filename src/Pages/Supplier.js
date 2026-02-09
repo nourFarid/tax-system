@@ -84,6 +84,9 @@ const Supplier = () => {
       newErrors.NationalID = "National ID or Passport is required if Tax Number is empty";
       newErrors.TaxNumber = "Tax Number is required if National ID is empty";
     }
+    if (hasTaxNumber && objDocType.TaxNumber.length > 50) {
+      newErrors.TaxNumber = "Tax Number must not exceed 50 characters";
+    }
 
     const address = objDocType.AddressLine || objDocType.Address;
     if (!address || address.trim() === "") {
@@ -328,7 +331,7 @@ const Supplier = () => {
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
-            <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
+            <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} maxLength={50} />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
           </div>
           <div className="col-md-6">
@@ -432,6 +435,7 @@ const Supplier = () => {
               onChange={handleChange}
               className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`}
               placeholder={objTitle.TaxNumber}
+              maxLength={50}
             />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
           </div>
