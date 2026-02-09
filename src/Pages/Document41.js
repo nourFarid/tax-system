@@ -304,7 +304,7 @@ const Document41 = () => {
           showActions={true}
           onEdit={Edit}
           showShow={false}
-          onDelete={HandelDelete}
+          // onDelete={HandelDelete}
           customActions={
             roles.includes("Admin")
               ? (row) => (
