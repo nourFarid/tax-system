@@ -51,6 +51,7 @@ const Auth = () => {
     });
     const [loading, setLoading] = useState(false);
     const [isButtonHovered, setIsButtonHovered] = useState(false);
+    const [loginError, setLoginError] = useState("");
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -58,6 +59,7 @@ const Auth = () => {
     const loginFun = async () => {
         try {
             setLoading(true);
+            setLoginError(""); // Clear previous errors
             const payload = {
                 userName: login.userName,
                 password: login.password,
@@ -77,6 +79,12 @@ const Auth = () => {
             }
         } catch (error) {
             setLoading(false);
+            // Check if it's an authentication error (401) or other error
+            if (error.response && (error.response.status === 401 || error.response.status === 400)) {
+                setLoginError(t("Invalid username or password"));
+            } else {
+                setLoginError(t("Login failed. Please try again."));
+            }
             console.error("Failed to login", error);
         }
     };
@@ -139,6 +147,16 @@ const Auth = () => {
                                     onClick={togglePasswordVisibility}>
                                 </i>
                             </div>
+
+                            {/* Error Message */}
+                            {loginError && (
+                                <div className="w-full sm:w-[350px] md:w-[400px] lg:w-[300px] xl:w-[350px] 3xl:w-[400px] text-center">
+                                    <p className="text-red-500 text-sm md:text-base lg:text-lg font-Cairo bg-red-100 rounded-lg py-2 px-4 flex items-center justify-center gap-2">
+                                        <i className="ri-error-warning-line"></i>
+                                        {loginError}
+                                    </p>
+                                </div>
+                            )}
 
 
                             {/* Login Button */}
