@@ -8,6 +8,7 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
 import { toast, ToastContainer } from 'react-toastify';
+import Switch from "../Components/Layout/Switch";
 
 const NatureOfTransaction = () => {
   const { t } = useTranslate();
@@ -31,7 +32,9 @@ const NatureOfTransaction = () => {
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
-      Code: t('Code')
+      Code: t('Code'),
+      Active: t("Active"),
+      Inactive: t("Inactive"),
     }),
     [t]
   );
@@ -99,6 +102,15 @@ const NatureOfTransaction = () => {
     { label: t("Updated At"), accessor: "updateAt" },
     { label: t("Created At"), accessor: "createdAt" },
     { label: t("Updated By"), accessor: "updatedByUser.userName" },
+    {
+      label: t("Status"),
+      accessor: "isActive",
+      render: (value) => (
+        <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
+          {value ? objTitle.Active : objTitle.Inactive}
+        </span>
+      )
+    },
   ];
 
   const fetchItems = async (page = 1) => {
@@ -109,8 +121,13 @@ const NatureOfTransaction = () => {
 
       if (data.result) {
         const itemsList = data.data;
-        setItems(itemsList);
-        setTotalCount(itemsList.length);
+        // Map isDeleted to isActive
+        const mappedItems = itemsList.map(item => ({
+          ...item,
+          isActive: item.isActive !== undefined ? item.isActive : !item.isDeleted
+        }));
+        setItems(mappedItems);
+        setTotalCount(mappedItems.length);
         setPageNumber(page);
       }
     } catch (e) {
@@ -262,6 +279,25 @@ const NatureOfTransaction = () => {
     });
   }
 
+  const handleToggle = async (row) => {
+    const itemId = row.id;
+    if (!itemId) {
+      showError(t("Error"), t("Invalid ID"));
+      return;
+    }
+    try {
+      const res = await axiosInstance.put(`TransactionNature/SoftDelete?id=${itemId}`);
+      if (res.data.result) {
+        toast.success(t("Status updated"));
+        fetchItems(pageNumber);
+      } else {
+        toast.error(t("Failed to toggle status"));
+      }
+    } catch (error) {
+      toast.error(t("Failed to toggle status"));
+    }
+  };
+
   // hideModal is now imported from Modal component
 
   useEffect(() => {
@@ -303,8 +339,16 @@ const NatureOfTransaction = () => {
         showActions={true}
         onEdit={handleEdit}
         showShow={false}
+        showDelete={false}
         onShow={() => { }}
         onDelete={handleDelete}
+        customActions={(row) => (
+          <Switch
+            id={`switch-${row.id}`}
+            checked={row.isActive}
+            onChange={() => handleToggle(row)}
+          />
+        )}
       />
       <Pagination
         pageNumber={pageNumber}
