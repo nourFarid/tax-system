@@ -8,6 +8,8 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import Spinner from "../Components/Layout/Spinner";
 import { toast, ToastContainer } from "react-toastify";
+import Switch from "../Components/Layout/Switch";
+
 
 const StatementType = () => {
   const { t } = useTranslate();
@@ -31,7 +33,9 @@ const StatementType = () => {
       QuestionMark: t("?"),
       Filter: t("Filter"),
       Reset: t("Reset"),
-      Code: t('Code')
+      Code: t('Code'),
+      Active: t("Active"),
+      Inactive: t("Inactive"),
     }),
     [t]
   );
@@ -96,8 +100,15 @@ const StatementType = () => {
     { label: t("Id"), accessor: "id" },
     { label: t("Name"), accessor: "name" },
     { label: t("Code"), accessor: "code" },
-
-
+    {
+      label: t("Status"),
+      accessor: "isActive",
+      render: (value) => (
+        <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
+          {value ? objTitle.Active : objTitle.Inactive}
+        </span>
+      )
+    },
   ];
 
   const fetchItems = async (page = 1) => {
@@ -108,8 +119,13 @@ const StatementType = () => {
 
       if (data.result) {
         const itemsList = data.data;
-        setItems(itemsList);
-        setTotalCount(itemsList.length);
+        // Map isDeleted to isActive if needed
+        const mappedItems = itemsList.map(item => ({
+          ...item,
+          isActive: item.isActive !== undefined ? item.isActive : !item.isDeleted
+        }));
+        setItems(mappedItems);
+        setTotalCount(mappedItems.length);
         setPageNumber(page);
       }
     } catch (e) {
@@ -235,6 +251,25 @@ const StatementType = () => {
       toast.error("Failed to add item!");
     }
   };
+  const handleToggle = async (row) => {
+    console.log("Toggle row:", row);
+    const itemId = row.id;
+    if (!itemId) {
+      showError(t("Error"), t("Invalid ID"));
+      return;
+    }
+    try {
+      const res = await axiosInstance.put(`StatementType/SoftDelete?id=${itemId}`);
+      if (res.data.result) {
+        toast.success(t("Status updated"));
+        fetchItems(pageNumber);
+      } else {
+        toast.error(t("Failed to toggle status"));
+      }
+    } catch (error) {
+      toast.error(t("Failed to toggle status"));
+    }
+  };
 
   const reset = () => {
     setObjItem({
@@ -264,8 +299,16 @@ const StatementType = () => {
         showActions={true}
         onEdit={handleEdit}
         showShow={false}
+        showDelete={false}
         onShow={() => { }}
         onDelete={handleDelete}
+        customActions={(row) => (
+          <Switch
+            id={`switch-${row.id}`}
+            checked={row.isActive}
+            onChange={() => handleToggle(row)}
+          />
+        )}
       />
       <Pagination
         pageNumber={pageNumber}
