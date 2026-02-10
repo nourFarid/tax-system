@@ -8,6 +8,7 @@ import { useSwal } from "../Hooks/Alert/Swal";
 import Modal, { showModal, hideModal } from "../Components/Layout/Modal";
 import { getUserRoles } from "../Hooks/Services/Storage.js";
 import AsyncSelect from "react-select/async";
+import { toast, ToastContainer } from "react-toastify";
 
 const Document41 = () => {
   const roles = getUserRoles();
@@ -48,7 +49,7 @@ const Document41 = () => {
         const res = await axiosInstance.post("Document41/ExportToCsv", payload, { responseType: "blob" });
 
         if (res.data.type === "application/json") {
-          return showError("Error", "No data to export");
+          return toast.error("No data to export");
         }
         const blob = new Blob([res.data], {
           type: "text/csv;charset=utf-8",
@@ -75,7 +76,7 @@ const Document41 = () => {
         const res = await axiosInstance.post("Document41/ExportToCsv", payload, { responseType: "blob" });
 
         if (res.data.type === "application/json") {
-          return showError("Error", "No data to export");
+          return toast.error("No data to export");
         }
         const blob = new Blob([res.data], {
           type: "text/csv;charset=utf-8",
@@ -139,7 +140,7 @@ const Document41 = () => {
   });
 
   const arrSupplier = async (input) => {
-    if (input.length < 2) return [];
+    if (input.length < 2 || input.length > 50) return [];
     const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
       NameIdentity: input,
       IsSupplier: true,
@@ -193,11 +194,11 @@ const Document41 = () => {
     const res = await axiosInstance.delete("Document41/Delete/" + objCurrentDoc.id);
     const response = res.data;
     if (response.result) {
-      showSuccess(t("Success"), response.message);
+      toast.success(t("Success"), response.message);
       hideModal("Delete");
       List();
     } else {
-      showError(t("Error"), response.message);
+      toast.error(t("Error"), response.message);
     }
   }
 
@@ -348,7 +349,7 @@ const Document41 = () => {
       >
         <p>{objTitle.DeleteConfirmation} <strong> {objCurrentDoc.Name} </strong> {objTitle.QuestionMark}</p>
       </Modal>
-
+      <ToastContainer />
       <SwalComponent />
     </>
   );

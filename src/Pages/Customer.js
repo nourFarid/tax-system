@@ -86,6 +86,10 @@ const Customer = () => {
       newErrors.TaxNumber = "Tax Number is required if National ID is empty";
     }
 
+    if (hasTaxNumber && objDocType.TaxNumber.length > 50) {
+      newErrors.TaxNumber = "Tax Number must not exceed 50 characters";
+    }
+
     const address = objDocType.AddressLine || objDocType.Address;
     if (!address || address.trim() === "") {
       newErrors.Address = "Address is required";
@@ -175,17 +179,7 @@ const Customer = () => {
         toast.error(response.data.message);
         return;
       }
-      console.log("Add response:", response.data);
-      setObjDocType({
-        NationalID: "",
-        Name: "",
-        Address: "",
-        TaxNumber: "",
-        PhoneNumber: "",
-        AddressLine: "",
-        IsSupplier: false,
-        IsCustomer: true
-      });
+      reset();
       hideModal("AddCustomer");
       await fetchCustomers(pageNumber);
       toast.success(response.data.message);
@@ -209,30 +203,12 @@ const Customer = () => {
         IsSupplier: objDocType.IsSupplier
       };
 
-      console.log("Sending update payload:", payload);
-
-      const response = await axiosInstance.put(
-        "CustomerSupplier/Update",
-        payload
-      );
+      const response = await axiosInstance.put("CustomerSupplier/Update", payload);
       if (response.data.result == false) {
         toast.error(response.data.message);
         return;
       }
-
-      setObjDocType({
-        Id: null,
-        Name: "",
-        NationalID: "",
-        PassportNumber: "",
-        TaxNumber: "",
-        PhoneNumber: "",
-        Address: "",
-        IsCustomer: true,
-        IsSupplier: false
-      });
-
-
+      reset();
       hideModal("EditCustomer");
       await fetchCustomers(pageNumber);
       toast.success(response.data.message);
@@ -247,12 +223,15 @@ const Customer = () => {
     try {
       const response = await axiosInstance.delete(`CustomerSupplier/${objDocType.Id}`);
 
-      if (response.status === 200 || response.status === 204) {
+      if (response?.data?.result === true) {
         console.log("Customer deleted successfully");
 
         toast.success(response.data.message);
         hideModal("DeleteCustomer");
         await fetchCustomers(pageNumber);
+        reset();
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Failed to delete customer", error);
@@ -322,7 +301,7 @@ const Customer = () => {
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.TaxNumber}</label>
-            <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} />
+            <input type="text" name="TaxNumber" value={objDocType.TaxNumber} onChange={handleChange} className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`} placeholder={objTitle.TaxNumber} maxLength={50} />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
           </div>
           <div className="col-md-6">
@@ -427,6 +406,7 @@ const Customer = () => {
               onChange={handleChange}
               className={`form-control ${errors.TaxNumber ? "is-invalid" : ""}`}
               placeholder={objTitle.TaxNumber}
+              maxLength={50}
             />
             {errors.TaxNumber && <div className="invalid-feedback">{errors.TaxNumber}</div>}
           </div>

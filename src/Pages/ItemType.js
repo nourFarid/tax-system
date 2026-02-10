@@ -17,6 +17,7 @@ const ItemType = () => {
   const [objItemType, setObjItemType] = useState({ Name: "", Code: "" });
   const { showSuccess, showError } = useSwal();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const objTitle = useMemo(
     () => ({
@@ -58,9 +59,8 @@ const ItemType = () => {
   ];
 
   const columns = [
-    { label: t("ID"), accessor: "id" },
     { label: t("Name"), accessor: "name" },
-    { label: t("Code"), accessor: "code" },
+    { label: t("Code"), accessor: "code" }
   ];
 
 
@@ -110,25 +110,37 @@ const ItemType = () => {
     setObjItemType((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!objItemType.Name || objItemType.Name.trim() === "") {
+      newErrors.Name = "Name is required";
+    }
+    if (!objItemType.Code || objItemType.Code.trim() === "") {
+      newErrors.Code = "Code is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const save = async () => {
+    if (!validateForm()) return;
     try {
       const payload = {
         name: objItemType.Name,
         code: objItemType.Code
       };
       const response = await axiosInstance.post("ItemType/AddItemType", payload);
-      if (response.status === 200) {
+      if (response.data.result) {
         setObjItemType({
           Name: "",
           Code: "",
         });
         hideModal("AddItemType");
         fetchItemTypes();
-        toast.success("Item type added successfully!");
+        toast.success(t("Item type added successfully!"));
       }
     } catch (error) {
-      console.error("Failed to add item type", error);
-      toast.error("Failed to add item type!");
+      toast.error(t("Failed to add item type"));
     }
   };
 
@@ -139,42 +151,56 @@ const ItemType = () => {
         name: objItemType.Name,
         code: objItemType.Code,
       };
-      const response = await axiosInstance.put("ItemType/Update", payload);
-      console.log("Update response:", response);
 
-      setObjItemType({
-        Name: "",
-        Id: null,
-        Code: ""
-      });
-      hideModal("EditItemType");
-      await fetchItemTypes();
-      toast.success("Item type updated successfully!");
+      const response = await axiosInstance.put("ItemType/Update", payload);
+
+      if (response?.data?.result === true) {
+        setObjItemType({
+          Name: "",
+          Id: null,
+          Code: ""
+        });
+
+        hideModal("EditItemType");
+        await fetchItemTypes();
+        toast.success(response.data.message || t("Item type updated successfully!"));
+      } else {
+        toast.error(response?.data?.message || t("Update failed"));
+      }
+
     } catch (error) {
       console.log(error);
-      toast.error("Failed to update item type");
+      const msg = error?.response?.data?.message || t("Failed to update item type");
+      toast.error(msg);
     }
   };
 
   const Delete = async () => {
     try {
-      await axiosInstance.put(`ItemType/SoftDelete?id=${objItemType.Id}`);
-      setObjItemType({
-        Name: "",
-        Id: null,
-        Code: ""
-      });
-      hideModal("DeleteItemType");
-      await fetchItemTypes();
-      toast.success("Item type deleted successfully!");
+      const response = await axiosInstance.put(`ItemType/SoftDelete?id=${objItemType.Id}`);
+
+      if (response?.data?.result === true) {
+        setObjItemType({
+          Name: "",
+          Id: null,
+          Code: ""
+        });
+        hideModal("DeleteItemType");
+        await fetchItemTypes();
+        toast.success(response.data.message || t("Item type deleted successfully!"));
+      } else {
+        toast.error(response?.data?.message || t("Delete failed"));
+      }
     } catch (error) {
-      console.error("Failed to delete item type", error);
-      toast.error("Failed to delete item type");
+      const msg = error?.response?.data?.message || t("Failed to delete item type");
+      toast.error(msg);
     }
   };
 
+
   const reset = () => {
     setObjItemType({ Name: "", Code: "" });
+    setErrors({});
   };
 
   useEffect(() => {
@@ -220,12 +246,14 @@ const ItemType = () => {
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">{objTitle.Name}</label>
-            <input type="text" name="Name" value={objItemType.Name} onChange={handleChange} className="form-control" placeholder={objTitle.Name} />
+            <input type="text" name="Name" value={objItemType.Name} onChange={handleChange} className={`form-control ${errors.Name ? "is-invalid" : ""}`} placeholder={objTitle.Name} />
+            {errors.Name && <div className="invalid-feedback">{errors.Name}</div>}
           </div>
 
           <div className="col-md-6">
             <label className="form-label">{objTitle.Code}</label>
-            <input type="text" name="Code" value={objItemType.Code} onChange={handleChange} className="form-control" placeholder={objTitle.Code} />
+            <input type="text" name="Code" value={objItemType.Code} onChange={handleChange} className={`form-control ${errors.Code ? "is-invalid" : ""}`} placeholder={objTitle.Code} />
+            {errors.Code && <div className="invalid-feedback">{errors.Code}</div>}
           </div>
         </div>
       </Modal>

@@ -108,7 +108,7 @@
   "Code": "مسلسل",
   "Tax Registration Number": "رقم التسجيل الضريبي",
   "National ID": "الرقم القومي",
-  "Supplier Name": "اسم الممول",
+  "Supplier Name": "اسم المورد",
   "Customer Name": "اسم العميل",
   "Address": "العنوان",
   "Errand Name": "اسم المأمورية",
@@ -286,8 +286,9 @@
   "All documents are valid": "جميع المستندات صالحة",
   "Invalid": "غير صالح",
   "Mark Invalid": "تحديد كغير صالح",
-  "Update Status":"تحديث الحالة",
+  "Update Status": "تحديث الحالة",
   "Updated": "تم التحديث",
-  "Not Updated": "لم يتم التحديث"
-
+  "Not Updated": "لم يتم التحديث",
+  "Invalid username or password": "اسم المستخدم أو كلمة المرور غير صحيحة",
+  "Item updated successfully!": "تم تحديث المنتج بنجاح "
 }

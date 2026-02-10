@@ -202,7 +202,7 @@ const Sales = () => {
   };
 
   const arrCustomer = async (input) => {
-    if (input.length < 2) return [];
+    if (input.length < 2 || input.length > 50) return [];
     const res = await axiosInstance.post("/CustomerSupplier/ListAll", {
       NameIdentity: input,
       IsSupplier: false,
