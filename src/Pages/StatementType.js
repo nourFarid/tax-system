@@ -192,11 +192,11 @@ const StatementType = () => {
       reset();
       hideModal("EditItem");
       await fetchItems(pageNumber);
-      toast.success("Item updated successfully!");
+      toast.success(t("Item updated successfully!"));
     } catch (error) {
       console.log(error)
 
-      toast.error("Failed to update item");
+      toast.error(t("Failed to update item"));
     }
   };
 

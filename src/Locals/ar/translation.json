@@ -289,5 +289,6 @@
   "Update Status": "تحديث الحالة",
   "Updated": "تم التحديث",
   "Not Updated": "لم يتم التحديث",
-  "Invalid username or password": "اسم المستخدم أو كلمة المرور غير صحيحة"
+  "Invalid username or password": "اسم المستخدم أو كلمة المرور غير صحيحة",
+  "Item updated successfully!": "تم تحديث المنتج بنجاح "
 }
