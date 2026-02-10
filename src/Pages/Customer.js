@@ -179,17 +179,7 @@ const Customer = () => {
         toast.error(response.data.message);
         return;
       }
-      console.log("Add response:", response.data);
-      setObjDocType({
-        NationalID: "",
-        Name: "",
-        Address: "",
-        TaxNumber: "",
-        PhoneNumber: "",
-        AddressLine: "",
-        IsSupplier: false,
-        IsCustomer: true
-      });
+      reset();
       hideModal("AddCustomer");
       await fetchCustomers(pageNumber);
       toast.success(response.data.message);
@@ -213,30 +203,12 @@ const Customer = () => {
         IsSupplier: objDocType.IsSupplier
       };
 
-      console.log("Sending update payload:", payload);
-
-      const response = await axiosInstance.put(
-        "CustomerSupplier/Update",
-        payload
-      );
+      const response = await axiosInstance.put("CustomerSupplier/Update", payload);
       if (response.data.result == false) {
         toast.error(response.data.message);
         return;
       }
-
-      setObjDocType({
-        Id: null,
-        Name: "",
-        NationalID: "",
-        PassportNumber: "",
-        TaxNumber: "",
-        PhoneNumber: "",
-        Address: "",
-        IsCustomer: true,
-        IsSupplier: false
-      });
-
-
+      reset();
       hideModal("EditCustomer");
       await fetchCustomers(pageNumber);
       toast.success(response.data.message);
@@ -251,12 +223,15 @@ const Customer = () => {
     try {
       const response = await axiosInstance.delete(`CustomerSupplier/${objDocType.Id}`);
 
-      if (response.status === 200 || response.status === 204) {
+      if (response?.data?.result === true) {
         console.log("Customer deleted successfully");
 
         toast.success(response.data.message);
         hideModal("DeleteCustomer");
         await fetchCustomers(pageNumber);
+        reset();
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Failed to delete customer", error);

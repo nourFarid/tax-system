@@ -185,14 +185,11 @@ const StatementType = () => {
 
       };
       const response = await axiosInstance.put("StatementType/Update", payload);
-      console.log("Update response:", response);
-
-      setObjItem({
-        Name: "",
-        Price: 0,
-        Id: null,
-        Code: ""
-      });
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
+      reset();
       hideModal("EditItem");
       await fetchItems(pageNumber);
       toast.success("Item updated successfully!");
@@ -206,13 +203,12 @@ const StatementType = () => {
 
   const Delete = async () => {
     try {
-      await axiosInstance.put(`StatementType/SoftDelete?id=${objItem.Id}`);
-      setObjItem({
-        Name: "",
-        Price: 0,
-        Id: null,
-        Code: ""
-      });
+      const response = await axiosInstance.put(`StatementType/SoftDelete?id=${objItem.Id}`);
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
+      }
+      reset();
       hideModal("DeleteItem");
       await fetchItems(pageNumber);
       toast.success("Item deleted successfully!");
@@ -235,12 +231,8 @@ const StatementType = () => {
 
       };
       const response = await axiosInstance.post("StatementType/add", payload);
-      if (response.status === 200) {
-        setObjItem({
-          Name: "",
-          Code: ""
-
-        });
+      if (response.data.result == true) {
+        reset();
         hideModal("AddItem");
         fetchItems(pageNumber)
         toast.success("Item added successfully!");

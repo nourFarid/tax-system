@@ -175,29 +175,14 @@ const Supplier = () => {
       };
 
       const response = await axiosInstance.post("CustomerSupplier/Add", payload);
-      console.log("Add response:", response.data);
       if (response.data.result == false) {
         toast.error(response.data.message);
         return;
       }
-      if (response.status === 200) {
-        setObjDocType({
-          NationalID: "",
-          Name: "",
-          Address: "",
-          TaxNumber: "",
-          PhoneNumber: "",
-          AddressLine: "",
-          IsSupplier: true,
-          IsCustomer: false
-        });
-
-        hideModal("AddSupplier");
-        fetchSuppliers(pageNumber);
-        toast.success("Supplier added successfully!");
-      } else {
-        toast.error(response.data?.message || "Failed to add Supplier");
-      }
+      reset();
+      hideModal("AddSupplier");
+      fetchSuppliers(pageNumber);
+      toast.success("Supplier added successfully!");
     } catch (error) {
       console.error("Failed to add supplier", error);
       toast.error(error.response?.data?.message || "Failed to add Supplier");
@@ -220,29 +205,14 @@ const Supplier = () => {
 
       console.log("Sending update payload:", payload);
 
-      const response = await axiosInstance.put(
-        "CustomerSupplier/Update",
-        payload
-      );
+      const response = await axiosInstance.put("CustomerSupplier/Update", payload);
 
       if (response.data.result == false) {
         toast.error(response.data.message);
         return;
       }
 
-      console.log("Update response:", response.data);
-
-      setObjDocType({
-        Id: null,
-        Name: "",
-        NationalID: "",
-        PassportNumber: "",
-        TaxNumber: "",
-        PhoneNumber: "",
-        Address: "",
-        IsCustomer: false,
-        IsSupplier: true
-      });
+      reset();
       hideModal("EditSupplier");
       await fetchSuppliers(pageNumber);
       toast.success(response.data.message);
@@ -258,12 +228,14 @@ const Supplier = () => {
     try {
       const response = await axiosInstance.delete(`CustomerSupplier/${objDocType.Id}`);
 
-      if (response.status === 200 || response.status === 204) {
-        console.log("Supplier deleted successfully");
-        toast.success("Supplier deleted successfully!");
-        hideModal("DeleteSupplier");
-        await fetchSuppliers(pageNumber);
+      if (response.data.result == false) {
+        toast.error(response.data.message);
+        return;
       }
+      reset();
+      toast.success("Supplier deleted successfully!");
+      hideModal("DeleteSupplier");
+      await fetchSuppliers(pageNumber);
     } catch (error) {
       console.error("Failed to delete supplier", error);
       toast.error(error.response?.data?.message || "Failed to delete supplier");

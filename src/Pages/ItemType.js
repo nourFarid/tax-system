@@ -130,18 +130,17 @@ const ItemType = () => {
         code: objItemType.Code
       };
       const response = await axiosInstance.post("ItemType/AddItemType", payload);
-      if (response.status === 200) {
+      if (response.data.result) {
         setObjItemType({
           Name: "",
           Code: "",
         });
         hideModal("AddItemType");
         fetchItemTypes();
-        toast.success("Item type added successfully!");
+        toast.success(t("Item type added successfully!"));
       }
     } catch (error) {
-      console.error("Failed to add item type", error);
-      toast.error("Failed to add item type!");
+      toast.error(t("Failed to add item type"));
     }
   };
 
@@ -152,39 +151,52 @@ const ItemType = () => {
         name: objItemType.Name,
         code: objItemType.Code,
       };
-      const response = await axiosInstance.put("ItemType/Update", payload);
-      console.log("Update response:", response);
 
-      setObjItemType({
-        Name: "",
-        Id: null,
-        Code: ""
-      });
-      hideModal("EditItemType");
-      await fetchItemTypes();
-      toast.success("Item type updated successfully!");
+      const response = await axiosInstance.put("ItemType/Update", payload);
+
+      if (response?.data?.result === true) {
+        setObjItemType({
+          Name: "",
+          Id: null,
+          Code: ""
+        });
+
+        hideModal("EditItemType");
+        await fetchItemTypes();
+        toast.success(response.data.message || t("Item type updated successfully!"));
+      } else {
+        toast.error(response?.data?.message || t("Update failed"));
+      }
+
     } catch (error) {
       console.log(error);
-      toast.error("Failed to update item type");
+      const msg = error?.response?.data?.message || t("Failed to update item type");
+      toast.error(msg);
     }
   };
 
   const Delete = async () => {
     try {
-      await axiosInstance.put(`ItemType/SoftDelete?id=${objItemType.Id}`);
-      setObjItemType({
-        Name: "",
-        Id: null,
-        Code: ""
-      });
-      hideModal("DeleteItemType");
-      await fetchItemTypes();
-      toast.success("Item type deleted successfully!");
+      const response = await axiosInstance.put(`ItemType/SoftDelete?id=${objItemType.Id}`);
+
+      if (response?.data?.result === true) {
+        setObjItemType({
+          Name: "",
+          Id: null,
+          Code: ""
+        });
+        hideModal("DeleteItemType");
+        await fetchItemTypes();
+        toast.success(response.data.message || t("Item type deleted successfully!"));
+      } else {
+        toast.error(response?.data?.message || t("Delete failed"));
+      }
     } catch (error) {
-      console.error("Failed to delete item type", error);
-      toast.error("Failed to delete item type");
+      const msg = error?.response?.data?.message || t("Failed to delete item type");
+      toast.error(msg);
     }
   };
+
 
   const reset = () => {
     setObjItemType({ Name: "", Code: "" });
