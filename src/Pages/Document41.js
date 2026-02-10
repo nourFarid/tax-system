@@ -102,26 +102,26 @@ const Document41 = () => {
     { label: t("Deduction Percentage"), accessor: "deductionPercentage" },
     { label: t("Fiscal Year From"), accessor: "quarter.dateFrom" },
     { label: t("Fiscal Year To"), accessor: "quarter.dateTo" },
-    {
-      label: t("Status"),
-      accessor: "isValid",
-      render: (value) =>
-        value ? (
-          <span className="badge bg-success">{t("Valid")}</span>
-        ) : (
-          <span className="badge bg-danger">{t("Invalid")}</span>
-        )
-    },
-    {
-      label: t("Update Status"),
-      accessor: "IsUpdated",
-      render: (value) =>
-        value ? (
-          <span className="badge bg-success">{t("Updated")}</span>
-        ) : (
-          <span className="badge bg-danger">{t("Not Updated")}</span>
-        )
-    },
+    // {
+    //   label: t("Status"),
+    //   accessor: "isValid",
+    //   render: (value) =>
+    //     value ? (
+    //       <span className="badge bg-success">{t("Valid")}</span>
+    //     ) : (
+    //       <span className="badge bg-danger">{t("Invalid")}</span>
+    //     )
+    // },
+    // {
+    //   label: t("Update Status"),
+    //   accessor: "IsUpdated",
+    //   render: (value) =>
+    //     value ? (
+    //       <span className="badge bg-success">{t("Updated")}</span>
+    //     ) : (
+    //       <span className="badge bg-danger">{t("Not Updated")}</span>
+    //     )
+    // },
 
 
 
@@ -149,18 +149,18 @@ const Document41 = () => {
       value: x.id,
     }));
   };
-  const MarkInvalid = async (row) => {
-    const res = await axiosInstance.put(
-      `Document41/MarkInvalid/${row.id}`
-    );
+  // const MarkInvalid = async (row) => {
+  //   const res = await axiosInstance.put(
+  //     `Document41/MarkInvalid/${row.id}`
+  //   );
 
-    if (res.data.result) {
-      showSuccess(t("Success"), t("Document marked as invalid"));
-      List(pageNumber);
-    } else {
-      showError(t("Error"), res.data.message);
-    }
-  };
+  //   if (res.data.result) {
+  //     showSuccess(t("Success"), t("Document marked as invalid"));
+  //     List(pageNumber);
+  //   } else {
+  //     showError(t("Error"), res.data.message);
+  //   }
+  // };
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
@@ -302,27 +302,28 @@ const Document41 = () => {
           columns={columns}
           data={arrData}
           showActions={true}
+          showDelete={false}
           onEdit={Edit}
           showShow={false}
           // onDelete={HandelDelete}
-          customActions={
-            roles.includes("Admin")
-              ? (row) => (
-                <>
-                  {!row.isInvalid && (
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-secondary"
-                      title={t("Mark Invalid")}
-                      onClick={() => MarkInvalid(row)}
-                    >
-                      <i className="bi bi-x-circle"></i>
-                    </button>
-                  )}
-                </>
-              )
-              : undefined
-          }
+          // customActions={
+          //   roles.includes("Admin")
+          //     ? (row) => (
+          //       <>
+          //         {!row.isInvalid && (
+          //           <button
+          //             type="button"
+          //             className="btn btn-sm btn-secondary"
+          //             title={t("Mark Invalid")}
+          //             onClick={() => MarkInvalid(row)}
+          //           >
+          //             <i className="bi bi-x-circle"></i>
+          //           </button>
+          //         )}
+          //       </>
+          //     )
+          //     : undefined
+          // }
         />
 
         <Pagination
