@@ -305,12 +305,11 @@ const Purchase = () => {
     } else {
       setBoolDisableExport(false);
     }
-
-    fetchPurchase(pageNumber);
-  }, [objFilter, pageNumber]);
+  }, [objFilter]);
 
   useEffect(() => {
     listFiscalYear();
+    fetchPurchase(1);
   }, []);
 
   const Reset = () => {
@@ -323,16 +322,17 @@ const Purchase = () => {
     });
     setObjSupplier(null);
     setPageNumber(1);
+    fetchPurchase(1);
   };
 
   const onFilterClick = () => {
     setPageNumber(1);
-    fetchPurchase();
+    fetchPurchase(1);
   };
 
   const onPageChange = (page) => {
     setPageNumber(page);
-    fetchPurchase();
+    fetchPurchase(page);
   };
 
   return (

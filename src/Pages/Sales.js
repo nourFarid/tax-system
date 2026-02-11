@@ -306,12 +306,11 @@ const Sales = () => {
     } else {
       setBoolDisableExport(false);
     }
-
-    fetchsales(pageNumber);
-  }, [objFilter, pageNumber]);
+  }, [objFilter]);
 
   useEffect(() => {
     listFiscalYear();
+    fetchsales(1);
   }, []);
 
   const Reset = () => {
@@ -324,11 +323,12 @@ const Sales = () => {
     });
     setObjCustomer(null);
     setPageNumber(1);
+    fetchsales(1);
   };
 
   const onFilterClick = () => {
     setPageNumber(1);
-    fetchsales();
+    fetchsales(1);
   };
 
   const onPageChange = (page) => {
