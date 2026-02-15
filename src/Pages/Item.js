@@ -176,39 +176,34 @@ const Item = () => {
         Code: objItem.Code,
       };
       const response = await axiosInstance.put("Item/Update", payload);
-      console.log("Update response:", response);
-
-      setObjItem({
-        Name: "",
-        Price: 0,
-        Id: null,
-        Code: ""
-      });
-      hideModal("EditItem");
-      await fetchItems(pageNumber);
-      toast.success("Item updated successfully!");
+      if (response.data.result === true) {
+        reset();
+        hideModal("EditItem");
+        await fetchItems(pageNumber);
+        toast.success(t("Item updated successfully!"));
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      console.log(error)
-      toast.error("Failed to update item");
+      toast.error(t("Failed to update item"));
     }
   };
 
 
   const Delete = async () => {
     try {
-      await axiosInstance.delete(`Item/${objItem.Id}`);
-      setObjItem({
-        Name: "",
-        Price: 0,
-        Id: null,
-        Code: ""
-      });
-      hideModal("DeleteItem");
-      await fetchItems(pageNumber);
-      toast.success("Deleted", "Item deleted successfully!");
+      const response = await axiosInstance.delete(`Item/${objItem.Id}`);
+      if (response.data.result === true) {
+        reset();
+        hideModal("DeleteItem");
+        await fetchItems(pageNumber);
+        toast.success(t("Item deleted successfully!"));
+      }
+      else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      console.error("Failed to delete item", error);
-      toast.error("Failed to delete item");
+      toast.error(t("Failed to delete item"));
     }
   };
 
@@ -224,20 +219,17 @@ const Item = () => {
         Code: objItem.Code
       };
       const response = await axiosInstance.post("Item/Add", payload);
-      if (response.status === 200) {
-        setObjItem({
-          Name: "",
-          Price: 0,
-          Code: "",
-
-        });
+      if (response.data.result === true) {
+        reset();
         hideModal("AddItem");
         fetchItems(pageNumber)
-        toast.success("Item added successfully!");
+        toast.success(t("Item added successfully!"));
+      }
+      else {
+        toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Failed to add item", error);
-      toast.error("Failed to add item!");
+      toast.error(t("Failed to add item!"));
     }
   };
 

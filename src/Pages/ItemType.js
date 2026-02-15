@@ -163,9 +163,9 @@ const ItemType = () => {
 
         hideModal("EditItemType");
         await fetchItemTypes();
-        toast.success(response.data.message || t("Item type updated successfully!"));
+        toast.success(t("Item type updated successfully!"));
       } else {
-        toast.error(response?.data?.message || t("Update failed"));
+        toast.error(t("Update failed"));
       }
 
     } catch (error) {
@@ -187,9 +187,9 @@ const ItemType = () => {
         });
         hideModal("DeleteItemType");
         await fetchItemTypes();
-        toast.success(response.data.message || t("Item type deleted successfully!"));
+        toast.success(t("Item type deleted successfully!"));
       } else {
-        toast.error(response?.data?.message || t("Delete failed"));
+        toast.error(t("Delete failed"));
       }
     } catch (error) {
       const msg = error?.response?.data?.message || t("Failed to delete item type");

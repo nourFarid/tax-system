@@ -243,9 +243,9 @@ const NatureOfTransaction = () => {
       if (response.data.result) {
         reset();
         hideModal("AddItem");
-        fetchItems(pageNumber)
+        await fetchItems(pageNumber)
         toast.success(t("Item added successfully!"));
-      }
+      } else { toast.error(t("Add failed")); }
     } catch (error) {
       toast.error(t("Failed to add item"))
     }
@@ -270,7 +270,7 @@ const NatureOfTransaction = () => {
       const res = await axiosInstance.put(`TransactionNature/SoftDelete?id=${itemId}`);
       if (res.data.result) {
         toast.success(t("Status updated"));
-        fetchItems(pageNumber);
+        await fetchItems(pageNumber);
       } else {
         toast.error(t("Failed to toggle status"));
       }
