@@ -149,7 +149,7 @@ const Position = () => {
             };
             const res = await axiosInstance.post("Position/Add", payload);
             if (res.data.result) {
-                toast.success(res.data.message || t("Position added successfully"));
+                toast.success(t("Position added successfully"));
                 hideModal("AddPosition");
                 reset();
                 ListAll();
