@@ -206,10 +206,10 @@ const NatureOfTransaction = () => {
         reset();
         hideModal("EditItem");
         await fetchItems(pageNumber);
-        toast.success(t("Item updated successfully!"));
+        toast.success(t("Transaction Nature updated successfully!"));
       } else { toast.error(response?.data?.message || t("Update failed")); }
     } catch (error) {
-      toast.error(t("Failed to update item"))
+      toast.error(t("Failed to update Transaction Nature"))
     }
   };
 
@@ -221,10 +221,10 @@ const NatureOfTransaction = () => {
         reset();
         hideModal("DeleteItem");
         await fetchItems(pageNumber);
-        toast.success(t("Item deleted successfully!"));
+        toast.success(t("Transaction Nature deleted successfully!"));
       } else { toast.error(response?.data?.message || t("Delete failed")); }
     } catch (error) {
-      toast.error(t("Failed to delete item"))
+      toast.error(t("Failed to delete Transaction Nature"))
     }
   };
 
@@ -244,10 +244,10 @@ const NatureOfTransaction = () => {
         reset();
         hideModal("AddItem");
         await fetchItems(pageNumber)
-        toast.success(t("Item added successfully!"));
+        toast.success(t("Transaction Nature added successfully!"));
       } else { toast.error(t("Add failed")); }
     } catch (error) {
-      toast.error(t("Failed to add item"))
+      toast.error(t("Failed to add Transaction Nature"))
     }
   };
 

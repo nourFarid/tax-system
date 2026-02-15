@@ -164,7 +164,7 @@ const FiscalYear = () => {
         hideModal("AddFiscalYear");
         setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
         setErrors({});
-        toast.success(response.data.message || t("Fiscal Year added successfully!"));
+        toast.success(t("Fiscal Year added successfully!"));
       }
       else {
         toast.error(response.data.message);
@@ -196,7 +196,7 @@ const FiscalYear = () => {
         await getFiscalYears();
         hideModal("EditFiscalYear");
         setObjDocType({ From: "", To: "", YrFrom: "", YrTo: "" });
-        toast.success(response.data.message || t("Fiscal Year updated successfully!"));
+        toast.success(t("Fiscal Year updated successfully!"));
       }
       else {
         toast.error(response.data.message);
@@ -213,7 +213,7 @@ const FiscalYear = () => {
       if (response.data.result) {
         await getFiscalYears();
         hideModal("DeleteFiscalYear");
-        toast.success(response.data.message || t("Fiscal Year deleted successfully!"));
+        toast.success(t("Fiscal Year deleted successfully!"));
       }
       else {
         toast.error(response.data.message);

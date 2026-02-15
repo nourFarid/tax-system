@@ -182,7 +182,7 @@ const Supplier = () => {
       reset();
       hideModal("AddSupplier");
       fetchSuppliers(pageNumber);
-      toast.success("Supplier added successfully!");
+      toast.success(t("Supplier added successfully!"));
     } catch (error) {
       console.error("Failed to add supplier", error);
       toast.error(error.response?.data?.message || "Failed to add Supplier");
@@ -215,7 +215,7 @@ const Supplier = () => {
       reset();
       hideModal("EditSupplier");
       await fetchSuppliers(pageNumber);
-      toast.success(response.data.message);
+      toast.success(t("Supplier updated successfully!"));
 
     } catch (error) {
       console.log(error);
@@ -233,7 +233,7 @@ const Supplier = () => {
         return;
       }
       reset();
-      toast.success("Supplier deleted successfully!");
+      toast.success(t("Supplier deleted successfully!"));
       hideModal("DeleteSupplier");
       await fetchSuppliers(pageNumber);
     } catch (error) {

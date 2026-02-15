@@ -182,7 +182,7 @@ const Customer = () => {
       reset();
       hideModal("AddCustomer");
       await fetchCustomers(pageNumber);
-      toast.success(response.data.message);
+      toast.success(t("Customer added successfully!"));
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add Customer");
     }
@@ -211,7 +211,7 @@ const Customer = () => {
       reset();
       hideModal("EditCustomer");
       await fetchCustomers(pageNumber);
-      toast.success(response.data.message);
+      toast.success(t("Customer updated successfully!"));
 
     } catch (error) {
       console.log(error);
@@ -226,12 +226,12 @@ const Customer = () => {
       if (response?.data?.result === true) {
         console.log("Customer deleted successfully");
 
-        toast.success(response.data.message);
+        toast.success(t("Customer deleted successfully!"));
         hideModal("DeleteCustomer");
         await fetchCustomers(pageNumber);
         reset();
       } else {
-        toast.error(response.data.message);
+        toast.error(t("Failed to delete customer"));
       }
     } catch (error) {
       console.error("Failed to delete customer", error);
