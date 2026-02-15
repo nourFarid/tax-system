@@ -144,7 +144,7 @@ const EditPurchase = () => {
   };
 
   const loadPurchase = async () => {
-    console.log("==========================================");
+    console.log("================doc item==========================");
     console.log(docItemId);
     console.log("");
     const body = {
@@ -157,6 +157,11 @@ const EditPurchase = () => {
     };
 
     const res = await axiosInstance.post("Purchase/List", body);
+    console.log('///////////')
+
+    console.log(res.data)
+    console.log('///////////')
+
     const purchase = res.data.data.items[0];
 
     setObjPurchase(purchase);

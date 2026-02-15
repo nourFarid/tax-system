@@ -368,5 +368,15 @@
   "Failed to add department": "فشل إضافة القسم",
   "Failed to load department": "فشل تحميل القسم",
   "Failed to fetch department": "فشل في جلب القسم",
-  "Status updated": "تم تحديث الحالة"
+  "Status updated": "تم تحديث الحالة",
+  "document toggled successfully": "تم تحديث حالة المستند بنجاح",
+  "Failed to toggle document status": "فشل في تحديث حالة المستند",
+  "Purchase document deleted successfully": "تم حذف مستند الشراء بنجاح",
+  "Failed to delete purchase document": "فشل حذف مستند الشراء",
+  "Purchase Edited successfully": "تم تعديل الشراء بنجاح",
+  "Failed to edit purchase": "فشل تعديل الشراء",
+  "Purchase item edited successfully": "تم تعديل منتج الشراء بنجاح",
+  "Failed to edit purchase item": "فشل تعديل منتج الشراء",
+  "Purchase item deleted successfully": "تم حذف منتج الشراء بنجاح",
+  "Failed to delete purchase item": "فشل حذف منتج الشراء"
 }
