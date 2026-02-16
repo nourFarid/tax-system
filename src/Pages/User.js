@@ -43,6 +43,7 @@ const User = () => {
             Reset: t("Reset"),
             Active: t("Active"),
             Inactive: t("Inactive"),
+            IsManager: t("Is Manager"),
         }),
         [t]
     );
@@ -56,7 +57,8 @@ const User = () => {
         RoleId: "",
         DepartmentId: "",
         PositionId: "",
-        IsActive: true
+        IsActive: true,
+        IsManager: false
     });
     const { showSuccess, showError, SwalComponent } = useSwal();
 
@@ -72,7 +74,8 @@ const User = () => {
             RoleId: "",
             DepartmentId: "",
             PositionId: "",
-            IsActive: true
+            IsActive: true,
+            IsManager: false
         });
         setFilteredPositions([]);
         setShowPassword(false);
@@ -305,7 +308,9 @@ const User = () => {
             RoleId: (row.roles && row.roles.length > 0) ? row.roles[0].roleId : "",
             DepartmentId: row.departmentId && row.departmentId > 0 ? row.departmentId : "",
             PositionId: row.positionId && row.positionId > 0 ? row.positionId : "",
-            IsActive: row.available ?? row.isActive ?? true
+            IsActive: row.available ?? row.isActive ?? true,
+            // Check for isManger (from DTO/JSON), IsManger, isManager (if fixed later)
+            IsManager: row.isManger ?? row.IsManger ?? row.isManager ?? false
         });
 
         showModal("EditUser");
@@ -381,7 +386,8 @@ const User = () => {
                 departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
                 positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0,
                 isActive: objUser.IsActive,
-                newUser: true
+                newUser: true,
+                isManger: objUser.IsManager
             };
             const response = await axiosInstance.post("User/Add", payload);
             console.log("Add response:", response.data);
@@ -411,16 +417,14 @@ const User = () => {
                 email: objUser.Email,
                 fullName: objUser.FullName,
                 available: objUser.IsActive,
-                isActive: objUser.IsActive,  // Send both field names to match backend
+                isActive: objUser.IsActive,
                 newUser: false,
-                // Send null for empty values instead of empty strings
                 userCode: (objUser.UserCode && objUser.UserCode.toString().trim() !== "") ? objUser.UserCode : null,
                 roleId: (objUser.RoleId && objUser.RoleId.toString().trim() !== "") ? objUser.RoleId : null,
                 departmentId: objUser.DepartmentId ? parseInt(objUser.DepartmentId) : 0,
-                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0
+                positionId: objUser.PositionId ? parseInt(objUser.PositionId) : 0,
+                isManger: objUser.IsManager
             };
-
-            // Only include password if it has a value (completely exclude from payload otherwise)
             if (objUser.Password && objUser.Password.trim() !== "") {
                 payload.password = objUser.Password;
             }
@@ -602,6 +606,20 @@ const User = () => {
                             }
                             label={objTitle.IsActive}
                         />
+                        <div className="ms-3">
+                            <Checkbox
+                                id="AddIsManager"
+                                name="IsManager"
+                                checked={objUser.IsManager}
+                                onChange={(e) =>
+                                    setObjUser((prev) => ({
+                                        ...prev,
+                                        IsManager: e.target.checked,
+                                    }))
+                                }
+                                label={objTitle.IsManager}
+                            />
+                        </div>
                     </div>
                 </div>
             </Modal>
@@ -749,6 +767,17 @@ const User = () => {
                             }
                             label={objTitle.IsActive}
                         />
+                        <div className="ms-3">
+                            <Checkbox
+                                id="EditIsManager"
+                                name="IsManager"
+                                checked={objUser.IsManager}
+                                onChange={(e) =>
+                                    setObjUser((prev) => ({ ...prev, IsManager: e.target.checked }))
+                                }
+                                label={objTitle.IsManager}
+                            />
+                        </div>
                     </div>
                 </div>
             </Modal>
