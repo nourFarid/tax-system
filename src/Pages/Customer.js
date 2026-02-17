@@ -45,7 +45,7 @@ const Customer = () => {
   );
 
   const [objDocType, setObjDocType] = useState({ NationalID: "", Name: "", Address: "", TaxNumber: "", PhoneNumber: "", IsSupplier: false, IsCustomer: true });
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -470,7 +470,6 @@ const Customer = () => {
       </Modal>
 
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

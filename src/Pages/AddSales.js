@@ -21,7 +21,7 @@ const AddSale = () => {
   const { t } = useTranslate();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
-  const { showSuccess, SwalComponent } = useSwal();
+  const { showSuccess } = useSwal();
 
   const breadcrumbItems = [
     { label: t("sale"), link: "/Sales", active: false },
@@ -388,7 +388,6 @@ const AddSale = () => {
         </div>
       </div>
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

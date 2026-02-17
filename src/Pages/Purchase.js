@@ -37,7 +37,7 @@ const Purchase = () => {
 
   // State for delete modal
   const [objCurrentPurchase, setObjCurrentPurchase] = useState({});
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
 
   const objTitle = useMemo(() => ({
     Save: t("Save"),
@@ -491,8 +491,6 @@ const Purchase = () => {
         </p>
       </Modal>
       <ToastContainer />
-
-      <SwalComponent />
     </>
   );
 };

@@ -43,7 +43,7 @@ const NatureOfTransaction = () => {
     Price: 0,
     Code: ""
   });
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
   const validateDuplicates = (name, code, id = null) => {
     let newErrors = { Name: "", Code: "" };
     let hasError = false;
@@ -439,7 +439,6 @@ const NatureOfTransaction = () => {
         <p>{objTitle.DeleteConfirmation} <strong> {objItem.Name} </strong> {objTitle.QuestionMark}</p>
       </Modal>
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

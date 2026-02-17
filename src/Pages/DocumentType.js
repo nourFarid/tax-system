@@ -16,7 +16,7 @@ const DocumentType = () => {
   const [pageSize] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [objDocType, setObjDocType] = useState({ Name: "", Code: "" });
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);

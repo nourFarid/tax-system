@@ -24,7 +24,7 @@ const EditSale = () => {
   const { id } = useParams();
   const strDocDir = document.documentElement.dir;
   const navigate = useNavigate();
-  const { showSuccess, SwalComponent } = useSwal();
+  const { showSuccess } = useSwal();
   const LOAD_OPTION_DOCUMENT_ITEMS = 1;
 
   const breadcrumbItems = [
@@ -417,7 +417,6 @@ const EditSale = () => {
         </div>
       </div>
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

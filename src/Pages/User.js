@@ -60,7 +60,7 @@ const User = () => {
         IsActive: true,
         IsManager: false
     });
-    const { showSuccess, showError, SwalComponent } = useSwal();
+    const { showSuccess, showError } = useSwal();
 
     // Function to reset form to initial state
     const resetForm = () => {
@@ -781,7 +781,7 @@ const User = () => {
                     </div>
                 </div>
             </Modal>
-            <SwalComponent />
+
             <ToastContainer />
         </>
     );

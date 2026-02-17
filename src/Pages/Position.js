@@ -14,7 +14,7 @@ const Position = () => {
     const [arrData, setArrData] = useState([]);
     const [arrDepartments, setArrDepartments] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { showSuccess, showError, showDeleteAlert, SwalComponent } = useSwal();
+    const { showSuccess, showError, showDeleteAlert } = useSwal();
 
     const [objPosition, setObjPosition] = useState({
         id: 0,
@@ -290,8 +290,6 @@ const Position = () => {
                 </div>
             </Modal>
             <ToastContainer />
-
-            <SwalComponent />
         </>
     );
 };
