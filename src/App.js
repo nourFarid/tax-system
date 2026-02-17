@@ -33,6 +33,7 @@ const Position = lazy(() => import('./Pages/Position'));
 const Auth = lazy(() => import('./Pages/Auth'));
 const InvalidDocuments = lazy(() => import('./Pages/InvalidDocuments'));
 const ResetPassword = lazy(() => import('./Pages/ResetPassword'));
+const NotFound = lazy(() => import('./NotFound'));
 
 function App() {
   const lang = useSelector((state) => state.language.lang);
@@ -68,24 +69,25 @@ function App() {
                 <Route path="/Setup/Item" element={<Item />} />
                 <Route path="/Setup/Supplier" element={<Supplier />} />
                 <Route path="/Setup/Customer" element={<Customer />} />
-                {true && 
+                {roles.includes("Admin") && 
                 <Route path="/Setup/StatementType" element={<StatementType />} />}
-                {true && 
+                {roles.includes("Admin") && 
                 <Route path="/Setup/TaxType" element={<TaxType />} />}
-                {true && 
+                {roles.includes("Admin") && 
                 <Route path="/Setup/ItemType" element={<ItemType />} />}
-                {true && 
+                {roles.includes("Admin") && 
                 <Route path="/Setup/TransactionNature" element={<NatureOfTransaction />} />}
-                {true && 
+                {roles.includes("Admin") && 
                 <Route path="/Setup/FiscalYear" element={<FiscalYear />} />}
-                {true &&
+                {roles.includes("Admin") &&
                 <Route path="/Setup/User" element={<User />} />}
-                {true &&
+                {roles.includes("Admin") &&
                 <Route path="/Setup/Departments" element={<Departments />} />}
-                {true &&
+                {roles.includes("Admin") &&
                 <Route path="/Setup/Position" element={<Position />} />}
-                {true &&
+                {roles.includes("Admin") &&
                 <Route path="/Setup/FiscalYear/Info/:id" element={<InfoFiscalYear />} />}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
           </ProtectedRoute>
