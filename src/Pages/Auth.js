@@ -104,7 +104,7 @@ const Auth = () => {
 
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto" style={{ background: "#ffffff" }}>
+            <div className="min-h-screen flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto" style={{ background: "rgb(10, 10, 26)" }}>
                 {/* Main Container */}
                 <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative" style={{ background: "#02000e" }}>
                     {/* Language Toggle Button - Inside Container */}
