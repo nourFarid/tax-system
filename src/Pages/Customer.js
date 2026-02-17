@@ -8,11 +8,13 @@ import Pagination from '../Components/Layout/Pagination';
 import axiosInstance from "../Axios/AxiosInstance";
 import { useSwal } from "../Hooks/Alert/Swal";
 import { toast, ToastContainer } from "react-toastify";
+import { getUserRoles } from "../Hooks/Services/Storage.js"
 
 const Customer = () => {
+  const roles = getUserRoles();
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(30);
   const [totalCount, setTotalCount] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,9 +88,9 @@ const Customer = () => {
       newErrors.TaxNumber = "Tax Number is required if National ID is empty";
     }
 
-    if (hasTaxNumber && objDocType.TaxNumber.length > 50) {
-      newErrors.TaxNumber = "Tax Number must not exceed 50 characters";
-    }
+    // if (hasTaxNumber && objDocType.TaxNumber.length > 50) {
+    //   newErrors.TaxNumber = "Tax Number must not exceed 50 characters";
+    // }
 
     const address = objDocType.AddressLine || objDocType.Address;
     if (!address || address.trim() === "") {
@@ -260,6 +262,8 @@ const Customer = () => {
         showShow={false}
         onShow={handleShow}
         onDelete={handleDelete}
+        highLight={roles.includes("Admin")}
+        highLightKey="isValid"
       />
       <Pagination
         pageNumber={pageNumber}

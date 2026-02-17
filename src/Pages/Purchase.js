@@ -31,7 +31,7 @@ const Purchase = () => {
     invoiceDateFrom: "",
     invoiceDateTo: "",
     exportWithName: null,
-    supplierId: null,
+    supplierId: -1,
   });
   const [objSupplier, setObjSupplier] = useState(null);
 
@@ -318,7 +318,8 @@ const Purchase = () => {
       quarterId: -1,
       invoiceDateFrom: "",
       invoiceDateTo: "",
-      supplierId: null,
+      exportWithName: null,
+      supplierId: -1,
     });
     setObjSupplier(null);
     setPageNumber(1);

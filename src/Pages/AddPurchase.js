@@ -337,7 +337,7 @@ const AddPurchase = () => {
                 </select>
               </div>
 
-              <div className="col-md-1 form-group">
+              <div className="col-md-3 form-group">
                 <label>{t("Transaction Nature")}</label>
                 <select className="mt-2 form-control" value={r.transactionNatureId}
                   onChange={(e) =>

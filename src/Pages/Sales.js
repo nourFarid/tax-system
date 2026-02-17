@@ -35,7 +35,7 @@ const Sales = () => {
     invoiceDateFrom: "",
     invoiceDateTo: "",
     exportWithName: null,
-    customerId: null,
+    customerId: -1,
   });
   const [objCustomer, setObjCustomer] = useState(null);
 
@@ -319,7 +319,8 @@ const Sales = () => {
       quarterId: -1,
       invoiceDateFrom: "",
       invoiceDateTo: "",
-      customerId: null,
+      exportWithName: null,
+      customerId: -1,
     });
     setObjCustomer(null);
     setPageNumber(1);

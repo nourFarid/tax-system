@@ -12,6 +12,8 @@ const Table = ({
   onDelete = () => { },
   onShow = () => { },
   customActions = null, // Function that receives (row) and returns JSX
+  highLight = false,
+  highLightKey = null
 }) => {
   const { t } = useTranslate();
 
@@ -117,7 +119,7 @@ const Table = ({
           <tbody>
             {Array.isArray(data) && data.length > 0 ? (
               data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr key={rowIndex} className={`${highLight && !row[highLightKey] ? "table-warning" : ""}`}>
                   {columns.map((col, colIndex) => {
                     // Use raw value for custom render functions, formatted value otherwise
                     const cellValue = col.render
