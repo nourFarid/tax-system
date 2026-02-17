@@ -44,7 +44,7 @@ const StatementType = () => {
     Price: 0,
     Code: ""
   });
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
   const validateDuplicates = (name, code, id = null) => {
     let newErrors = { Name: "", Code: "" };
     let hasError = false;
@@ -404,7 +404,6 @@ const StatementType = () => {
       </Modal>
 
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

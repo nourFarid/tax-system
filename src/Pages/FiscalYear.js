@@ -43,7 +43,7 @@ const FiscalYear = () => {
   );
 
   const [objDocType, setObjDocType] = useState({ From: "", To: "", YrFrom: "", YrTo: "" });
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
 
   const breadcrumbItems = [
     { label: t("Setup"), link: "/Setup", active: false },
@@ -356,7 +356,6 @@ const FiscalYear = () => {
       </Modal>
 
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

@@ -17,7 +17,7 @@ const Sales = () => {
   const roles = getUserRoles();
 
   const navigate = useNavigate();
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
 
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(5);
@@ -495,8 +495,6 @@ const Sales = () => {
         </p>
       </Modal>
       <ToastContainer />
-
-      <SwalComponent />
     </>
   );
 };

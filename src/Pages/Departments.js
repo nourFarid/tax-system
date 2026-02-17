@@ -14,7 +14,7 @@ const Departments = () => {
 
     const [arrData, setArrData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { showSuccess, showError, SwalComponent } = useSwal();
+    const { showSuccess, showError } = useSwal();
 
     const [objDepartment, setObjDepartment] = useState({
         id: -1,
@@ -257,7 +257,6 @@ const Departments = () => {
                 </div>
             </Modal>
             <ToastContainer />
-            <SwalComponent />
         </>
     );
 };

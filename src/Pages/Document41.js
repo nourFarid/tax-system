@@ -21,7 +21,7 @@ const Document41 = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [arrFiscalYear, setArrFiscalYear] = useState([]);
   const [objCurrentDoc, setObjCurrentDoc] = useState({});
-  const { showSuccess, showError, showDeleteConfirmation, SwalComponent } = useSwal();
+  const { showSuccess, showError, showDeleteConfirmation } = useSwal();
   const objTitle = useMemo(
     () => ({
       Save: t("Save"),
@@ -351,7 +351,6 @@ const Document41 = () => {
         <p>{objTitle.DeleteConfirmation} <strong> {objCurrentDoc.Name} </strong> {objTitle.QuestionMark}</p>
       </Modal>
       <ToastContainer />
-      <SwalComponent />
     </>
   );
 };

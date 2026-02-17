@@ -12,7 +12,7 @@ const InfoFiscalYear = () => {
     const { id } = useParams();
     const [fiscalYear, setFiscalYear] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { showSuccess, showError, SwalComponent } = useSwal();
+    const { showSuccess, showError } = useSwal();
 
     // State for Quarter Edit
     const [selectedQuarter, setSelectedQuarter] = useState(null);
@@ -468,7 +468,6 @@ const InfoFiscalYear = () => {
                 </div>
             </Modal>
             <ToastContainer />
-            <SwalComponent />
         </>
     );
 };
