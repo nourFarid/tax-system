@@ -230,7 +230,7 @@ const Customer = () => {
 
         toast.success(t("Customer deleted successfully!"));
         hideModal("DeleteCustomer");
-        await fetchCustomers(pageNumber);
+          
         reset();
       } else {
         toast.error(t("Failed to delete customer"));
@@ -238,6 +238,22 @@ const Customer = () => {
     } catch (error) {
       console.error("Failed to delete customer", error);
       toast.error(error.response?.data?.message || "Failed to delete customer");
+    }
+  };
+  const MarkValid = async (row) => {
+    try {
+      const res = await axiosInstance.put(
+        `CustomerSupplier/Verify/${row.id}`
+      );
+
+      if (res.data.result) {
+        toast.success(res.data.message);
+        await fetchCustomers(pageNumber);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(t("Something went wrong"));
     }
   };
 
@@ -264,6 +280,18 @@ const Customer = () => {
         onDelete={handleDelete}
         highLight={roles.includes("Admin")}
         highLightKey="isValid"
+        customActions={
+            roles.includes("Admin")
+              ? (row) => (
+                <>
+                  {!row.isValid && (
+                    <button className="btn btn-success btn-sm" onClick={() => MarkValid(row)} title={t("Mark as Valid")}>
+                      <i className="bi bi-check2"></i>
+                    </button>
+                  )}
+                </>
+              )
+              : undefined}
       />
       <Pagination
         pageNumber={pageNumber}
