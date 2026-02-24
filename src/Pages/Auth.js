@@ -104,9 +104,9 @@ const Auth = () => {
 
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto" style={{ background: "#ffffff" }}>
+            <div className="min-h-screen flex items-center justify-center p-4 md:p-3 lg:p-5 3xl:p-10 overflow-auto" style={{ background: "rgb(2 0 14)" }}>
                 {/* Main Container */}
-                <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative" style={{ background: "#02000e" }}>
+                <div className="w-full my-auto max-w-[92%] sm:max-w-[600px] md:max-w-[750px] lg:max-w-[1100px] xl:max-w-[1100px] 3xl:max-w-[1500px] rounded-[30px] md:rounded-[40px] lg:rounded-[50px] p-6 sm:p-8 md:p-6 lg:p-8 xl:p-12 3xl:p-20 shadow-2xl overflow-auto relative" style={{ background: "#02000e", boxShadow: "inset 0 1px 2px rgba(138, 146, 173, 0.6), 0 2px 4px rgba(94, 93, 116, 0.3), 0 8px 16px rgba(87, 93, 106, 0.25)" }}>
                     {/* Language Toggle Button - Inside Container */}
                     <button onClick={toggleLanguage} className="absolute top-4 md:top-6 lg:top-8 ltr:right-4 rtl:left-4 md:ltr:right-6 md:rtl:left-6 lg:ltr:right-8 lg:rtl:left-8 z-50 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white" aria-label="Toggle Language" title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}>
                         <span className="font-Cairo font-bold text-sm md:text-base">

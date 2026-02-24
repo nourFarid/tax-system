@@ -247,6 +247,22 @@ const Supplier = () => {
       toast.error(error.response?.data?.message || "Failed to delete supplier");
     }
   };
+  const MarkValid = async (row) => {
+    try {
+      const res = await axiosInstance.put(
+        `CustomerSupplier/Verify/${row.id}`
+      );
+
+      if (res.data.result) {
+        toast.success(res.data.message);
+        await fetchSuppliers(pageNumber);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(t("Something went wrong"));
+    }
+  };
 
   const reset = () => {
     setObjDocType({ NationalID: "", Name: "", AddressLine: "", TaxNumber: "", PhoneNumber: "", IsCustomer: false, IsSupplier: true });
@@ -270,6 +286,18 @@ const Supplier = () => {
         onDelete={handleDelete}
         highLight={roles.includes("Admin")}
         highLightKey="isValid"
+        customActions={
+            roles.includes("Admin")
+              ? (row) => (
+                <>
+                  {!row.isValid && (
+                    <button className="btn btn-success btn-sm" onClick={() => MarkValid(row)} title={t("Mark as Valid")}>
+                      <i className="bi bi-check2"></i>
+                    </button>
+                  )}
+                </>
+              )
+              : undefined}
       />
       <Pagination
         pageNumber={pageNumber}
