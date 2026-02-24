@@ -14,7 +14,7 @@ const Supplier = () => {
   const roles = getUserRoles();
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(30);
+  const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,13 +103,16 @@ const Supplier = () => {
   const fetchSuppliers = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("CustomerSupplier/ListAll", { pageNumber: page, pageSize: pageSize });
+      const res = await axiosInstance.post("CustomerSupplier/List", {
+        Filter: { IsSupplier: true },
+        PageNumber: page,
+        PageSize: pageSize
+      });
       const data = res.data;
 
       if (data.result) {
-        const suppliersList = data.data.filter(item => item.isSupplier === true);
-        setSuppliers(suppliersList);
-        setTotalCount(suppliersList.length);
+        setSuppliers(data.data.items || []);
+        setTotalCount(data.data.totalCount || 0);
         setPageNumber(page);
       }
     } catch (e) {
@@ -118,7 +121,8 @@ const Supplier = () => {
       setLoading(false);
     }
   };
-  const mappedSuppliers = suppliers.map(s => ({
+
+  const mappedSuppliers = (suppliers || []).map(s => ({
     ...s,
     updatedByUserName: s.updatedByUser ? s.updatedByUser.userName : ""
   }));
@@ -183,7 +187,7 @@ const Supplier = () => {
       }
       reset();
       hideModal("AddSupplier");
-      fetchSuppliers(pageNumber);
+      await fetchSuppliers(pageNumber);
       toast.success(t("Supplier added successfully!"));
     } catch (error) {
       console.error("Failed to add supplier", error);

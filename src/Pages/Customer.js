@@ -14,7 +14,7 @@ const Customer = () => {
   const roles = getUserRoles();
   const { t } = useTranslate();
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize] = useState(30);
+  const [pageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,13 +105,16 @@ const Customer = () => {
   const fetchCustomers = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post("CustomerSupplier/ListAll", { pageNumber: page, pageSize: pageSize });
+      const res = await axiosInstance.post("CustomerSupplier/List", {
+        Filter: { IsCustomer: true },
+        PageNumber: page,
+        PageSize: pageSize
+      });
       const data = res.data;
 
       if (data.result) {
-        const customersList = data.data.filter(item => item.isCustomer === true);
-        setCustomers(customersList);
-        setTotalCount(customersList.length);
+        setCustomers(data.data.items || []);
+        setTotalCount(data.data.totalCount || 0);
         setPageNumber(page);
       }
     } catch (e) {
@@ -121,7 +124,7 @@ const Customer = () => {
     }
   };
 
-  const mappedCustomers = customers.map(c => ({
+  const mappedCustomers = (customers || []).map(c => ({
     ...c,
     updatedByUserName: c.updatedByUser ? c.updatedByUser.userName : ""
   }));
