@@ -123,9 +123,9 @@ const Item = () => {
       newErrors.Name = "Name is required";
     }
 
-    if (!objItem.Code || objItem.Code.trim() === "") {
-      newErrors.Code = "Code is required";
-    }
+    // if (!objItem.Code || objItem.Code.trim() === "") {
+    //   newErrors.Code = "Code is required";
+    // }
 
     if (objItem.Price === "" || objItem.Price === null || isNaN(objItem.Price)) {
       newErrors.Price = "Price is required";
