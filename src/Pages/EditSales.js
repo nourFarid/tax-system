@@ -183,22 +183,66 @@ const EditSale = () => {
       : arrDocumentTypeStatment;
   };
 
+  // ===================== VALIDATION =====================
+  const validateHeader = () => {
+    const missing = [];
+
+    if (!objSale.invoiceDate) missing.push(t("Settlement Date"));
+    if (!objSale.invoiceNumber) missing.push(t("Invoice Number"));
+    if (!objSale.issueDate) missing.push(t("Issue Date"));
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const validateRow = (r, index) => {
+    const missing = [];
+    const row = `${t("Item")} #${index + 1}`;
+
+    if (!r.itemId || r.itemId === -1) missing.push(`${row} - ${t("Item")}`);
+    if (!r.documentTypeId || r.documentTypeId === -1)
+      missing.push(`${row} - ${t("Document Type")}`);
+    if (!r.statementTypeId || r.statementTypeId === -1)
+      missing.push(`${row} - ${t("Statement Type")}`);
+    if (!r.itemTypeId || r.itemTypeId === -1)
+      missing.push(`${row} - ${t("Item Type")}`);
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
   // ===================== SUBMIT =====================
   const Edit = async () => {
+    if (!validateHeader()) return;
+
     const response = await axiosInstance.put("/Sales/Update", objSale);
     if (response.data.result) {
       toast.success(t("Sale Edited successfully"));
     }
   };
 
-  const AddDocItem = async (obj) => {
+  const AddDocItem = async (obj, index) => {
+    if (!validateRow(obj, index)) return;
+
     const response = await axiosInstance.post("/Sales/AddDocumentItem", obj);
     if (response.data.result) {
       toast.success(t("Sale item added successfully"));
     }
   };
 
-  const EditDocItem = async (obj) => {
+  const EditDocItem = async (obj, index) => {
+    if (!validateRow(obj, index)) return;
+
     const response = await axiosInstance.put("/Sales/UpdateDocumentItem", obj);
     if (response.data.result) {
       toast.success(t("Sale item edited successfully"));
@@ -365,10 +409,10 @@ const EditSale = () => {
 
               <div className="col-md-3 text-end">
                 {r.id ?
-                  <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
+                  <button className="btn btn-primary" onClick={() => EditDocItem(r, index)}>
                     {t("Save")}
                   </button> :
-                  <button className="btn btn-primary" onClick={() => AddDocItem(r)}>
+                  <button className="btn btn-primary" onClick={() => AddDocItem(r, index)}>
                     {t("Save")}
                   </button>
                 }

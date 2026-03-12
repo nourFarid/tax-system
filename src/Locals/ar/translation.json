@@ -380,5 +380,6 @@
   "Purchase item deleted successfully": "تم حذف منتج الشراء بنجاح",
   "Failed to delete purchase item": "فشل حذف منتج الشراء",
   "Select Regular Year": "اختر السنة الميلادية",
-  "Regular Year": "السنة الميلادية"
+  "Regular Year": "السنة الميلادية",
+  "Please fill in the following required fields": "يرجى ملء الحقول المطلوبة التالية"
 }

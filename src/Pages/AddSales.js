@@ -143,8 +143,39 @@ const AddSale = () => {
       : arrDocumentTypeStatment;
   };
 
+  // ===================== VALIDATION =====================
+  const validate = () => {
+    const missing = [];
+
+    if (!objCustomer) missing.push(t("Customer"));
+    if (!objSale.invoiceDate) missing.push(t("Settlement Date"));
+    if (!objSale.invoiceNumber) missing.push(t("Invoice Number"));
+    if (!objSale.issueDate) missing.push(t("Issue Date"));
+
+    objSale.documentItems.forEach((r, i) => {
+      const row = `${t("Item")} #${i + 1}`;
+      if (!r.itemId || r.itemId === -1) missing.push(`${row} - ${t("Item")}`);
+      if (!r.documentTypeId || r.documentTypeId === -1)
+        missing.push(`${row} - ${t("Document Type")}`);
+      if (!r.statementTypeId || r.statementTypeId === -1)
+        missing.push(`${row} - ${t("Statement Type")}`);
+      if (!r.itemTypeId || r.itemTypeId === -1)
+        missing.push(`${row} - ${t("Item Type")}`);
+    });
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
   // ===================== SUBMIT =====================
   const Add = async () => {
+    if (!validate()) return;
+
     const response = await axiosInstance.post("/Sales/Add", objSale);
     if (response.data.result) {
       toast.success(t("Sale added successfully"));
