@@ -200,15 +200,61 @@ const EditPurchase = () => {
       : arrDocumentTypeStatment;
   };
 
+  // ===================== VALIDATION =====================
+  const validateHeader = () => {
+    const missing = [];
+
+    if (!objPurchase.invoiceDate) missing.push(t("Settlement Date"));
+    if (!objPurchase.invoiceNumber) missing.push(t("Invoice Number"));
+    if (!objPurchase.issueDate) missing.push(t("Issue Date"));
+    if (objPurchase.isPrePaid === null || objPurchase.isPrePaid === undefined)
+      missing.push(t("Prepaid payments"));
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const validateRow = (r, index) => {
+    const missing = [];
+    const row = `${t("Item")} #${index + 1}`;
+
+    if (!r.itemId || r.itemId === -1) missing.push(`${row} - ${t("Item")}`);
+    if (!r.documentTypeId || r.documentTypeId === -1)
+      missing.push(`${row} - ${t("Document Type")}`);
+    if (!r.statementTypeId || r.statementTypeId === -1)
+      missing.push(`${row} - ${t("Statement Type")}`);
+    if (!r.itemTypeId || r.itemTypeId === -1)
+      missing.push(`${row} - ${t("Item Type")}`);
+    if (!r.transactionNatureId || r.transactionNatureId === -1)
+      missing.push(`${row} - ${t("Transaction Nature")}`);
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
   // ===================== SUBMIT =====================
   const Edit = async () => {
+    if (!validateHeader()) return;
+
     const response = await axiosInstance.put("/Purchase/Update", objPurchase);
     if (response.data.result) {
       toast.success(t("Purchase Edited successfully"));
     }
   };
 
-  const AddDocItem = async (obj) => {
+  const AddDocItem = async (obj, index) => {
+    if (!validateRow(obj, index)) return;
+
     const response = await axiosInstance.post("/Purchase/AddDocumentItem", obj);
     if (response.data.result) {
       toast.success(t("Purchase item added successfully"));
@@ -217,7 +263,9 @@ const EditPurchase = () => {
     }
   };
 
-  const EditDocItem = async (obj) => {
+  const EditDocItem = async (obj, index) => {
+    if (!validateRow(obj, index)) return;
+
     obj.isPrePaid = objPurchase.isPrePaid;
     const response = await axiosInstance.put("/Purchase/UpdateDocumentItem", obj);
     if (response.data.result) {
@@ -399,10 +447,10 @@ const EditPurchase = () => {
 
               <div className="col-md-3 text-end">
                 {!boolIsChanged ? (r.id ?
-                  <button className="btn btn-primary" onClick={() => EditDocItem(r)}>
+                  <button className="btn btn-primary" onClick={() => EditDocItem(r, index)}>
                     {t("Save")}
                   </button> :
-                  <button className="btn btn-primary" onClick={() => AddDocItem(r)}>
+                  <button className="btn btn-primary" onClick={() => AddDocItem(r, index)}>
                     {t("Save")}
                   </button>) : null
                 }

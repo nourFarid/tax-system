@@ -153,8 +153,43 @@ const AddPurchase = () => {
   };
 
 
+  // ===================== VALIDATION =====================
+  const validate = () => {
+    const missing = [];
+
+    if (!objSupplier) missing.push(t("Supplier"));
+    if (!objPurchase.invoiceDate) missing.push(t("Settlement Date"));
+    if (!objPurchase.invoiceNumber) missing.push(t("Invoice Number"));
+    if (!objPurchase.issueDate) missing.push(t("Issue Date"));
+    if (objPurchase.isPrePaid === null || objPurchase.isPrePaid === undefined)
+      missing.push(t("Prepaid payments"));
+
+    objPurchase.documentItems.forEach((r, i) => {
+      const row = `${t("Item")} #${i + 1}`;
+      if (!r.itemId || r.itemId === -1) missing.push(`${row} - ${t("Item")}`);
+      if (!r.documentTypeId || r.documentTypeId === -1)
+        missing.push(`${row} - ${t("Document Type")}`);
+      if (!r.statementTypeId || r.statementTypeId === -1)
+        missing.push(`${row} - ${t("Statement Type")}`);
+      if (!r.itemTypeId || r.itemTypeId === -1)
+        missing.push(`${row} - ${t("Item Type")}`);
+      if (!r.transactionNatureId || r.transactionNatureId === -1)
+        missing.push(`${row} - ${t("Transaction Nature")}`);
+    });
+
+    if (missing.length > 0) {
+      toast.error(
+        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+      );
+      return false;
+    }
+    return true;
+  };
+
   // ===================== SUBMIT =====================
   const Add = async () => {
+    if (!validate()) return;
+
     const response = await axiosInstance.post("/Purchase/Add", objPurchase);
     if (response.data.result) {
       toast.success(t("Purchase added successfully"), {
