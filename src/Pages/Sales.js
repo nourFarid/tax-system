@@ -25,6 +25,7 @@ const Sales = () => {
   const [loading, setLoading] = useState(false);
   const [sales, setSales] = useState([]);
   const [error, setError] = useState(null);
+  const [arrRegularYear, setArrRegularYear] = useState([]);
 
   const [arrFiscalYear, setArrFiscalYear] = useState([]);
   const [boolDisableExport, setBoolDisableExport] = useState(false);
@@ -36,6 +37,7 @@ const Sales = () => {
     invoiceDateTo: "",
     exportWithName: null,
     customerId: -1,
+    regularDate: "",
   });
   const [objCustomer, setObjCustomer] = useState(null);
 
@@ -172,6 +174,21 @@ const Sales = () => {
 
   const strDocDir = document.documentElement.dir;
 
+  const listYears = (doStartDate) => {
+    const years = [];
+    const startYear = new Date(doStartDate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    for (let i = startYear; i <= currentYear; i++) {
+      let obj = {
+        name: i,
+        dateFrom: `${i}-01-01`,
+        dateTo: `${i}-12-31`,
+      }
+      years.push(obj);
+    }
+    setArrRegularYear(years);
+  }
+
   const listFiscalYear = async () => {
     try {
       const res = await axiosInstance.post("FiscalYear/ListAll", {});
@@ -179,6 +196,7 @@ const Sales = () => {
         toast.error(res.data.message);
         return;
       }
+      listYears(res.data.data[0]?.fromDate);
       setArrFiscalYear(res.data.data);
     } catch {
       toast.error(t("Failed to load fiscal years"));
@@ -321,6 +339,7 @@ const Sales = () => {
       invoiceDateTo: "",
       exportWithName: null,
       customerId: -1,
+      regularDate: "",
     });
     setObjCustomer(null);
     setPageNumber(1);
@@ -381,6 +400,27 @@ const Sales = () => {
                 setObjFilter({ ...objFilter, invoiceDateTo: e.target.value })
               }
             />
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Regular Year")}</label>
+            <select className="form-select" value={objFilter.regularDate}
+              onChange={(e) => {
+                const selected = arrRegularYear.find(
+                  (x) => x.name == e.target.value
+                );
+                setObjFilter({
+                  ...objFilter,
+                  regularDate: selected?.name || "",
+                  invoiceDateFrom: selected?.dateFrom || "",
+                  invoiceDateTo: selected?.dateTo || "",
+                });
+              }}>
+              <option value={""}>{t("Select Regular Year")}</option>
+              {arrRegularYear.map((item) => (
+                <option key={item.name} value={item.name}> {item.name} </option>
+              ))}
+            </select>
           </div>
 
           <div className="col-md-3 mb-3">

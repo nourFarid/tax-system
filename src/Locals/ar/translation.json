@@ -378,5 +378,7 @@
   "Purchase item edited successfully": "تم تعديل منتج الشراء بنجاح",
   "Failed to edit purchase item": "فشل تعديل منتج الشراء",
   "Purchase item deleted successfully": "تم حذف منتج الشراء بنجاح",
-  "Failed to delete purchase item": "فشل حذف منتج الشراء"
+  "Failed to delete purchase item": "فشل حذف منتج الشراء",
+  "Select Regular Year": "اختر السنة الميلادية",
+  "Regular Year": "السنة الميلادية"
 }

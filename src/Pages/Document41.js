@@ -21,6 +21,7 @@ const Document41 = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [arrFiscalYear, setArrFiscalYear] = useState([]);
   const [objCurrentDoc, setObjCurrentDoc] = useState({});
+  const [arrRegularYear, setArrRegularYear] = useState([]);
   const { showSuccess, showError, showDeleteConfirmation } = useSwal();
   const objTitle = useMemo(
     () => ({
@@ -137,6 +138,7 @@ const Document41 = () => {
     transactionDateTo: "",
     exportWithName: false,
     supplierId: -1,
+    regularDate: "",
   });
 
   const arrSupplier = async (input) => {
@@ -150,18 +152,6 @@ const Document41 = () => {
       value: x.id,
     }));
   };
-  // const MarkInvalid = async (row) => {
-  //   const res = await axiosInstance.put(
-  //     `Document41/MarkInvalid/${row.id}`
-  //   );
-
-  //   if (res.data.result) {
-  //     showSuccess(t("Success"), t("Document marked as invalid"));
-  //     List(pageNumber);
-  //   } else {
-  //     showError(t("Error"), res.data.message);
-  //   }
-  // };
 
   const List = async (intPageNumber = 1) => {
     setPageNumber(intPageNumber);
@@ -185,6 +175,7 @@ const Document41 = () => {
       transactionDateFrom: "",
       transactionDateTo: "",
       supplierId: -1,
+      regularDate: "",
     });
     setObjSupplier(null);
     List();
@@ -202,18 +193,24 @@ const Document41 = () => {
     }
   }
 
-  const Edit = (objRow) => {
-    window.location.href = `/Document41/UpdateDocument41/${objRow.id}`;
-  }
-
   const GetQuarters = (fiscalYearId) => {
     let fiscalYear = arrFiscalYear.find(fy => fy.id === parseInt(fiscalYearId));
     return fiscalYear ? fiscalYear.quarters : [];
   }
 
-  const HandelDelete = (row) => {
-    setObjCurrentDoc(row);
-    showModal("Delete");
+  const listYears = (doStartDate) => {
+    const years = [];
+    const startYear = new Date(doStartDate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    for (let i = startYear; i <= currentYear; i++) {
+      let obj = {
+        name: i,
+        dateFrom: `${i}-01-01`,
+        dateTo: `${i}-12-31`,
+      }
+      years.push(obj);
+    }
+    setArrRegularYear(years);
   }
 
   const listFiscalYear = async () => {
@@ -222,6 +219,7 @@ const Document41 = () => {
       alert(res.data.message);
       return;
     }
+    listYears(res.data.data[0]?.fromDate);
     setArrFiscalYear(res.data.data);
   }
 
@@ -263,6 +261,26 @@ const Document41 = () => {
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Transaction Date To")}</label>
             <input type="date" className="form-control" value={objFilter.transactionDateTo} onChange={(e) => setObjFilter({ ...objFilter, transactionDateTo: e.target.value })} />
+          </div>
+          <div className="col-md-3 mb-3">
+            <label className="form-label">{t("Regular Year")}</label>
+            <select className="form-select" value={objFilter.regularDate}
+              onChange={(e) => {
+                const selected = arrRegularYear.find(
+                  (x) => x.name == e.target.value
+                );
+                setObjFilter({
+                  ...objFilter,
+                  regularDate: selected?.name || "",
+                  transactionDateFrom: selected?.dateFrom || "",
+                  transactionDateTo: selected?.dateTo || "",
+                });
+              }}>
+              <option value={""}>{t("Select Regular Year")}</option>
+              {arrRegularYear.map((item) => (
+                <option key={item.name} value={item.name}> {item.name} </option>
+              ))}
+            </select>
           </div>
           <div className="col-md-3 mb-3">
             <label className="form-label">{t("Fiscal Year")}</label>
