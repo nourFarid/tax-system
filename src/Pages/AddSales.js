@@ -165,7 +165,7 @@ const AddSale = () => {
 
     if (missing.length > 0) {
       toast.error(
-        `${t("Please fill in the following required fields")}:\n${missing.join("\n")}`
+        `${t("Please fill in the following required fields")}:\n${missing.join(", \n")}`
       );
       return false;
     }
